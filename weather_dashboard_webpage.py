@@ -96,84 +96,77 @@ st.sidebar.markdown(
     'Here is an analysis of the weather data for four cities in Asia for 20 years.')
 
 
-# Main Dashboard
-if selected_city == 'Delhi':
-    st.markdown('''
-    # Weather Dashboard - ***Delhi*** 
-    > Delhi, the capital of India, is one of the most populous and polluted cities in the world. The city has changed a lot over the years with respect to its weather. There have been a number of factors that have contributed to this change, including climate change. Here is a dashboard for the analysis of weather data for 20 years.
-    ---
-    ''')
-    rt_chart(Delhi)
-elif selected_city == 'Kuala Lumpur':
-    st.markdown('''
-    # Weather Data Dashboard - ***Kuala Lumpur***
-    > Kaula Lumpur, the capital city of Malaysia, home to the iconic Twin Towers. Kuala Lumpur is best known for its affordable luxury hotels, great shopping scene, and even better food. Malaysian capital boasts some of the finest shopping centers in the world, head towards Pavilion KL and Suria KLC for high-end luxurious items, or visit Petaling Street to have a real sense of local shopping. The city has changed a lot over the years with respect to its weather. There have been a number of factors that have contributed to this change, including climate change. Here is a dashboard for the analysis of weather data for 20 years.
-    ---
-    ''')
-    rt_chart(kuala_lumpur)
-elif selected_city == 'Singapore':
-    st.markdown('''
-    # Weather Data Dashboard - ***Singapore***
-    > Singapore, officially the Republic of Singapore, is a sovereign island country and city-state in maritime Southeast Asia. It is famous for being a global financial center, being among the most densely populated places in the world, having a world-class city airport with a waterfall, and a Botanic Garden that is a World Heritage Site. The city has changed a lot over the years with respect to its weather. There have been a number of factors that have contributed to this change, including climate change. Here is a dashboard for the analysis of weather data for 20 years.
-    ''')
-    rt_chart(Singapore)
-elif selected_city == 'Tokyo':
-    st.markdown('''
-    # Weather Data Dashboard - ***Tokyo***
-    > Tokyo, Japan’s busy capital, mixes the ultramodern and the traditional...
-    ''')
-    rt_chart(Tokyo)
-elif selected_city == 'Oahu':
-    st.markdown('''
-    # Weather Data Dashboard - ***Oahu***
-    > Oʻahu, known as "The Gathering Place," is the third-largest of the Hawaiian Islands...
-    ---
-    ''')
-    # Define bounding box for Hawaiian Islands
-    bounds = [[18.5, -161.0], [21.9, -154.5]]
-    # Create interactive satellite map with Esri tiles, constrained to Hawaii
-    oahu_map = folium.Map(
-        location=[20.5, -157.0],
-        zoom_start=7,
-        tiles=None,
-        min_zoom=6,
-        max_bounds=True
-    )
-    folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
-    oahu_map.fit_bounds(bounds)
-    folium_static(oahu_map)
+# Main Dashboard and chatbot
+main_col, chat_col = st.columns([4,1])
+
+with main_col:
+    # Main Dashboard
+    if selected_city == 'Delhi':
+        st.markdown('''
+        # Weather Dashboard - ***Delhi*** 
+        > Delhi, the capital of India, is one of the most populous and polluted cities in the world. The city has changed a lot over the years with respect to its weather. There have been a number of factors that have contributed to this change, including climate change. Here is a dashboard for the analysis of weather data for 20 years.
+        ---
+        ''')
+        rt_chart(Delhi)
+    elif selected_city == 'Kuala Lumpur':
+        st.markdown('''
+        # Weather Data Dashboard - ***Kuala Lumpur***
+        > Kaula Lumpur, the capital city of Malaysia, home to the iconic Twin Towers. Kuala Lumpur is best known for its affordable luxury hotels, great shopping scene, and even better food. Malaysian capital boasts some of the finest shopping centers in the world, head towards Pavilion KL and Suria KLC for high-end luxurious items, or visit Petaling Street to have a real sense of local shopping. The city has changed a lot over the years with respect to its weather. There have been a number of factors that have contributed to this change, including climate change. Here is a dashboard for the analysis of weather data for 20 years.
+        ---
+        ''')
+        rt_chart(kuala_lumpur)
+    elif selected_city == 'Singapore':
+        st.markdown('''
+        # Weather Data Dashboard - ***Singapore***
+        > Singapore, officially the Republic of Singapore, is a sovereign island country and city-state in maritime Southeast Asia. It is famous for being a global financial center, being among the most densely populated places in the world, having a world-class city airport with a waterfall, and a Botanic Garden that is a World Heritage Site. The city has changed a lot over the years with respect to its weather. There have been a number of factors that have contributed to this change, including climate change. Here is a dashboard for the analysis of weather data for 20 years.
+        ''')
+        rt_chart(Singapore)
+    elif selected_city == 'Tokyo':
+        st.markdown('''
+        # Weather Data Dashboard - ***Tokyo***
+        > Tokyo, Japan’s busy capital, mixes the ultramodern and the traditional...
+        ''')
+        rt_chart(Tokyo)
+    elif selected_city == 'Oahu':
+        st.markdown('''
+        # Weather Data Dashboard - ***Oahu***
+        > Oʻahu, known as "The Gathering Place," is the third-largest of the Hawaiian Islands...
+        ---
+        ''')
+        # Define bounding box for Hawaiian Islands
+        bounds = [[18.5, -161.0], [21.9, -154.5]]
+        # Create interactive satellite map with Esri tiles, constrained to Hawaii
+        oahu_map = folium.Map(
+            location=[20.5, -157.0],
+            zoom_start=7,
+            tiles=None,
+            min_zoom=6,
+            max_bounds=True
+        )
+        folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
+        oahu_map.fit_bounds(bounds)
+        folium_static(oahu_map)
 
     
-# Collapsible chatbot positioned on the bottom right
-with st.expander("🌐 Climate Chatbot", expanded=False):
-    if 'chat_history' not in st.session_state:
-        st.session_state['chat_history'] = []
+with chat_col:
+    st.markdown("""<style>.stExpander {position: fixed; bottom: 0; right: 0; width: 25%;}</style>""", unsafe_allow_html=True)
+    with st.expander("🌐 Climate Chatbot", expanded=False):
+        if 'chat_history' not in st.session_state:
+            st.session_state['chat_history'] = []
 
-    # Display chat history
-    for chat in st.session_state['chat_history']:
-        if chat['role'] == 'user':
-            st.markdown(f"**You:** {chat['content']}")
-        else:
-            st.markdown(f"**Bot:** {chat['content']}")
+        for chat in st.session_state['chat_history']:
+            role = "You" if chat['role'] == 'user' else "Bot"
+            st.markdown(f"**{role}:** {chat['content']}")
 
-    # Chat input
-    user_input = st.text_input("Ask about climate:", key="user_input")
+        user_input = st.text_input("Ask about climate:", key="user_input")
 
-    # Function to interact with backend API
-    def get_bot_response(query):
-        api_url = "https://your-backend-api.com/chat"  # Replace with your backend URL
-        response = requests.post(api_url, json={'query': query})
-        if response.status_code == 200:
-            return response.json().get('answer', 'Sorry, something went wrong!')
-        else:
-            return "Error contacting backend."
+        def get_bot_response(query):
+            api_url = "https://your-backend-api.com/chat"
+            response = requests.post(api_url, json={'query': query})
+            return response.json().get('answer', 'Error contacting backend.') if response.ok else "Error contacting backend."
 
-    # Handle user query
-    if user_input:
-        st.session_state['chat_history'].append({'role': 'user', 'content': user_input})
-        bot_response = get_bot_response(user_input)
-        st.session_state['chat_history'].append({'role': 'bot', 'content': bot_response})
-
-        # Display updated conversation
-        st.markdown(f"**You:** {user_input}")
-        st.markdown(f"**Bot:** {bot_response}")
+        if user_input:
+            st.session_state['chat_history'].append({'role': 'user', 'content': user_input})
+            bot_response = get_bot_response(user_input)
+            st.session_state['chat_history'].append({'role': 'bot', 'content': bot_response})
+            st.experimental_rerun()
