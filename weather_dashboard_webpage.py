@@ -143,270 +143,38 @@ elif selected_city == 'Oahu':
     folium_static(oahu_map)
 
     
+# Chatbot UI in sidebar (bottom-right corner simulation)
+st.sidebar.markdown('---')
+st.sidebar.header("🌐 Climate Chatbot")
 
-# --- Floating Chatbox HTML/CSS/JS ---
-# This injects the UI and the JavaScript to interact with a *separate* backend API.
-chatbox_html = """
-<style>
-    #chat-bubble {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 60px;
-        height: 60px;
-        background-color: #6a1b9a; /* Purple color */
-        color: white;
-        border-radius: 50%;
-        text-align: center;
-        line-height: 60px; /* Vertically center icon/text */
-        font-size: 24px;
-        cursor: pointer;
-        box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-        z-index: 1000;
-        transition: transform 0.2s ease-in-out;
-    }
-    #chat-bubble:hover {
-        transform: scale(1.1);
-        background-color: #4a148c; /* Darker purple on hover */
-    }
-    #chat-window {
-        position: fixed;
-        bottom: 90px; /* Position above the bubble */
-        right: 20px;
-        width: 320px; /* Slightly wider */
-        height: 450px; /* Slightly taller */
-        background-color: #ffffff;
-        border: 1px solid #e0e0e0; /* Lighter border */
-        border-radius: 12px; /* More rounded corners */
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Softer shadow */
-        display: none; /* Hidden by default */
-        flex-direction: column;
-        overflow: hidden;
-        z-index: 999;
-    }
-    #chat-window.open {
-        display: flex;
-        z-index: 1001;
-    }
-    #chat-header {
-        background: linear-gradient(to right, #7b1fa2, #6a1b9a); /* Gradient header */
-        color: white;
-        padding: 12px 15px; /* More padding */
-        font-weight: bold;
-        border-top-left-radius: 12px; /* Match window rounding */
-        border-top-right-radius: 12px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-     #chat-header span {
-        font-size: 1.1em;
-     }
-     #close-chat {
-        background: none;
-        border: none;
-        color: white;
-        font-size: 20px;
-        cursor: pointer;
-        padding: 0 5px;
-     }
-    #chat-messages {
-        flex-grow: 1;
-        padding: 15px; /* More padding */
-        overflow-y: auto;
-        background-color: #f5f5f5; /* Light grey background */
-        border-bottom: 1px solid #e0e0e0;
-    }
-    #chat-input-area {
-        display: flex;
-        padding: 12px;
-        background-color: #ffffff;
-        border-top: 1px solid #e0e0e0;
-    }
-    #chat-input {
-        flex-grow: 1;
-        border: 1px solid #bdbdbd; /* Grey border */
-        border-radius: 20px; /* Pill shape */
-        padding: 10px 15px; /* Adjust padding */
-        margin-right: 10px;
-        font-size: 0.95em;
-        outline: none; /* Remove focus outline */
-    }
-    #chat-input:focus {
-        border-color: #6a1b9a; /* Highlight border on focus */
-        box-shadow: 0 0 0 2px rgba(106, 27, 154, 0.2); /* Subtle glow on focus */
-    }
-    #send-button {
-        padding: 10px 15px;
-        background-color: #6a1b9a; /* Match theme */
-        color: white;
-        border: none;
-        border-radius: 20px; /* Pill shape */
-        cursor: pointer;
-        font-size: 0.95em;
-        transition: background-color 0.2s ease;
-    }
-    #send-button:hover {
-        background-color: #4a148c; /* Darker shade on hover */
-    }
-    /* Message Styling */
-    .message {
-        margin-bottom: 10px; /* More space between messages */
-        padding: 8px 12px;
-        border-radius: 15px; /* Rounded messages */
-        max-width: 80%; /* Prevent messages from being too wide */
-        word-wrap: break-word; /* Handle long words */
-        font-size: 0.95em;
-        line-height: 1.4;
-    }
-    .user-message {
-        background-color: #e1bee7; /* Light purple for user */
-        color: #333;
-        margin-left: auto; /* Align to right */
-        border-bottom-right-radius: 5px; /* Slightly different shape */
-    }
-    .bot-message {
-        background-color: #eeeeee; /* Light grey for bot */
-        color: #333;
-        margin-right: auto; /* Align to left */
-        border-bottom-left-radius: 5px; /* Slightly different shape */
-    }
-    .error-message {
-        background-color: #ffcdd2; /* Light red for errors */
-        color: #b71c1c;
-        margin-right: auto;
-        border-bottom-left-radius: 5px;
-    }
-    .typing-indicator {
-        display: none; /* Hidden by default */
-        padding: 5px 12px;
-        color: #757575;
-        font-style: italic;
-        font-size: 0.9em;
-    }
-</style>
+if 'chat_history' not in st.session_state:
+    st.session_state['chat_history'] = []
 
-<div id="chat-bubble">💬</div>
-<div id="chat-window">
-    <div id="chat-header">
-        <span>AI Assistant</span>
-        <button id="close-chat" title="Close Chat">&times;</button>
-    </div>
-    <div id="chat-messages">
-        <div class="message bot-message">Hello! How can I assist you today?</div>
-    </div>
-    <div class="typing-indicator" id="typing-indicator">AI is typing...</div>
-    <div id="chat-input-area">
-        <input type="text" id="chat-input" placeholder="Ask something...">
-        <button id="send-button">Send</button>
-    </div>
-</div>
+# Display chat history
+for chat in st.session_state['chat_history']:
+    if chat['role'] == 'user':
+        st.sidebar.markdown(f"**You:** {chat['content']}")
+    else:
+        st.sidebar.markdown(f"**Bot:** {chat['content']}")
 
-<script>
-    const chatBubble = document.getElementById('chat-bubble');
-    const chatWindow = document.getElementById('chat-window');
-    const chatInput = document.getElementById('chat-input');
-    const sendButton = document.getElementById('send-button');
-    const messagesContainer = document.getElementById('chat-messages');
-    const closeButton = document.getElementById('close-chat');
-    const typingIndicator = document.getElementById('typing-indicator');
+# Chat input
+user_input = st.sidebar.text_input("Ask about climate:", key="user_input")
 
-    // --- Backend API Endpoint ---
-    // IMPORTANT: Replace this with the actual URL of your backend API
-    const API_ENDPOINT = '/api/chat'; // Placeholder URL
+# Function to interact with backend API
+def get_bot_response(query):
+    api_url = "https://your-backend-api.com/chat"  # Replace with your backend URL
+    response = requests.post(api_url, json={'query': query})
+    if response.status_code == 200:
+        return response.json().get('answer', 'Sorry, something went wrong!')
+    else:
+        return "Error contacting backend."
 
-    // Function to add a message to the chat window
-    function addMessage(text, sender) {
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message');
-        messageDiv.classList.add(sender === 'user' ? 'user-message' : (sender === 'error' ? 'error-message' : 'bot-message'));
-        messageDiv.textContent = text; // Use textContent to prevent HTML injection
-        messagesContainer.appendChild(messageDiv);
-        // Scroll to the bottom
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
+# Handle user query
+if user_input:
+    st.session_state['chat_history'].append({'role': 'user', 'content': user_input})
+    bot_response = get_bot_response(user_input)
+    st.session_state['chat_history'].append({'role': 'bot', 'content': bot_response})
 
-    // Function to handle sending message and interacting with API
-    async function sendMessage() {
-        const messageText = chatInput.value.trim();
-        if (messageText === '') return; // Do nothing if input is empty
-
-        // 1. Display user message immediately
-        addMessage(messageText, 'user');
-        chatInput.value = ''; // Clear input field
-        chatInput.disabled = true; // Disable input while waiting for response
-        sendButton.disabled = true;
-        typingIndicator.style.display = 'block'; // Show typing indicator
-
-        try {
-            // 2. Send message to backend API
-            const response = await fetch(API_ENDPOINT, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ message: messageText }), // Send message in JSON body
-            });
-
-            typingIndicator.style.display = 'none'; // Hide typing indicator
-
-            if (!response.ok) {
-                // Handle HTTP errors (like 404, 500)
-                throw new Error(`API Error: ${response.status} ${response.statusText}`);
-            }
-
-            // 3. Process successful response
-            const data = await response.json();
-
-            if (data && data.answer) {
-                // Display bot's answer
-                addMessage(data.answer, 'bot');
-            } else {
-                // Handle cases where response is ok but doesn't contain expected data
-                addMessage("Sorry, I received an unexpected response from the server.", 'error');
-            }
-
-        } catch (error) {
-            // 4. Handle errors (network issues, API errors, JSON parsing errors)
-            console.error('Chat API Error:', error);
-            typingIndicator.style.display = 'none'; // Hide typing indicator
-            addMessage(`Sorry, something went wrong. Could not reach the AI assistant. (${error.message})`, 'error');
-        } finally {
-            // Re-enable input fields regardless of success or failure
-             chatInput.disabled = false;
-             sendButton.disabled = false;
-             chatInput.focus(); // Set focus back to input
-        }
-    }
-
-    // --- Event Listeners ---
-
-    // Toggle chat window visibility
-    chatBubble.addEventListener('click', () => {
-        chatWindow.classList.toggle('open');
-        if (chatWindow.classList.contains('open')) {
-             chatInput.focus(); // Focus input when opened
-        }
-    });
-
-    // Close chat window
-    closeButton.addEventListener('click', () => {
-        chatWindow.classList.remove('open');
-    });
-
-    // Send message on button click
-    sendButton.addEventListener('click', sendMessage);
-
-    // Send message on Enter key press in input field
-    chatInput.addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            sendMessage();
-        }
-    });
-
-</script>
-"""
-
-# Inject the HTML into the Streamlit app
-# This should generally be placed near the end of your script
-st.markdown(chatbox_html, unsafe_allow_html=True)
+    # Display updated conversation
+    st.sidebar.markdown(f"**You:** {user_input}")
+    st.sidebar.markdown(f"**Bot:** {bot_response}")
