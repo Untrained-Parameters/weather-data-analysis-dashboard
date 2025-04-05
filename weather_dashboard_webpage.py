@@ -137,15 +137,19 @@ with main_col:
         bounds = [[18.5, -161.0], [21.9, -154.5]]
         # Create interactive satellite map with Esri tiles, constrained to Hawaii
         oahu_map = folium.Map(
-            location=[20.5, -157.0],
-            zoom_start=7,
-            tiles=None,
-            min_zoom=6,
-            max_bounds=True
-        )
-        folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
-        oahu_map.fit_bounds(bounds)
-        folium_static(oahu_map)
+        location=[20.5, -157.0],
+        zoom_start=7,
+        tiles=None,
+        min_zoom=6,
+        max_bounds=True,
+        max_lat=21.9,
+        min_lat=18.5,
+        max_lon=-154.5,
+        min_lon=-161.0
+    )
+    folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
+    oahu_map.fit_bounds(bounds)
+    folium_static(oahu_map)
 
     
 with chat_col:
