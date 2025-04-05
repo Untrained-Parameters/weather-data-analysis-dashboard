@@ -141,27 +141,6 @@ with main_col:
 
     # Main Dashboard (only new blocks for each island below)
     today = datetime.today()
-    # def render_time_selectors(view):
-    #     if view == "Monthly":
-    #         colm1, colm2 = st.columns([1, 1])
-    #         with colm1:
-    #             st.markdown("#### Choose Month")
-    #             st.session_state.selected_month = months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-    #         with colm2:
-    #             st.markdown("#### Choose Year")
-    #             st.session_state.selected_year = st.slider("", 1990, today.year, today.year, key=f"year_{selected_page}")
-    #     else:
-    #         cold1, cold2, cold3 = st.columns([1, 1, 1])
-    #         with cold1:
-    #             st.markdown("#### Choose Day")
-    #             st.session_state.selected_day = st.slider("", 1, 31, today.day, key=f"day_{selected_page}")
-    #         with cold2:
-    #             st.markdown("#### Choose Month")
-    #             st.session_state.selected_month = st.slider("", 1, 12, today.month, key=f"month_{selected_page}")
-    #         with cold3:
-    #             st.markdown("#### Choose Year")
-    #             st.session_state.selected_year = st.slider("", 1990, today.year, today.year, key=f"year_{selected_page}")
-
     if selected_page == 'Oʻahu':
         page_title = f"Weather Dashboard for Oʻahu" if display_type == "General Overview" else f"{display_type} in Oʻahu"
         st.markdown(f'''
@@ -174,26 +153,26 @@ with main_col:
             col1, col2, col3, col4, col5, col6 = st.columns(6)
             if metric_view == "Daily":
                 with col1:
-                    st.metric("Daily Precip", "3.2 mm")
+                    st.metric("Daily Precip", "3.2 mm","10")
                 with col2:
-                    st.metric("Max Temp", "30.1 °C")
+                    st.metric("Max Temp", "30.1 °C","2")
                 with col3:
-                    st.metric("Min Temp", "21.7 °C")
+                    st.metric("Min Temp", "21.7 °C","-4")
                 with col4:
-                    st.metric("Humidity", "75%")
+                    st.metric("Humidity", "75%","12")
                 with col5:
                     st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
                 with col6:
                     st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
             else:
                 with col1:
-                    st.metric("Monthly Precip", "85 mm")
+                    st.metric("Monthly Precip", "85 mm","13")
                 with col2:
-                    st.metric("Avg Max Temp", "29.5 °C")
+                    st.metric("Avg Max Temp", "29.5 °C","5")
                 with col3:
-                    st.metric("Avg Min Temp", "22.3 °C")
+                    st.metric("Avg Min Temp", "22.3 °C","10")
                 with col4:
-                    st.metric("Avg Humidity", "77%")
+                    st.metric("Avg Humidity", "77%","11")
                 with col5:
                     st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
                 with col6:
