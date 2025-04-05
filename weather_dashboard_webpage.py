@@ -42,36 +42,6 @@ if "view_toggle" not in st.session_state:
 main_col, chat_col = st.columns([4,1])
 
 with main_col:
-    # Floating Toggle Button using Streamlit buttons
-    st.markdown("""
-        <style>
-        div[data-testid="toggle-button-container"] {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #f0f2f6;
-            border-radius: 25px;
-            padding: 6px 20px;
-            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.15);
-            display: flex;
-            gap: 10px;
-            z-index: 1000;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
-    with st.container():
-        st.markdown('<div data-testid="toggle-button-container">', unsafe_allow_html=True)
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("🗺 Map"):
-                st.session_state.view_toggle = "Map"
-        with col2:
-            if st.button("📊 Chart"):
-                st.session_state.view_toggle = "Chart"
-        st.markdown('</div>', unsafe_allow_html=True)
-
     # Default Homepage Map if no selection yet or fallback
     if selected_page == 'All Islands':
         st.markdown('''
@@ -305,6 +275,36 @@ with main_col:
         bigisland_map = folium.Map(location=[19.6, -155.5], zoom_start=8, tiles=None, min_zoom=6, max_bounds=True)
         folium.TileLayer('Esri.WorldImagery').add_to(bigisland_map)
         folium_static(bigisland_map)
+
+    # Floating Toggle Button using Streamlit buttons
+    st.markdown("""
+        <style>
+        div[data-testid="toggle-button-container"] {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #f0f2f6;
+            border-radius: 25px;
+            padding: 6px 20px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.15);
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    with st.container():
+        st.markdown('<div data-testid="toggle-button-container">', unsafe_allow_html=True)
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("🗺 Map"):
+                st.session_state.view_toggle = "Map"
+        with col2:
+            if st.button("📊 Chart"):
+                st.session_state.view_toggle = "Chart"
+        st.markdown('</div>', unsafe_allow_html=True)
 
 with chat_col:
     st.markdown("""
