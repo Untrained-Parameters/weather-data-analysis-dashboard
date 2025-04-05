@@ -186,24 +186,25 @@ with main_col:
         > Oʻahu, known as "The Gathering Place," is the third-largest of the Hawaiian Islands...
         ---
         ''')
-        bounds = [[18.5, -161.0], [21.9, -154.5]]
-        oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9.7, tiles=None, min_zoom=6, max_bounds=True)
-        folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
-        # folium.Marker([21.3069, -157.8583], popup='Honolulu').add_to(oahu_map)
-        folium_static(oahu_map)
-
-        # Example climate metrics for Oʻahu
-        st.markdown("## Climate Summary")
-        col1, col2, col3 = st.columns(3)
+        # Climate Metrics Displayed Horizontally with color indicators
+        col1, col2, col3, col4, col5, col6 = st.columns(6)
         with col1:
-            st.metric("Avg Daily Precipitation", "3.2 mm", "+12%")
-            st.metric("Avg Max Daily Temp", "29.5 °C", "-1.2 °C")
+            st.metric("Avg Daily Precip", "3.2 mm", "+12%")
         with col2:
-            st.metric("Avg Min Daily Temp", "22.3 °C", "+0.5 °C")
-            st.metric("Avg Daily Humidity", "77%", "+3%")
+            st.metric("Avg Max Temp", "29.5 °C", "-1.2 °C")
         with col3:
-            st.metric("Flood Warning", "No", "")
-            st.metric("Fire Ignition Warning", "Low", "")
+            st.metric("Avg Min Temp", "22.3 °C", "+0.5 °C")
+        with col4:
+            st.metric("Avg Humidity", "77%", "+3%")
+        with col5:
+            st.markdown('<div style="background-color:#34c759;padding:10px;border-radius:8px;text-align:center;color:white;font-weight:bold;">Flood Warning<br>No</div>', unsafe_allow_html=True)
+        with col6:
+            st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
+        bounds = [[18.5, -161.0], [21.9, -154.5]]
+        oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9, tiles=None, min_zoom=6, max_bounds=True)
+        folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
+        folium.Marker([21.3069, -157.8583], popup='Honolulu').add_to(oahu_map)
+        folium_static(oahu_map)
         
 
     elif selected_page == 'Kauaʻi':
