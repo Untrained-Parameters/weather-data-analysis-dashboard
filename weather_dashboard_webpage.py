@@ -201,7 +201,7 @@ with main_col:
         with col6:
             st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
         # bounds = [[18.5, -161.0], [21.9, -154.5]]
-        oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9, tiles=None, min_zoom=6, max_bounds=True)
+        oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
         folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
         # folium.Marker([21.3069, -157.8583], popup='Honolulu').add_to(oahu_map)
         folium_static(oahu_map)
@@ -239,6 +239,21 @@ with main_col:
         > Molokaʻi is known for its high sea cliffs and rural lifestyle...
         ---
         ''')
+         # Climate Metrics Displayed Horizontally with color indicators
+        col1, col2, col3, col4, col5, col6 = st.columns(6)
+        with col1:
+            st.metric("Avg Daily Precip", "3.2 mm", "+12%")
+        with col2:
+            st.metric("Avg Max Temp", "29.5 °C", "-1.2 °C")
+        with col3:
+            st.metric("Avg Min Temp", "22.3 °C", "+0.5 °C")
+        with col4:
+            st.metric("Avg Humidity", "77%", "+3%")
+        with col5:
+            st.markdown('<div style="background-color:#34c759;padding:5px 10px;border-radius:12px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
+        with col6:
+            st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
+        
         molokai_map = folium.Map(location=[21.1333, -157.0167], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
         folium.TileLayer('Esri.WorldImagery').add_to(molokai_map)
         # folium.Marker([21.0889, -157.0125], popup='Kaunakakai').add_to(molokai_map)
@@ -261,6 +276,21 @@ with main_col:
         > Maui is known for its beaches, the sacred ʻĪao Valley, and the scenic Hana Highway...
         ---
         ''')
+         # Climate Metrics Displayed Horizontally with color indicators
+        col1, col2, col3, col4, col5, col6 = st.columns(6)
+        with col1:
+            st.metric("Avg Daily Precip", "3.2 mm", "+12%")
+        with col2:
+            st.metric("Avg Max Temp", "29.5 °C", "-1.2 °C")
+        with col3:
+            st.metric("Avg Min Temp", "22.3 °C", "+0.5 °C")
+        with col4:
+            st.metric("Avg Humidity", "77%", "+3%")
+        with col5:
+            st.markdown('<div style="background-color:#34c759;padding:5px 10px;border-radius:12px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
+        with col6:
+            st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
+        
         maui_map = folium.Map(location=[20.8, -156.3], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
         folium.TileLayer('Esri.WorldImagery').add_to(maui_map)
         # folium.Marker([20.8895, -156.4729], popup='Kahului').add_to(maui_map)
@@ -272,6 +302,21 @@ with main_col:
         > The Big Island is the largest in the Hawaiian archipelago and features diverse climates and active volcanoes...
         ---
         ''')
+         # Climate Metrics Displayed Horizontally with color indicators
+        col1, col2, col3, col4, col5, col6 = st.columns(6)
+        with col1:
+            st.metric("Avg Daily Precip", "3.2 mm", "+12%")
+        with col2:
+            st.metric("Avg Max Temp", "29.5 °C", "-1.2 °C")
+        with col3:
+            st.metric("Avg Min Temp", "22.3 °C", "+0.5 °C")
+        with col4:
+            st.metric("Avg Humidity", "77%", "+3%")
+        with col5:
+            st.markdown('<div style="background-color:#34c759;padding:5px 10px;border-radius:12px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
+        with col6:
+            st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
+        
         bigisland_map = folium.Map(location=[19.6, -155.5], zoom_start=8.4, tiles=None, min_zoom=6, max_bounds=True)
         folium.TileLayer('Esri.WorldImagery').add_to(bigisland_map)
         # folium.Marker([19.7297, -155.09], popup='Hilo').add_to(bigisland_map)
