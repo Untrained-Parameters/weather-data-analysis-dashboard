@@ -8,6 +8,8 @@ import streamlit.components.v1 as components
 from streamlit_folium import folium_static
 import folium
 import requests
+from transformers import AutoTokenizer, AutoModelForQuestionAnswering, pipeline
+
 
 # this is a test
 # setting page configuration
@@ -168,33 +170,76 @@ with main_col:
 
     
 with chat_col:
-    st.markdown("""<style>
+    st.markdown("""
+                <style>
                 .stExpander {
                     position: fixed;
                     bottom: 0;
                     right: 0;
                     width: 25%;
-                    font-size: 25px;
                 }
-                </style>""", unsafe_allow_html=True)
+                /* Target text inside the expander */
+                div[data-testid="stExpander"] div[data-testid="stMarkdownContainer"] p {
+                    font-size: 25px !important;
+                }
+                /* Target text input inside the expander */
+                div[data-testid="stExpander"] input {
+                    font-size: 18px !important;
+                }
+                </style>
+                """, unsafe_allow_html=True)
     with st.expander("🌐 Climate Chatbot", expanded=True):
-        if 'chat_history' not in st.session_state:
-            st.session_state['chat_history'] = []
+        # if 'chat_history' not in st.session_state:
+        #     st.session_state['chat_history'] = []
 
-        for chat in st.session_state['chat_history']:
-            role = "You" if chat['role'] == 'user' else "Bot"
-            st.markdown(f"**{role}:** {chat['content']}")
+        # for chat in st.session_state['chat_history']:
+        #     role = "You" if chat['role'] == 'user' else "Bot"
+        #     st.markdown(f"**{role}:** {chat['content']}")
 
-        user_input = st.text_input("Ask about climate:", key="user_input")
+        # user_input = st.text_input("Ask about climate:", key="user_input")
 
-        def get_bot_response(query):
-            # api_url = "https://your-backend-api.com/chat"
-            # response = requests.post(api_url, json={'query': query})
-            # return response.json().get('answer', 'Error contacting backend.') if response.ok else "Error contacting backend."
-            return "This is a placeholder response. Replace with actual API call."
+        # def get_bot_response(query):
+        #     # api_url = "https://your-backend-api.com/chat"
+        #     # response = requests.post(api_url, json={'query': query})
+        #     # return response.json().get('answer', 'Error contacting backend.') if response.ok else "Error contacting backend."
+        #     return "This is a placeholder response. Replace with actual API call."
 
-        if user_input:
-            st.session_state['chat_history'].append({'role': 'user', 'content': user_input})
-            bot_response = get_bot_response(user_input)
-            st.session_state['chat_history'].append({'role': 'bot', 'content': bot_response})
-            st.experimental_rerun()
+        # if user_input:
+        #     st.session_state['chat_history'].append({'role': 'user', 'content': user_input})
+        #     bot_response = get_bot_response(user_input)
+        #     st.session_state['chat_history'].append({'role': 'bot', 'content': bot_response})
+        #     st.experimental_rerun()
+
+        # Model training
+        model_name = "deepset/roberta-base-squad2"
+
+        # Load model & tokenizer
+        model = AutoModelForQuestionAnswering.from_pretrained(model_name)
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+        # User input box
+        question = st.text_input("Ask about Hawai`i climate:")
+
+        # Contextualization
+        context = '''
+                    You are an LLM built to be knowledgeable on a data science project submission to the Rutgers Data Science Fall 23 Datathon 
+                    submitted by Maha, Nikhila, and Nivedha. This is a project about the forecasting. The data set is from GCAG, this is the website 
+                    that has more info on the data: https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/national/data-info. 
+                    You are hosted on a Streamlit app. This project is about a forecasting model of global temperatures built using Prophet by Facebook. 
+                    The raw data has Year and Anomaly Column. The anamoly representsanomaly means a departure from a reference value or long-term average. 
+                    A positive anomaly indicates that the observed temperature was warmer than the reference value, while a negative anomaly indicates 
+                    that the observed temperature was cooler than the reference value. The visualizations are built plotly - an interactive python 
+                    plotting library. The github link to the streamlit is: https://github.com/mahakanakala/datathon23_streamlit.
+                    The github link to the model and training of this project is: https://github.com/mahakanakala/datathon23.
+                    The processed data has Year, Anomaly, Month, and Season Column.
+        '''
+
+        # Intializing deepset/roberta-base-squad2 model and getting answer instances from pipeline
+        if question:
+            nlp = pipeline('question-answering', model=model, tokenizer=tokenizer)
+            QA_input = {
+                'question': question,
+                'context': context
+            }
+            answer = nlp(QA_input)
+            st.write("Answer:", answer['answer'])
