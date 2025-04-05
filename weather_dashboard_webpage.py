@@ -135,19 +135,34 @@ with main_col:
         ''')
         # Define bounding box for Hawaiian Islands
         bounds = [[18.5, -161.0], [21.9, -154.5]]
-        # Create interactive satellite map with Esri tiles, constrained to Hawaii
+        # Create map with Esri tiles
         oahu_map = folium.Map(
-        location=[20.5, -157.0],
-        zoom_start=7,
+        location=[21.4389, -158.0],
+        zoom_start=9,
         tiles=None,
         min_zoom=6,
-        max_bounds=True,
-        max_lat=21.9,
-        min_lat=18.5,
-        max_lon=-154.5,
-        min_lon=-161.0
+        max_bounds=True
     )
         folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
+
+        # Add island labels
+        islands = {
+            'Kauaʻi': [22.1, -159.5],
+            'Oʻahu': [21.4389, -158.0],
+            'Molokaʻi': [21.1333, -157.0167],
+            'Lānaʻi': [20.8333, -156.9167],
+            'Maui': [20.8, -156.3],
+            'Hawaiʻi (Big Island)': [19.6, -155.5]
+            }
+        for name, coords in islands.items():
+            folium.map.Marker(
+                location=coords,
+                icon=folium.DivIcon(
+                    html=f'<div style="font-size: 16px; color: white; font-weight: bold; text-shadow: 1px 1px 2px black;">{name}</div>'
+                )
+            ).add_to(oahu_map)
+
+        # Fit to Hawaiian bounds
         oahu_map.fit_bounds(bounds)
         folium_static(oahu_map)
 
