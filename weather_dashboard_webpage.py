@@ -207,11 +207,6 @@ if selected_page == 'Oʻahu':
             st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
         with col6:
             st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-    st.markdown('''
-    # Weather Data Dashboard - ***Oʻahu***
-    > Oʻahu, known as "The Gathering Place," is the third-largest of the Hawaiian Islands...
-    ---
-    ''')
 
     # Climate Metrics Displayed Horizontally with color indicators
     col1, col2, col3, col4, col5, col6 = st.columns(6)
@@ -229,7 +224,6 @@ if selected_page == 'Oʻahu':
         st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
     oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9, tiles=None, min_zoom=6, max_bounds=True)
     folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
-    folium.Marker([21.3069, -157.8583], popup='Honolulu').add_to(oahu_map)
     folium_static(oahu_map)
 
 
@@ -252,14 +246,8 @@ elif selected_page == 'Kauaʻi':
         col4.metric("Avg Humidity", "79%")
     col5.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
     col6.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-    st.markdown('''
-    # Weather Data Dashboard - ***Kauaʻi***
-    > Kauaʻi, also known as the Garden Isle, is the oldest of the main Hawaiian Islands...
-    ---
-    ''')
     kauai_map = folium.Map(location=[22.1, -159.5], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
     folium.TileLayer('Esri.WorldImagery').add_to(kauai_map)
-    folium.Marker([21.9811, -159.3711], popup='Līhuʻe').add_to(kauai_map)
     folium_static(kauai_map)
 
 elif selected_page == 'Molokaʻi':
@@ -281,14 +269,8 @@ elif selected_page == 'Molokaʻi':
         col4.metric("Avg Humidity", "73%")
     col5.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
     col6.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-    st.markdown('''
-    # Weather Data Dashboard - ***Molokaʻi***
-    > Molokaʻi is known for its high sea cliffs and rural lifestyle...
-    ---
-    ''')
     molokai_map = folium.Map(location=[21.1333, -157.0167], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
     folium.TileLayer('Esri.WorldImagery').add_to(molokai_map)
-    folium.Marker([21.0889, -157.0125], popup='Kaunakakai').add_to(molokai_map)
     folium_static(molokai_map)
 
 elif selected_page == 'Lānaʻi':
@@ -310,14 +292,8 @@ elif selected_page == 'Lānaʻi':
         col4.metric("Avg Humidity", "69%")
     col5.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
     col6.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-    st.markdown('''
-    # Weather Data Dashboard - ***Lānaʻi***
-    > Lānaʻi, the smallest publicly accessible inhabited island in Hawaii...
-    ---
-    ''')
     lanai_map = folium.Map(location=[20.8333, -156.9167], zoom_start=11, tiles=None, min_zoom=6, max_bounds=True)
     folium.TileLayer('Esri.WorldImagery').add_to(lanai_map)
-    folium.Marker([20.8275, -156.9208], popup='Lānaʻi City').add_to(lanai_map)
     folium_static(lanai_map)
 
 elif selected_page == 'Maui':
@@ -339,14 +315,8 @@ elif selected_page == 'Maui':
         col4.metric("Avg Humidity", "75%")
     col5.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
     col6.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-    st.markdown('''
-    # Weather Data Dashboard - ***Maui***
-    > Maui is known for its beaches, the sacred ʻĪao Valley, and the scenic Hana Highway...
-    ---
-    ''')
     maui_map = folium.Map(location=[20.8, -156.3], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
     folium.TileLayer('Esri.WorldImagery').add_to(maui_map)
-    folium.Marker([20.8895, -156.4729], popup='Kahului').add_to(maui_map)
     folium_static(maui_map)
 
 elif selected_page == 'Hawaiʻi (Big Island)':
@@ -368,15 +338,8 @@ elif selected_page == 'Hawaiʻi (Big Island)':
         col4.metric("Avg Humidity", "77%")
     col5.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
     col6.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-    st.markdown('''
-    # Weather Data Dashboard - ***Hawaiʻi (Big Island)***
-    > The Big Island is the largest in the Hawaiian archipelago and features diverse climates and active volcanoes...
-    ---
-    ''')
     bigisland_map = folium.Map(location=[19.6, -155.5], zoom_start=8, tiles=None, min_zoom=6, max_bounds=True)
     folium.TileLayer('Esri.WorldImagery').add_to(bigisland_map)
-    folium.Marker([19.7297, -155.09], popup='Hilo').add_to(bigisland_map)
-    folium.Marker([19.6406, -155.9956], popup='Kailua-Kona').add_to(bigisland_map)
     folium_static(bigisland_map)
 
 
