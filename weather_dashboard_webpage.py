@@ -144,13 +144,8 @@ elif selected_city == 'Oahu':
     folium_static(oahu_map)
 
     
-# Chatbot container on the right side
-chatbot_container = st.container()
-
-with chatbot_container:
-    st.markdown("---")
-    st.header("🌐 Climate Chatbot")
-
+# Collapsible chatbot positioned on the bottom right
+with st.expander("🌐 Climate Chatbot", expanded=False):
     if 'chat_history' not in st.session_state:
         st.session_state['chat_history'] = []
 
