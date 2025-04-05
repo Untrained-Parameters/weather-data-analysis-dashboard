@@ -92,8 +92,9 @@ with main_col:
                 st.session_state.selected_year = st.slider("", 1990, today.year, today.year, key=f"year_{selected_page}")
 
     if selected_page == 'Oʻahu':
+        page_title = f"{display_type} in Oʻahu" if display_type else "Weather Dashboard for Oʻahu"
         st.markdown(f'''
-        # {display_type} in Oʻahu
+        # {page_title} in Oʻahu
         > Oʻahu, known as "The Gathering Place," is the third-largest of the Hawaiian Islands...
         ---
         ''')
