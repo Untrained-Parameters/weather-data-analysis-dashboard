@@ -192,6 +192,20 @@ with main_col:
         # folium.Marker([21.3069, -157.8583], popup='Honolulu').add_to(oahu_map)
         folium_static(oahu_map)
 
+        # Example climate metrics for Oʻahu
+        st.markdown("## Climate Summary")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Avg Daily Precipitation", "3.2 mm", "+12%")
+            st.metric("Avg Max Daily Temp", "29.5 °C", "-1.2 °C")
+        with col2:
+            st.metric("Avg Min Daily Temp", "22.3 °C", "+0.5 °C")
+            st.metric("Avg Daily Humidity", "77%", "+3%")
+        with col3:
+            st.metric("Flood Warning", "No", "")
+            st.metric("Fire Ignition Warning", "Low", "")
+        
+
     elif selected_page == 'Kauaʻi':
         st.markdown('''
         # Weather Data Dashboard - ***Kauaʻi***
