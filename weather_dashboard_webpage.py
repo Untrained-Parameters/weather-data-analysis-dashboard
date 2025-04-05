@@ -114,13 +114,7 @@ elif selected_city == 'Singapore':
     > Singapore, officially the Republic of Singapore, is a sovereign island country and city-state in maritime Southeast Asia. It is famous for being a global financial center, being among the most densely populated places in the world, having a world-class city airport with a waterfall, and a Botanic Garden that is a World Heritage Site. The city has changed a lot over the years with respect to its weather. There have been a number of factors that have contributed to this change, including climate change. Here is a dashboard for the analysis of weather data for 20 years.
     ''')
     rt_chart(Singapore)
-else:
-    st.markdown('''
-    # Weather Data Dashboard - ***Tokyo***
-    > Tokyo, Japan’s busy capital, mixes the ultramodern and the traditional, from neon-lit skyscrapers to historic temples. The city has changed a lot over the years with respect to its weather. There have been a number of factors that have contributed to this change, including climate change. Here is a dashboard for the analysis of weather data for 20 years.
-    ''')
-    rt_chart(Tokyo)
-elif selected_city == 'Oahu':
+elif selected_city == ('Oahu'):
     st.markdown('''
     # Weather Data Dashboard - ***Oahu***
     > Oʻahu, known as "The Gathering Place," is the third-largest of the Hawaiian Islands and home to the majority of Hawaii’s diverse population. From the bustling city of Honolulu to the world-famous beaches of the North Shore, Oahu offers a blend of natural beauty and vibrant culture. Here’s a visual view of the island.
@@ -131,4 +125,10 @@ elif selected_city == 'Oahu':
         height=600,
         width=900
     )
+else:
+    st.markdown('''
+    # Weather Data Dashboard - ***Tokyo***
+    > Tokyo, Japan’s busy capital, mixes the ultramodern and the traditional, from neon-lit skyscrapers to historic temples. The city has changed a lot over the years with respect to its weather. There have been a number of factors that have contributed to this change, including climate change. Here is a dashboard for the analysis of weather data for 20 years.
+    ''')
+    rt_chart(Tokyo)
 
