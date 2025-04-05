@@ -150,7 +150,7 @@ with main_col:
     
 with chat_col:
     st.markdown("""<style>.stExpander {position: fixed; bottom: 0; right: 0; width: 25%;}</style>""", unsafe_allow_html=True)
-    with st.expander("🌐 Climate Chatbot", expanded=False):
+    with st.expander("🌐 Climate Chatbot", expanded=True):
         if 'chat_history' not in st.session_state:
             st.session_state['chat_history'] = []
 
