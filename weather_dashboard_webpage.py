@@ -134,7 +134,7 @@ with main_col:
             folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
             folium_static(oahu_map)
 
-    elif selected_page == 'Kauaʻi:
+    elif selected_page == "Kauaʻi":
         page_title = f"Weather Dashboard for Kauaʻi" if display_type == "General Overview" else f"{display_type} in Kauaʻi"
         st.markdown('''
         > Kauaʻi, also known as the Garden Isle, is the oldest of the main Hawaiian Islands...
