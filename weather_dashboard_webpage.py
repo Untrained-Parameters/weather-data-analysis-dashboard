@@ -357,7 +357,8 @@ with chat_col:
         display: flex;
         flex-direction: column;
         background-color: #f8f9fa;
-        color: black
+        color: black;
+        border-radius: 15px; /* Added border-radius for rounded corners */
     }
 
     .scrollable-chat-container {
