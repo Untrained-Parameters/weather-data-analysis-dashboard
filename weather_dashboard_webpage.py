@@ -50,7 +50,7 @@ with main_col:
         folium.TileLayer('Esri.WorldImagery').add_to(all_map)
 
         islands_info = {
-            'Kauaʻi': [22.1, -159.5],
+            "Kauaʻi": [22.1, -159.5],
             'Oʻahu': [21.4389, -158.0],
             'Molokaʻi': [21.1333, -157.0167],
             'Lānaʻi': [20.8333, -156.9167],
@@ -93,8 +93,7 @@ with main_col:
 
     if selected_page == 'Oʻahu':
         page_title = f"Weather Dashboard for Oʻahu" if display_type == "General Overview" else f"{display_type} in Oʻahu"
-        st.markdown(f'''
-        # {page_title} in Oʻahu
+        st.markdown('''
         > Oʻahu, known as "The Gathering Place," is the third-largest of the Hawaiian Islands...
         ---
         ''')
@@ -135,9 +134,9 @@ with main_col:
             folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
             folium_static(oahu_map)
 
-    elif selected_page == 'Kauaʻi':
-        st.markdown(f'''
-        # {display_type} in Kauaʻi'
+    elif selected_page == 'Kauaʻi:
+        page_title = f"Weather Dashboard for Kauaʻi" if display_type == "General Overview" else f"{display_type} in Kauaʻi"
+        st.markdown('''
         > Kauaʻi, also known as the Garden Isle, is the oldest of the main Hawaiian Islands...
         ---
         ''')
@@ -159,6 +158,7 @@ with main_col:
         folium_static(kauai_map)
 
     elif selected_page == 'Molokaʻi':
+        page_title = f"Weather Dashboard for Molokaʻi" if display_type == "General Overview" else f"{display_type} in Molokaʻi"
         st.markdown(f'''
         # {display_type} in Molokaʻi
         > Molokaʻi is known for its high sea cliffs and rural lifestyle...
@@ -182,8 +182,8 @@ with main_col:
         folium_static(molokai_map)
 
     elif selected_page == 'Lānaʻi':
-        st.markdown(f'''
-        # {display_type} in Lānaʻi
+        page_title = f"Weather Dashboard for Lānaʻi" if display_type == "General Overview" else f"{display_type} in Lānaʻi"
+        st.markdown('''
         > Lānaʻi, the smallest publicly accessible inhabited island in Hawaii...
         ---
         ''')
@@ -205,8 +205,8 @@ with main_col:
         folium_static(lanai_map)
 
     elif selected_page == 'Maui':
-        st.markdown(f'''
-        # {display_type} in Maui
+        page_title = f"Weather Dashboard for Maui" if display_type == "General Overview" else f"{display_type} in Maui"
+        st.markdown('''
         > Maui is known for its beaches, the sacred ʻĪao Valley, and the scenic Hana Highway...
         ---
         ''')
@@ -228,8 +228,8 @@ with main_col:
         folium_static(maui_map)
 
     elif selected_page == 'Hawaiʻi (Big Island)':
-        st.markdown(f'''
-        # {display_type} in Hawaiʻi (Big Island)
+        page_title = f"Weather Dashboard for Hawaiʻi (Big Island)" if display_type == "General Overview" else f"{display_type} in Hawaiʻi (Big Island)"
+        st.markdown('''
         > The Big Island is the largest in the Hawaiian archipelago and features diverse climates and active volcanoes...
         ---
         ''')
