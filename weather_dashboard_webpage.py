@@ -29,8 +29,7 @@ else:
 st.sidebar.markdown("### Display Type")
 display_type = st.sidebar.radio("Choose Data", [
     "Rainfall", "Temperature", "Humidity", "NVDI", "Ignition Probability",
-    "Future Climate Predictions", "Contemporary Climatology", "Legacy Climatology"
-])'))
+    "Future Climate Predictions", "Contemporary Climatology", "Legacy Climatology"])
 
 with main_col:
     # Default Homepage Map if no selection yet or fallback
