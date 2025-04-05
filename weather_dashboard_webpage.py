@@ -10,110 +10,27 @@ import folium
 import requests
 from transformers import AutoTokenizer, AutoModelForQuestionAnswering, pipeline
 
-# this is a test
 # setting page configuration
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
-# # reading csv files
-# Delhi = pd.read_csv('delhi.csv', parse_dates=['time'])
-# kuala_lumpur = pd.read_csv(
-#     'kuala_lumpur.csv', parse_dates=['time'])
-# Singapore = pd.read_csv(
-#     'singapore.csv', parse_dates=['time'])
-# Tokyo = pd.read_csv('Tokyo.csv', parse_dates=['time'])
-
-# # defining function
-# def rt_chart(City):
-#     # creating date,month and year column
-#     City['date'] = pd.DatetimeIndex(City['time']).day
-#     City['month'] = pd.DatetimeIndex(City['time']).month
-#     City['year'] = pd.DatetimeIndex(City['time']).year
-
-#     # rainfall analysis
-#     st.header('Rainfall over past 40 years')
-#     col1, col2 = st.columns(2, gap='large')
-#     with col1:
-#         Year = st.slider('Choose Year', min_value=1980, max_value=2022, key=1)
-#         st.write('The selected Year is', Year)
-#     with col2:
-#         if Year == 2022:
-#             Month = st.slider('Choose Month', min_value=1, max_value=10, key=5)
-#         else:
-#             Month = st.slider('Choose Month', min_value=1, max_value=12, key=2)
-#         st.write('The selected Month is', Month)
-
-#     col1, col2 = st.columns([3, 1], gap='large')
-#     with col1:
-#         tab1, tab2 = st.tabs(['Table', 'Chart'])
-#         with tab1:
-#             st.dataframe(City[(City['month'] == Month) & (
-#                 City['year'] == Year)], height=350, width=1000)
-#         with tab2:
-#             rain_chart = alt.Chart(City[(City['month'] == Month) & (City['year'] == Year)]).mark_line().encode(
-#                 x='date', y='rainfall', tooltip=[alt.Tooltip('date', title="Date"), alt.Tooltip('rainfall', title='Rainfall in mm')], color=alt.value('green')).interactive().properties(height=350, width=750)
-#             st.altair_chart(rain_chart)
-
-#     with col2:
-#         st.metric("Year", value=Year)
-#         st.metric('Month', value=Month)
-#         st.metric("Total Precipitation in mm", value=round(
-#             City[(City['month'] == Month) & (City['year'] == Year)]['rainfall'].sum(), 1))
-#     st.markdown('''---''')
-#     # temperature analysis
-#     st.header('Temperature over 40 years')
-
-#     Year = st.slider('Choose Year', min_value=1980, max_value=2022, key=3)
-#     st.write('The selected Year is', Year)
-
-#     col1, col2 = st.columns([3, 1], gap='large')
-#     with col1:
-#         tab1, tab2 = st.tabs(['Table', 'Chart'])
-#         with tab1:
-#             st.dataframe(City[City['year'] == Year])
-#         with tab2:
-#             temp_chart = alt.Chart(City[City['year'] == Year]).mark_rect().encode(x='date:O', y='month:O', color=alt.Color('avg_temp', scale=alt.Scale(scheme="inferno")), tooltip=[
-#                 alt.Tooltip('date', title="Date"), alt.Tooltip('avg_temp', title='Average Temperature in °C')]).properties(height=450, width=750)
-#             st.altair_chart(temp_chart)
-
-#     with col2:
-#         st.metric('Year', value=Year)
-#         st.metric('Maximum tempertature in °C',
-#                   value=City[City['year'] == Year]['max_temp'].max())
-#         st.metric('Minimum tempertature in °C',
-#                   value=City[City['year'] == Year]['min_temp'].min())
-
-
 # Sidebar
-# st.sidebar.title('Climatic Changes')
-# image = 'https://www.noaa.gov/sites/default/files/styles/landscape_width_1275/public/2022-03/PHOTO-Climate-Collage-Diagonal-Design-NOAA-Communications-NO-NOAA-Logo.jpg'
-# st.sidebar.image(image)
-# st.sidebar.markdown('''
-# > Climate change refers to long-term shifts in temperatures and weather patterns. It also includes sea level rise, changes in weather patterns like drought and flooding, and much more.
-# ---
-# ''')
-# selected_page = st.sidebar.selectbox(
-#     'Select a City:', ('Delhi', 'Kuala Lumpur', 'Singapore', 'Tokyo', 'All Islands', 'Kauaʻi', 'Oʻahu', 'Molokaʻi', 'Lānaʻi', 'Maui', 'Hawaiʻi (Big Island)'))
-# st.sidebar.markdown(
-#     'Here is an analysis of the weather data for four cities in Asia for 20 years.')
+st.sidebar.markdown("### Location")
+st.session_state.selected_island = st.sidebar.selectbox("Select Island", ["Select Island", "Kauaʻi", "Oʻahu", "Molokaʻi", "Lānaʻi", "Maui", "Hawaiʻi (Big Island)"])
 
-
-
-
-# Sidebar
 metric_view = st.sidebar.radio("Select View:", ["Daily", "Monthly"])
-st.sidebar.title('Climatic Changes')
-image = 'https://www.noaa.gov/sites/default/files/styles/landscape_width_1275/public/2022-03/PHOTO-Climate-Collage-Diagonal-Design-NOAA-Communications-NO-NOAA-Logo.jpg'
-st.sidebar.image(image)
-st.sidebar.markdown('''
-> Climate change refers to long-term shifts in temperatures and weather patterns. It also includes sea level rise, changes in weather patterns like drought and flooding, and much more.
----
-''')
-# hawaiian_pages = ['All Islands', 'Kauaʻi', 'Oʻahu', 'Molokaʻi', 'Lānaʻi', 'Maui', 'Hawaiʻi (Big Island)']
-selected_page = st.sidebar.selectbox('Select a Page:', ('All Islands', 'Kauaʻi', 'Oʻahu', 'Molokaʻi', 'Lānaʻi', 'Maui', 'Hawaiʻi (Big Island)'))
-st.sidebar.markdown('Here is an analysis of the weather data for four cities in Asia for 20 years.')
 
-#Main Dashboard
-main_col, chat_col = st.columns([4,1])
+if metric_view == "Daily":
+    st.sidebar.markdown("### Date")
+    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/DD/YYYY)", datetime.today().strftime("%m/%d/%Y"))
+else:
+    st.sidebar.markdown("### Date")
+    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/YYYY)", datetime.today().strftime("%m/%Y"))
+
+st.sidebar.markdown("### Display Type")
+display_type = st.sidebar.radio("Choose Data", [
+    "Rainfall", "Temperature", "Humidity", "NVDI", "Ignition Probability",
+    "Future Climate Predictions", "Contemporary Climatology", "Legacy Climatology"
+])'))
 
 with main_col:
     # Default Homepage Map if no selection yet or fallback
@@ -356,17 +273,14 @@ with chat_col:
         overflow: hidden;
         display: flex;
         flex-direction: column;
-        background-color: #f8f9fa;
-        color: black;
-        border-radius: 15px; /* Added border-radius for rounded corners */
     }
 
     .scrollable-chat-container {
         flex-grow: 1;
         max-height: 60vh;
         overflow-y: auto;
-        padding: 0px;
-        border: 0px solid #ccc;
+        padding: 10px;
+        border: 1px solid #ccc;
         border-radius: 10px;
         background-color: #f8f9fa;
         margin-bottom: 10px;
@@ -379,7 +293,6 @@ with chat_col:
         padding: 10px;
         border-radius: 10px;
         margin-bottom: 10px;
-        margin-left: 40px;
         text-align: right;
         font-size: 16px;
         color: #000000;
@@ -390,7 +303,6 @@ with chat_col:
         padding: 10px;
         border-radius: 10px;
         margin-bottom: 10px;
-        margin-right: 40px;
         text-align: left;
         font-size: 16px;
         color: white;
