@@ -200,7 +200,7 @@ with main_col:
             st.markdown('<div style="background-color:#34c759;padding:5px 10px;border-radius:12px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
         with col6:
             st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-        bounds = [[18.5, -161.0], [21.9, -154.5]]
+        # bounds = [[18.5, -161.0], [21.9, -154.5]]
         oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9, tiles=None, min_zoom=6, max_bounds=True)
         folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
         # folium.Marker([21.3069, -157.8583], popup='Honolulu').add_to(oahu_map)
@@ -213,6 +213,21 @@ with main_col:
         > Kauaʻi, also known as the Garden Isle, is the oldest of the main Hawaiian Islands...
         ---
         ''')
+         # Climate Metrics Displayed Horizontally with color indicators
+        col1, col2, col3, col4, col5, col6 = st.columns(6)
+        with col1:
+            st.metric("Avg Daily Precip", "3.2 mm", "+12%")
+        with col2:
+            st.metric("Avg Max Temp", "29.5 °C", "-1.2 °C")
+        with col3:
+            st.metric("Avg Min Temp", "22.3 °C", "+0.5 °C")
+        with col4:
+            st.metric("Avg Humidity", "77%", "+3%")
+        with col5:
+            st.markdown('<div style="background-color:#34c759;padding:5px 10px;border-radius:12px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
+        with col6:
+            st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
+        
         kauai_map = folium.Map(location=[22.1, -159.5], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
         folium.TileLayer('Esri.WorldImagery').add_to(kauai_map)
         # folium.Marker([21.9811, -159.3711], popup='Līhuʻe').add_to(kauai_map)
