@@ -14,73 +14,73 @@ from transformers import AutoTokenizer, AutoModelForQuestionAnswering, pipeline
 # setting page configuration
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
-# reading csv files
-Delhi = pd.read_csv('delhi.csv', parse_dates=['time'])
-kuala_lumpur = pd.read_csv(
-    'kuala_lumpur.csv', parse_dates=['time'])
-Singapore = pd.read_csv(
-    'singapore.csv', parse_dates=['time'])
-Tokyo = pd.read_csv('Tokyo.csv', parse_dates=['time'])
+# # reading csv files
+# Delhi = pd.read_csv('delhi.csv', parse_dates=['time'])
+# kuala_lumpur = pd.read_csv(
+#     'kuala_lumpur.csv', parse_dates=['time'])
+# Singapore = pd.read_csv(
+#     'singapore.csv', parse_dates=['time'])
+# Tokyo = pd.read_csv('Tokyo.csv', parse_dates=['time'])
 
-# defining function
-def rt_chart(City):
-    # creating date,month and year column
-    City['date'] = pd.DatetimeIndex(City['time']).day
-    City['month'] = pd.DatetimeIndex(City['time']).month
-    City['year'] = pd.DatetimeIndex(City['time']).year
+# # defining function
+# def rt_chart(City):
+#     # creating date,month and year column
+#     City['date'] = pd.DatetimeIndex(City['time']).day
+#     City['month'] = pd.DatetimeIndex(City['time']).month
+#     City['year'] = pd.DatetimeIndex(City['time']).year
 
-    # rainfall analysis
-    st.header('Rainfall over past 40 years')
-    col1, col2 = st.columns(2, gap='large')
-    with col1:
-        Year = st.slider('Choose Year', min_value=1980, max_value=2022, key=1)
-        st.write('The selected Year is', Year)
-    with col2:
-        if Year == 2022:
-            Month = st.slider('Choose Month', min_value=1, max_value=10, key=5)
-        else:
-            Month = st.slider('Choose Month', min_value=1, max_value=12, key=2)
-        st.write('The selected Month is', Month)
+#     # rainfall analysis
+#     st.header('Rainfall over past 40 years')
+#     col1, col2 = st.columns(2, gap='large')
+#     with col1:
+#         Year = st.slider('Choose Year', min_value=1980, max_value=2022, key=1)
+#         st.write('The selected Year is', Year)
+#     with col2:
+#         if Year == 2022:
+#             Month = st.slider('Choose Month', min_value=1, max_value=10, key=5)
+#         else:
+#             Month = st.slider('Choose Month', min_value=1, max_value=12, key=2)
+#         st.write('The selected Month is', Month)
 
-    col1, col2 = st.columns([3, 1], gap='large')
-    with col1:
-        tab1, tab2 = st.tabs(['Table', 'Chart'])
-        with tab1:
-            st.dataframe(City[(City['month'] == Month) & (
-                City['year'] == Year)], height=350, width=1000)
-        with tab2:
-            rain_chart = alt.Chart(City[(City['month'] == Month) & (City['year'] == Year)]).mark_line().encode(
-                x='date', y='rainfall', tooltip=[alt.Tooltip('date', title="Date"), alt.Tooltip('rainfall', title='Rainfall in mm')], color=alt.value('green')).interactive().properties(height=350, width=750)
-            st.altair_chart(rain_chart)
+#     col1, col2 = st.columns([3, 1], gap='large')
+#     with col1:
+#         tab1, tab2 = st.tabs(['Table', 'Chart'])
+#         with tab1:
+#             st.dataframe(City[(City['month'] == Month) & (
+#                 City['year'] == Year)], height=350, width=1000)
+#         with tab2:
+#             rain_chart = alt.Chart(City[(City['month'] == Month) & (City['year'] == Year)]).mark_line().encode(
+#                 x='date', y='rainfall', tooltip=[alt.Tooltip('date', title="Date"), alt.Tooltip('rainfall', title='Rainfall in mm')], color=alt.value('green')).interactive().properties(height=350, width=750)
+#             st.altair_chart(rain_chart)
 
-    with col2:
-        st.metric("Year", value=Year)
-        st.metric('Month', value=Month)
-        st.metric("Total Precipitation in mm", value=round(
-            City[(City['month'] == Month) & (City['year'] == Year)]['rainfall'].sum(), 1))
-    st.markdown('''---''')
-    # temperature analysis
-    st.header('Temperature over 40 years')
+#     with col2:
+#         st.metric("Year", value=Year)
+#         st.metric('Month', value=Month)
+#         st.metric("Total Precipitation in mm", value=round(
+#             City[(City['month'] == Month) & (City['year'] == Year)]['rainfall'].sum(), 1))
+#     st.markdown('''---''')
+#     # temperature analysis
+#     st.header('Temperature over 40 years')
 
-    Year = st.slider('Choose Year', min_value=1980, max_value=2022, key=3)
-    st.write('The selected Year is', Year)
+#     Year = st.slider('Choose Year', min_value=1980, max_value=2022, key=3)
+#     st.write('The selected Year is', Year)
 
-    col1, col2 = st.columns([3, 1], gap='large')
-    with col1:
-        tab1, tab2 = st.tabs(['Table', 'Chart'])
-        with tab1:
-            st.dataframe(City[City['year'] == Year])
-        with tab2:
-            temp_chart = alt.Chart(City[City['year'] == Year]).mark_rect().encode(x='date:O', y='month:O', color=alt.Color('avg_temp', scale=alt.Scale(scheme="inferno")), tooltip=[
-                alt.Tooltip('date', title="Date"), alt.Tooltip('avg_temp', title='Average Temperature in °C')]).properties(height=450, width=750)
-            st.altair_chart(temp_chart)
+#     col1, col2 = st.columns([3, 1], gap='large')
+#     with col1:
+#         tab1, tab2 = st.tabs(['Table', 'Chart'])
+#         with tab1:
+#             st.dataframe(City[City['year'] == Year])
+#         with tab2:
+#             temp_chart = alt.Chart(City[City['year'] == Year]).mark_rect().encode(x='date:O', y='month:O', color=alt.Color('avg_temp', scale=alt.Scale(scheme="inferno")), tooltip=[
+#                 alt.Tooltip('date', title="Date"), alt.Tooltip('avg_temp', title='Average Temperature in °C')]).properties(height=450, width=750)
+#             st.altair_chart(temp_chart)
 
-    with col2:
-        st.metric('Year', value=Year)
-        st.metric('Maximum tempertature in °C',
-                  value=City[City['year'] == Year]['max_temp'].max())
-        st.metric('Minimum tempertature in °C',
-                  value=City[City['year'] == Year]['min_temp'].min())
+#     with col2:
+#         st.metric('Year', value=Year)
+#         st.metric('Maximum tempertature in °C',
+#                   value=City[City['year'] == Year]['max_temp'].max())
+#         st.metric('Minimum tempertature in °C',
+#                   value=City[City['year'] == Year]['min_temp'].min())
 
 
 # Sidebar
@@ -95,6 +95,10 @@ def rt_chart(City):
 #     'Select a City:', ('Delhi', 'Kuala Lumpur', 'Singapore', 'Tokyo', 'All Islands', 'Kauaʻi', 'Oʻahu', 'Molokaʻi', 'Lānaʻi', 'Maui', 'Hawaiʻi (Big Island)'))
 # st.sidebar.markdown(
 #     'Here is an analysis of the weather data for four cities in Asia for 20 years.')
+
+
+# Home Button
+st.sidebar.markdown("[🏠 Home](?selected_page=All Islands)")
 
 
 # Sidebar
@@ -150,7 +154,7 @@ def render_time_selectors(view):
         colm1, colm2 = st.columns([1, 1])
         with colm1:
             st.markdown("#### Choose Month")
-            st.session_state.selected_month = st.slider("", 1, 12, today.month, key=f"month_{selected_page}")
+            st.session_state.selected_month = months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
         with colm2:
             st.markdown("#### Choose Year")
             st.session_state.selected_year = st.slider("", 1990, today.year, today.year, key=f"year_{selected_page}")
