@@ -10,6 +10,7 @@ import folium
 import requests
 from transformers import AutoTokenizer, AutoModelForQuestionAnswering, pipeline
 from datetime import datetime
+import pydeck as pdk
 
 # setting page configuration
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
