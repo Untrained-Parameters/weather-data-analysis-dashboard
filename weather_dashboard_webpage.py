@@ -587,59 +587,59 @@ elif selected_page == 'Hawaiʻi (Big Island)':
 #         folium_static(bigisland_map)
 
 
-with chat_col:
-    st.markdown("""
-    <style>
-    /* Positioning the expander fixed to the bottom-right */
-    div[data-testid="stExpander"] {
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        width: 25%;
-        z-index: 1000;
-    }
+# with chat_col:
+#     st.markdown("""
+#     <style>
+#     /* Positioning the expander fixed to the bottom-right */
+#     div[data-testid="stExpander"] {
+#         position: fixed;
+#         bottom: 0;
+#         right: 0;
+#         width: 25%;
+#         z-index: 1000;
+#     }
 
-    /* Increasing font size inside expander content */
-    div[data-testid="stExpander"] div[data-testid="stMarkdownContainer"] p {
-        font-size: 25px !important;
-    }
+#     /* Increasing font size inside expander content */
+#     div[data-testid="stExpander"] div[data-testid="stMarkdownContainer"] p {
+#         font-size: 25px !important;
+#     }
 
-    /* Increasing font size inside input box */
-    div[data-testid="stExpander"] input[type="text"] {
-        font-size: 18px !important;
-    }
+#     /* Increasing font size inside input box */
+#     div[data-testid="stExpander"] input[type="text"] {
+#         font-size: 18px !important;
+#     }
 
-    /* Increasing font size for expander header (title) */
-    div[data-testid="stExpander"] summary {
-        font-size: 20px !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+#     /* Increasing font size for expander header (title) */
+#     div[data-testid="stExpander"] summary {
+#         font-size: 20px !important;
+#     }
+#     </style>
+    # """, unsafe_allow_html=True)
 
-    with st.expander("🌐 Kai Climate Helper", expanded=True):
-        # Initialize chat history if not present
-        chat_history = st.session_state.setdefault("chat_history", [])
+    # with st.expander("🌐 Kai Climate Helper", expanded=True):
+    #     # Initialize chat history if not present
+    #     chat_history = st.session_state.setdefault("chat_history", [])
 
-        # Set default system message
-        if not chat_history:
-            chat_history.append({"role": "assistant", "content": "Hi! Ask me anything about Hawaii's climate."})
+    #     # Set default system message
+    #     if not chat_history:
+    #         chat_history.append({"role": "assistant", "content": "Hi! Ask me anything about Hawaii's climate."})
 
-        # Display chat messages
-        for msg in chat_history:
-            with st.chat_message(msg["role"]):
-                st.markdown(msg["content"])
+    #     # Display chat messages
+    #     for msg in chat_history:
+    #         with st.chat_message(msg["role"]):
+    #             st.markdown(msg["content"])
 
-        # User input
-        user_input = st.chat_input("Ask about Hawaii climate")
+    #     # User input
+    #     user_input = st.chat_input("Ask about Hawaii climate")
 
-        # Handle new user input
-        if user_input:
-            # Add user message to chat
-            st.chat_message("user").markdown(user_input)
-            chat_history.append({"role": "user", "content": user_input})
+    #     # Handle new user input
+    #     if user_input:
+    #         # Add user message to chat
+    #         st.chat_message("user").markdown(user_input)
+    #         chat_history.append({"role": "user", "content": user_input})
 
-            bot_reply = "This is a placeholder answer. Replace with actual model output."
+    #         bot_reply = "This is a placeholder answer. Replace with actual model output."
 
-            # Add assistant response to chat
-            st.chat_message("assistant").markdown(bot_reply)
-            chat_history.append({"role": "assistant", "content": bot_reply})
+    #         # Add assistant response to chat
+    #         st.chat_message("assistant").markdown(bot_reply)
+    #         chat_history.append({"role": "assistant", "content": bot_reply})
