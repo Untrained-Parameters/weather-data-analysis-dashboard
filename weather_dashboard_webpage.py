@@ -147,9 +147,9 @@ with main_col:
         max_lon=-154.5,
         min_lon=-161.0
     )
-    folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
-    oahu_map.fit_bounds(bounds)
-    folium_static(oahu_map)
+        folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
+        oahu_map.fit_bounds(bounds)
+        folium_static(oahu_map)
 
     
 with chat_col:
