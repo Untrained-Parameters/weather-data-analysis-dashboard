@@ -190,7 +190,7 @@ with main_col:
         bounds = [[18.5, -161.0], [21.9, -154.5]]
         oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9, tiles=None, min_zoom=6, max_bounds=True)
         folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
-        folium.Marker([21.3069, -157.8583], popup='Honolulu').add_to(oahu_map)
+        # folium.Marker([21.3069, -157.8583], popup='Honolulu').add_to(oahu_map)
         folium_static(oahu_map)
 
     elif selected_page == 'Kauaʻi':
@@ -201,7 +201,7 @@ with main_col:
         ''')
         kauai_map = folium.Map(location=[22.1, -159.5], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
         folium.TileLayer('Esri.WorldImagery').add_to(kauai_map)
-        folium.Marker([21.9811, -159.3711], popup='Līhuʻe').add_to(kauai_map)
+        # folium.Marker([21.9811, -159.3711], popup='Līhuʻe').add_to(kauai_map)
         folium_static(kauai_map)
 
     elif selected_page == 'Molokaʻi':
