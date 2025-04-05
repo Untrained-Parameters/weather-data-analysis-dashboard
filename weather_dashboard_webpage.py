@@ -155,10 +155,7 @@ with chat_col:
                     bottom: 0;
                     right: 0;
                     width: 25%;
-                    font-size: 18px; /* Adjust this value to change font size */
-                }
-                .stExpander input {
-                    font-size: 18px; /* Adjust input font size here */
+                    font-size: 25px;
                 }
                 </style>""", unsafe_allow_html=True)
     with st.expander("🌐 Climate Chatbot", expanded=True):
