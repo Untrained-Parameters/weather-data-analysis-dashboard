@@ -356,7 +356,8 @@ with chat_col:
         overflow: hidden;
         display: flex;
         flex-direction: column;
-        background-color: #e0e0e0;
+        background-color: #f8f9fa;
+        color: black
     }
 
     .scrollable-chat-container {
