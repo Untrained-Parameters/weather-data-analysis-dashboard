@@ -265,6 +265,21 @@ with main_col:
         > Lānaʻi, the smallest publicly accessible inhabited island in Hawaii...
         ---
         ''')
+         # Climate Metrics Displayed Horizontally with color indicators
+        col1, col2, col3, col4, col5, col6 = st.columns(6)
+        with col1:
+            st.metric("Avg Daily Precip", "3.2 mm", "+12%")
+        with col2:
+            st.metric("Avg Max Temp", "29.5 °C", "-1.2 °C")
+        with col3:
+            st.metric("Avg Min Temp", "22.3 °C", "+0.5 °C")
+        with col4:
+            st.metric("Avg Humidity", "77%", "+3%")
+        with col5:
+            st.markdown('<div style="background-color:#34c759;padding:5px 10px;border-radius:12px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
+        with col6:
+            st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
+        
         lanai_map = folium.Map(location=[20.8333, -156.9167], zoom_start=11, tiles=None, min_zoom=6, max_bounds=True)
         folium.TileLayer('Esri.WorldImagery').add_to(lanai_map)
         # folium.Marker([20.8275, -156.9208], popup='Lānaʻi City').add_to(lanai_map)
