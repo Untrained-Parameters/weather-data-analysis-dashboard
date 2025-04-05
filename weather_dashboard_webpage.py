@@ -91,10 +91,9 @@ with main_col:
                 st.markdown("#### Choose Year")
                 st.session_state.selected_year = st.slider("", 1990, today.year, today.year, key=f"year_{selected_page}")
 
-
     if selected_page == 'Oʻahu':
-        st.markdown('''
-        # Weather Data Dashboard - ***Oʻahu***
+        st.markdown(f'''
+        # {display_type} in Oʻahu
         > Oʻahu, known as "The Gathering Place," is the third-largest of the Hawaiian Islands...
         ---
         ''')
@@ -149,8 +148,8 @@ with main_col:
 
 
     elif selected_page == 'Kauaʻi':
-        st.markdown('''
-        # Weather Data Dashboard - ***Kauaʻi***
+        st.markdown(f'''
+        # {display_type} in Kauaʻi'
         > Kauaʻi, also known as the Garden Isle, is the oldest of the main Hawaiian Islands...
         ---
         ''')
@@ -171,45 +170,9 @@ with main_col:
         folium.TileLayer('Esri.WorldImagery').add_to(kauai_map)
         folium_static(kauai_map)
 
-        chart_data = pd.DataFrame(
-            np.random.randn(1000, 2) / [50, 50] + [37.76, -122.4],
-            columns=["lat", "lon"],
-        )
-
-        st.pydeck_chart(
-            pdk.Deck(
-                map_style=None,
-                initial_view_state=pdk.ViewState(
-                    latitude=37.76,
-                    longitude=-122.4,
-                    zoom=11,
-                    pitch=50,
-                ),
-                layers=[
-                    pdk.Layer(
-                        "HexagonLayer",
-                        data=chart_data,
-                        get_position="[lon, lat]",
-                        radius=200,
-                        elevation_scale=4,
-                        elevation_range=[0, 1000],
-                        pickable=True,
-                        extruded=True,
-                    ),
-                    pdk.Layer(
-                        "ScatterplotLayer",
-                        data=chart_data,
-                        get_position="[lon, lat]",
-                        get_color="[200, 30, 0, 160]",
-                        get_radius=200,
-                    ),
-                ],
-            )
-        )
-
     elif selected_page == 'Molokaʻi':
-        st.markdown('''
-        # Weather Data Dashboard - ***Molokaʻi***
+        st.markdown(f'''
+        # {display_type} in Molokaʻi
         > Molokaʻi is known for its high sea cliffs and rural lifestyle...
         ---
         ''')
@@ -231,8 +194,8 @@ with main_col:
         folium_static(molokai_map)
 
     elif selected_page == 'Lānaʻi':
-        st.markdown('''
-        # Weather Data Dashboard - ***Lānaʻi***
+        st.markdown(f'''
+        # {display_type} in Lānaʻi
         > Lānaʻi, the smallest publicly accessible inhabited island in Hawaii...
         ---
         ''')
@@ -254,8 +217,8 @@ with main_col:
         folium_static(lanai_map)
 
     elif selected_page == 'Maui':
-        st.markdown('''
-        # Weather Data Dashboard - ***Maui***
+        st.markdown(f'''
+        # {display_type} in Maui
         > Maui is known for its beaches, the sacred ʻĪao Valley, and the scenic Hana Highway...
         ---
         ''')
@@ -277,8 +240,8 @@ with main_col:
         folium_static(maui_map)
 
     elif selected_page == 'Hawaiʻi (Big Island)':
-        st.markdown('''
-        # Weather Data Dashboard - ***Hawaiʻi (Big Island)***
+        st.markdown(f'''
+        # {display_type} in Hawaiʻi (Big Island)
         > The Big Island is the largest in the Hawaiian archipelago and features diverse climates and active volcanoes...
         ---
         ''')
