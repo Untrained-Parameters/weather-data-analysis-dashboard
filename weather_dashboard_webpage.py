@@ -197,13 +197,13 @@ with main_col:
         with col4:
             st.metric("Avg Humidity", "77%", "+3%")
         with col5:
-            st.markdown('<div style="background-color:#34c759;padding:10px;border-radius:8px;text-align:center;color:white;font-weight:bold;">Flood Warning<br>No</div>', unsafe_allow_html=True)
+            st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
         with col6:
             st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
         bounds = [[18.5, -161.0], [21.9, -154.5]]
         oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9, tiles=None, min_zoom=6, max_bounds=True)
         folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
-        folium.Marker([21.3069, -157.8583], popup='Honolulu').add_to(oahu_map)
+        # folium.Marker([21.3069, -157.8583], popup='Honolulu').add_to(oahu_map)
         folium_static(oahu_map)
         
 
