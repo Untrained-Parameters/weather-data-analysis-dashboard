@@ -128,8 +128,9 @@ elif selected_city == 'Oahu':
     > Oʻahu, known as "The Gathering Place," is the third-largest of the Hawaiian Islands...
     ---
     ''')
-    # Create interactive map using folium
-    oahu_map = folium.Map(location=[21.4389, -158.0001], zoom_start=10, tiles='Stamen Terrain')
+    # Create interactive satellite map using folium with Esri Satellite tiles
+    oahu_map = folium.Map(location=[21.4389, -158.0001], zoom_start=10, tiles=None)
+    folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
     folium_static(oahu_map)
 
 
