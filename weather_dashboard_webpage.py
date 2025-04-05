@@ -192,7 +192,7 @@ with main_col:
         folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
         folium.Marker([21.3069, -157.8583], popup='Honolulu').add_to(oahu_map)
         folium_static(oahu_map)
-        
+
     elif selected_page == 'Kauaʻi':
         st.markdown('''
         # Weather Data Dashboard - ***Kauaʻi***
@@ -212,7 +212,7 @@ with main_col:
         ''')
         molokai_map = folium.Map(location=[21.1333, -157.0167], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
         folium.TileLayer('Esri.WorldImagery').add_to(molokai_map)
-        folium.Marker([21.0889, -157.0125], popup='Kaunakakai').add_to(molokai_map)
+        # folium.Marker([21.0889, -157.0125], popup='Kaunakakai').add_to(molokai_map)
         folium_static(molokai_map)
 
     elif selected_page == 'Lānaʻi':
@@ -223,7 +223,7 @@ with main_col:
         ''')
         lanai_map = folium.Map(location=[20.8333, -156.9167], zoom_start=11, tiles=None, min_zoom=6, max_bounds=True)
         folium.TileLayer('Esri.WorldImagery').add_to(lanai_map)
-        folium.Marker([20.8275, -156.9208], popup='Lānaʻi City').add_to(lanai_map)
+        # folium.Marker([20.8275, -156.9208], popup='Lānaʻi City').add_to(lanai_map)
         folium_static(lanai_map)
 
     elif selected_page == 'Maui':
@@ -234,7 +234,7 @@ with main_col:
         ''')
         maui_map = folium.Map(location=[20.8, -156.3], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
         folium.TileLayer('Esri.WorldImagery').add_to(maui_map)
-        folium.Marker([20.8895, -156.4729], popup='Kahului').add_to(maui_map)
+        # folium.Marker([20.8895, -156.4729], popup='Kahului').add_to(maui_map)
         folium_static(maui_map)
 
     elif selected_page == 'Hawaiʻi (Big Island)':
@@ -245,8 +245,8 @@ with main_col:
         ''')
         bigisland_map = folium.Map(location=[19.6, -155.5], zoom_start=8, tiles=None, min_zoom=6, max_bounds=True)
         folium.TileLayer('Esri.WorldImagery').add_to(bigisland_map)
-        folium.Marker([19.7297, -155.09], popup='Hilo').add_to(bigisland_map)
-        folium.Marker([19.6406, -155.9956], popup='Kailua-Kona').add_to(bigisland_map)
+        # folium.Marker([19.7297, -155.09], popup='Hilo').add_to(bigisland_map)
+        # folium.Marker([19.6406, -155.9956], popup='Kailua-Kona').add_to(bigisland_map)
         folium_static(bigisland_map)
 
 
