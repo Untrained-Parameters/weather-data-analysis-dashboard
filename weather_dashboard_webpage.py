@@ -5,7 +5,6 @@ import streamlit as st
 import altair as alt
 import matplotlib.pyplot as plt 
 
-
 # this is a test
 # setting page configuration
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
