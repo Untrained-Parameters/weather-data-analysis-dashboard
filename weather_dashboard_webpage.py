@@ -72,7 +72,7 @@ with main_col:
         all_map.fit_bounds(bounds)
         if st.session_state.view_toggle == "Map":
             folium_static(all_map)
-        else:
+        elif st.session_state.view_toggle == "Chart":
             chart_data = pd.DataFrame(
                 np.random.randn(1000, 2) / [50, 50] + [37.76, -122.4],
                 columns=["lat", "lon"],
