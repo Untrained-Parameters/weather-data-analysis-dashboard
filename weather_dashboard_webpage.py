@@ -4,6 +4,7 @@ import numpy as np
 import streamlit as st
 import altair as alt
 import matplotlib.pyplot as plt 
+import scipy
 
 # this is a test
 # setting page configuration
