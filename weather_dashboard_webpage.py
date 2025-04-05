@@ -164,7 +164,8 @@ with main_col:
 
     if selected_page == 'Oʻahu':
         page_title = f"Weather Dashboard for Oʻahu" if display_type == "General Overview" else f"{display_type} in Oʻahu"
-        st.markdown('''
+        st.markdown(f'''
+        # {page_title}
         > Oʻahu, known as "The Gathering Place," is the third-largest of the Hawaiian Islands...
         ---
         ''')
@@ -207,10 +208,12 @@ with main_col:
 
     elif selected_page == "Kauaʻi":
         page_title = f"Weather Dashboard for Kauaʻi" if display_type == "General Overview" else f"{display_type} in Kauaʻi"
-        st.markdown('''
+        st.markdown(f'''
+        # {page_title}
         > Kauaʻi, also known as the Garden Isle, is the oldest of the main Hawaiian Islands...
         ---
         ''')
+        
         col1, col2, col3, col4, col5, col6 = st.columns(6)
         if metric_view == "Daily":
             col1.metric("Daily Precip", "4.1 mm")
@@ -231,7 +234,7 @@ with main_col:
     elif selected_page == 'Molokaʻi':
         page_title = f"Weather Dashboard for Molokaʻi" if display_type == "General Overview" else f"{display_type} in Molokaʻi"
         st.markdown(f'''
-        # {display_type} in Molokaʻi
+        # {page_title}
         > Molokaʻi is known for its high sea cliffs and rural lifestyle...
         ---
         ''')
@@ -254,7 +257,8 @@ with main_col:
 
     elif selected_page == 'Lānaʻi':
         page_title = f"Weather Dashboard for Lānaʻi" if display_type == "General Overview" else f"{display_type} in Lānaʻi"
-        st.markdown('''
+        st.markdown(f'''
+        # {page_title}
         > Lānaʻi, the smallest publicly accessible inhabited island in Hawaii...
         ---
         ''')
@@ -277,7 +281,8 @@ with main_col:
 
     elif selected_page == 'Maui':
         page_title = f"Weather Dashboard for Maui" if display_type == "General Overview" else f"{display_type} in Maui"
-        st.markdown('''
+        st.markdown(f'''
+        # {page_title}
         > Maui is known for its beaches, the sacred ʻĪao Valley, and the scenic Hana Highway...
         ---
         ''')
@@ -300,7 +305,8 @@ with main_col:
 
     elif selected_page == 'Hawaiʻi (Big Island)':
         page_title = f"Weather Dashboard for Hawaiʻi (Big Island)" if display_type == "General Overview" else f"{display_type} in Hawaiʻi (Big Island)"
-        st.markdown('''
+        st.markdown(f'''
+        # {page_title}
         > The Big Island is the largest in the Hawaiian archipelago and features diverse climates and active volcanoes...
         ---
         ''')
