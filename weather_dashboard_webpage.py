@@ -173,9 +173,10 @@ with chat_col:
         user_input = st.text_input("Ask about climate:", key="user_input")
 
         def get_bot_response(query):
-            api_url = "https://your-backend-api.com/chat"
-            response = requests.post(api_url, json={'query': query})
-            return response.json().get('answer', 'Error contacting backend.') if response.ok else "Error contacting backend."
+            # api_url = "https://your-backend-api.com/chat"
+            # response = requests.post(api_url, json={'query': query})
+            # return response.json().get('answer', 'Error contacting backend.') if response.ok else "Error contacting backend."
+            return "This is a placeholder response. Replace with actual API call."
 
         if user_input:
             st.session_state['chat_history'].append({'role': 'user', 'content': user_input})
