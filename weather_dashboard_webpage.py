@@ -276,35 +276,48 @@ with main_col:
         folium.TileLayer('Esri.WorldImagery').add_to(bigisland_map)
         folium_static(bigisland_map)
 
-    # Floating Toggle Button using Streamlit buttons
+    # Show floating toggle buttons using Streamlit + proper CSS styling
     st.markdown("""
         <style>
-        div[data-testid="toggle-button-container"] {
+        .toggle-button-container {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             background-color: #f0f2f6;
-            border-radius: 25px;
-            padding: 6px 20px;
-            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.15);
+            border-radius: 30px;
+            padding: 8px 16px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
             display: flex;
-            gap: 10px;
-            z-index: 1000;
+            justify-content: center;
+            gap: 12px;
+            z-index: 9999;
+        }
+        .toggle-button-container button {
+            font-size: 16px !important;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
         }
         </style>
+        <div class="toggle-button-container">
+            <form action="" method="post">
+                <button name="map_btn" type="submit">🗺 Map</button>
+                <button name="chart_btn" type="submit">📊 Chart</button>
+            </form>
+        </div>
     """, unsafe_allow_html=True)
 
-    with st.container():
-        st.markdown('<div data-testid="toggle-button-container">', unsafe_allow_html=True)
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("🗺 Map"):
-                st.session_state.view_toggle = "Map"
-        with col2:
-            if st.button("📊 Chart"):
-                st.session_state.view_toggle = "Chart"
-        st.markdown('</div>', unsafe_allow_html=True)
+    # Streamlit logic to detect clicks
+    map_clicked = st.button("🗺 Map", key="map_button")
+    chart_clicked = st.button("📊 Chart", key="chart_button")
+
+    if map_clicked:
+        st.session_state.view_toggle = "Map"
+    elif chart_clicked:
+        st.session_state.view_toggle = "Chart"
 
 with chat_col:
     st.markdown("""
