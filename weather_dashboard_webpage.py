@@ -276,43 +276,41 @@ with main_col:
         folium.TileLayer('Esri.WorldImagery').add_to(bigisland_map)
         folium_static(bigisland_map)
 
-    # CSS for floating toggle
+    # Inject styles
     st.markdown("""
         <style>
-        .toggle-pill-container {
+        .toggle-btn-container {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             background-color: #f0f2f6;
             border-radius: 50px;
-            padding: 6px 12px;
-            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.15);
+            padding: 8px 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
             display: flex;
             gap: 10px;
             z-index: 1000;
         }
-        .pill-btn {
-            all: unset;
+        .toggle-btn {
+            padding: 8px 20px;
             font-size: 16px;
-            font-weight: 600;
-            padding: 8px 18px;
+            font-weight: bold;
             border-radius: 25px;
+            border: none;
             cursor: pointer;
-            background-color: #d0d0d0;
+            background-color: #e0e0e0;
             color: black;
         }
-        .pill-btn-active {
+        .toggle-btn-active {
             background-color: #1f77b4;
             color: white;
         }
         </style>
     """, unsafe_allow_html=True)
 
-    # Layout container with HTML + Streamlit buttons
-    st.markdown('<div class="toggle-pill-container">', unsafe_allow_html=True)
-
-    col1, col2 = st.columns([1, 1])
+    # Use HTML for button appearance and Streamlit for logic
+    col1, col2, _ = st.columns([1, 1, 2])
     with col1:
         if st.button("🗺 Map"):
             st.session_state.view_toggle = "Map"
@@ -320,7 +318,18 @@ with main_col:
         if st.button("📊 Chart"):
             st.session_state.view_toggle = "Chart"
 
-    st.markdown('</div>', unsafe_allow_html=True)
+    # Re-render the floating buttons using HTML and show which one is active
+    active_map = "toggle-btn toggle-btn-active" if st.session_state.view_toggle == "Map" else "toggle-btn"
+    active_chart = "toggle-btn toggle-btn-active" if st.session_state.view_toggle == "Chart" else "toggle-btn"
+
+    st.markdown(f"""
+        <div class="toggle-btn-container">
+            <form method="get">
+                <button class="{active_map}" onclick="window.location.reload()">🗺 Map</button>
+                <button class="{active_chart}" onclick="window.location.reload()">📊 Chart</button>
+            </form>
+        </div>
+    """, unsafe_allow_html=True)
 
 
 with chat_col:
