@@ -378,6 +378,7 @@ with chat_col:
         padding: 10px;
         border-radius: 10px;
         margin-bottom: 10px;
+        margin-left: 40px;
         text-align: right;
         font-size: 16px;
         color: #000000;
@@ -388,6 +389,7 @@ with chat_col:
         padding: 10px;
         border-radius: 10px;
         margin-bottom: 10px;
+        margin-right: 40px;
         text-align: left;
         font-size: 16px;
         color: white;
