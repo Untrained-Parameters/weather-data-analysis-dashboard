@@ -88,7 +88,7 @@ st.sidebar.markdown('''
 ---
 ''')
 selected_city = st.sidebar.selectbox(
-    'Select a City:', ('Delhi', 'Kuala Lumpur', 'Singapore', 'Tokyo'))
+    'Select a City:', ('Delhi', 'Kuala Lumpur', 'Singapore', 'Tokyo', 'Oahu'))
 st.sidebar.markdown(
     'Here is an analysis of the weather data for four cities in Asia for 20 years.')
 
@@ -120,3 +120,15 @@ else:
     > Tokyo, Japan’s busy capital, mixes the ultramodern and the traditional, from neon-lit skyscrapers to historic temples. The city has changed a lot over the years with respect to its weather. There have been a number of factors that have contributed to this change, including climate change. Here is a dashboard for the analysis of weather data for 20 years.
     ''')
     rt_chart(Tokyo)
+elif selected_city == 'Oahu':
+    st.markdown('''
+    # Weather Data Dashboard - ***Oahu***
+    > Oʻahu, known as "The Gathering Place," is the third-largest of the Hawaiian Islands and home to the majority of Hawaii’s diverse population. From the bustling city of Honolulu to the world-famous beaches of the North Shore, Oahu offers a blend of natural beauty and vibrant culture. Here’s a visual view of the island.
+    ---
+    ''')
+    st.components.v1.iframe(
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d371812.17093795836!2d-158.20834579850995!3d21.438912517195956!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x7c0053d40df7be8f%3A0x9fa11fc5f0c905a8!2sOahu%2C%20Hawaii!5e0!3m2!1sen!2sus!4v1647202851651!5m2!1sen!2sus",
+        height=600,
+        width=900
+    )
+
