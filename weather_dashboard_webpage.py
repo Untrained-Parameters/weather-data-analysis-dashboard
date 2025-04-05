@@ -144,38 +144,41 @@ elif selected_city == 'Oahu':
     folium_static(oahu_map)
 
     
-# Chatbot UI in sidebar (bottom-right corner simulation)
-st.sidebar.markdown('---')
-st.sidebar.header("🌐 Climate Chatbot")
+# Chatbot container on the right side
+chatbot_container = st.container()
 
-if 'chat_history' not in st.session_state:
-    st.session_state['chat_history'] = []
+with chatbot_container:
+    st.markdown("---")
+    st.header("🌐 Climate Chatbot")
 
-# Display chat history
-for chat in st.session_state['chat_history']:
-    if chat['role'] == 'user':
-        st.sidebar.markdown(f"**You:** {chat['content']}")
-    else:
-        st.sidebar.markdown(f"**Bot:** {chat['content']}")
+    if 'chat_history' not in st.session_state:
+        st.session_state['chat_history'] = []
 
-# Chat input
-user_input = st.sidebar.text_input("Ask about climate:", key="user_input")
+    # Display chat history
+    for chat in st.session_state['chat_history']:
+        if chat['role'] == 'user':
+            st.markdown(f"**You:** {chat['content']}")
+        else:
+            st.markdown(f"**Bot:** {chat['content']}")
 
-# Function to interact with backend API
-def get_bot_response(query):
-    api_url = "https://your-backend-api.com/chat"  # Replace with your backend URL
-    response = requests.post(api_url, json={'query': query})
-    if response.status_code == 200:
-        return response.json().get('answer', 'Sorry, something went wrong!')
-    else:
-        return "Error contacting backend."
+    # Chat input
+    user_input = st.text_input("Ask about climate:", key="user_input")
 
-# Handle user query
-if user_input:
-    st.session_state['chat_history'].append({'role': 'user', 'content': user_input})
-    bot_response = get_bot_response(user_input)
-    st.session_state['chat_history'].append({'role': 'bot', 'content': bot_response})
+    # Function to interact with backend API
+    def get_bot_response(query):
+        api_url = "https://your-backend-api.com/chat"  # Replace with your backend URL
+        response = requests.post(api_url, json={'query': query})
+        if response.status_code == 200:
+            return response.json().get('answer', 'Sorry, something went wrong!')
+        else:
+            return "Error contacting backend."
 
-    # Display updated conversation
-    st.sidebar.markdown(f"**You:** {user_input}")
-    st.sidebar.markdown(f"**Bot:** {bot_response}")
+    # Handle user query
+    if user_input:
+        st.session_state['chat_history'].append({'role': 'user', 'content': user_input})
+        bot_response = get_bot_response(user_input)
+        st.session_state['chat_history'].append({'role': 'bot', 'content': bot_response})
+
+        # Display updated conversation
+        st.markdown(f"**You:** {user_input}")
+        st.markdown(f"**Bot:** {bot_response}")
