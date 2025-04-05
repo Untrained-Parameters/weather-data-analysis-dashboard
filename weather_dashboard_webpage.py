@@ -364,7 +364,7 @@ with chat_col:
         flex-grow: 1;
         max-height: 60vh;
         overflow-y: auto;
-        padding: 10px;
+        padding: 0px;
         border: 1px solid #ccc;
         border-radius: 10px;
         background-color: #f8f9fa;
