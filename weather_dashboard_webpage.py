@@ -32,6 +32,9 @@ display_type = st.sidebar.radio("Choose Data", [
     "Rainfall", "Temperature", "Humidity", "NVDI", "Ignition Probability",
     "Future Climate Predictions", "Contemporary Climatology", "Legacy Climatology"])
 
+#Main Dashboard
+main_col, chat_col = st.columns([4,1])
+
 with main_col:
     # Default Homepage Map if no selection yet or fallback
     if selected_page == 'All Islands':
