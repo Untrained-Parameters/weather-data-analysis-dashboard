@@ -9,6 +9,7 @@ from streamlit_folium import folium_static
 import folium
 import requests
 from transformers import AutoTokenizer, AutoModelForQuestionAnswering, pipeline
+from datetime import datetime
 
 # setting page configuration
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
@@ -63,8 +64,6 @@ with main_col:
         folium_static(all_map)
 
     # Main Dashboard (only new blocks for each island below)
-    from datetime import datetime
-
     today = datetime.today()
     def render_time_selectors(view):
         if view == "Monthly":
