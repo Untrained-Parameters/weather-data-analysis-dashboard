@@ -82,8 +82,10 @@ st.sidebar.markdown('''
 ---
 ''')
 hawaiian_pages = ['All Islands', 'Kauaʻi', 'Oʻahu', 'Molokaʻi', 'Lānaʻi', 'Maui', 'Hawaiʻi (Big Island)']
-selected_page = st.sidebar.selectbox('Select a Page:', ('Delhi', 'Kuala Lumpur', 'Singapore', 'Tokyo') + tuple(hawaiian_pages))
-st.sidebar.markdown('Here is an analysis of the weather data for four cities in Asia for 20 years.')
+selected_page = st.sidebar.selectbox(
+    'Select a Page:', ('Delhi', 'Kuala Lumpur', 'Singapore', 'Tokyo')+ tuple(hawaiian_pages))
+st.sidebar.markdown(
+    'Here is an analysis of the weather data for four cities in Asia for 20 years.')
 
 # Island Coordinates and Cities
 islands_info = {
@@ -119,41 +121,45 @@ islands_info = {
     }
 }
 
-# Main Dashboard
-if selected_page in ['Delhi', 'Kuala Lumpur', 'Singapore', 'Tokyo']:
-    st.markdown(f"""
-    # Weather Dashboard - ***{selected_page}*** 
-    > Climate information and analysis for {selected_page}.
-    ---
-    """)
-    rt_chart(eval(selected_page.lower().replace(" ", "_")))
-elif selected_page == 'All Islands':
-    st.markdown("""
-    # Weather Data Dashboard - ***All Hawaiian Islands***
-    > Overview of all major islands in the Hawaiian archipelago.
-    ---
-    """)
-    bounds = [[18.5, -161.0], [22.25, -154.5]]
-    all_map = folium.Map(location=[20.5, -157.0], zoom_start=7, tiles=None, min_zoom=6, max_bounds=True)
-    folium.TileLayer('Esri.WorldImagery').add_to(all_map)
-    for name, info in islands_info.items():
-        folium.map.Marker(
-            location=info['center'],
-            icon=folium.DivIcon(
-                html=f'<div style="font-size: 16px; color: white; font-weight: bold; text-shadow: 1px 1px 2px black;">{name}</div>'
-            )
-        ).add_to(all_map)
-    all_map.fit_bounds(bounds)
-    folium_static(all_map)
-else:
-    st.markdown(f"""
-    # Weather Data Dashboard - ***{selected_page}***
-    > {selected_page}, part of the Hawaiian Islands, showing city locations.
-    ---
-    """)
-    info = islands_info[selected_page]
-    island_map = folium.Map(location=info['center'], zoom_start=info['zoom'], tiles=None, min_zoom=6, max_bounds=True)
-    folium.TileLayer('Esri.WorldImagery').add_to(island_map)
-    for city, loc in info['cities'].items():
-        folium.Marker(location=loc, popup=city).add_to(island_map)
-    folium_static(island_map)
+# Main Dashboard and chatbot
+main_col, chat_col = st.columns([4,1])
+
+with main_col:
+    # Main Dashboard
+    if selected_page in ['Delhi', 'Kuala Lumpur', 'Singapore', 'Tokyo']:
+        st.markdown(f"""
+        # Weather Dashboard - ***{selected_page}*** 
+        > Climate information and analysis for {selected_page}.
+        ---
+        """)
+        rt_chart(eval(selected_page.lower().replace(" ", "_")))
+    elif selected_page == 'All Islands':
+        st.markdown("""
+        # Weather Data Dashboard - ***All Hawaiian Islands***
+        > Overview of all major islands in the Hawaiian archipelago.
+        ---
+        """)
+        bounds = [[18.5, -161.0], [22.25, -154.5]]
+        all_map = folium.Map(location=[20.5, -157.0], zoom_start=7, tiles=None, min_zoom=6, max_bounds=True)
+        folium.TileLayer('Esri.WorldImagery').add_to(all_map)
+        for name, info in islands_info.items():
+            folium.map.Marker(
+                location=info['center'],
+                icon=folium.DivIcon(
+                    html=f'<div style="font-size: 16px; color: white; font-weight: bold; text-shadow: 1px 1px 2px black;">{name}</div>'
+                )
+            ).add_to(all_map)
+        all_map.fit_bounds(bounds)
+        folium_static(all_map)
+    else:
+        st.markdown(f"""
+        # Weather Data Dashboard - ***{selected_page}***
+        > {selected_page}, part of the Hawaiian Islands, showing city locations.
+        ---
+        """)
+        info = islands_info[selected_page]
+        island_map = folium.Map(location=info['center'], zoom_start=info['zoom'], tiles=None, min_zoom=6, max_bounds=True)
+        folium.TileLayer('Esri.WorldImagery').add_to(island_map)
+        for city, loc in info['cities'].items():
+            folium.Marker(location=loc, popup=city).add_to(island_map)
+        folium_static(island_map)
