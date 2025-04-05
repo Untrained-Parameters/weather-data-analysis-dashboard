@@ -188,7 +188,7 @@ with main_col:
         ---
         ''')
         bounds = [[18.5, -161.0], [21.9, -154.5]]
-        oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9.3, tiles=None, min_zoom=6, max_bounds=True)
+        oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9.7, tiles=None, min_zoom=6, max_bounds=True)
         folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
         # folium.Marker([21.3069, -157.8583], popup='Honolulu').add_to(oahu_map)
         folium_static(oahu_map)
@@ -243,7 +243,7 @@ with main_col:
         > The Big Island is the largest in the Hawaiian archipelago and features diverse climates and active volcanoes...
         ---
         ''')
-        bigisland_map = folium.Map(location=[19.6, -155.5], zoom_start=8.5, tiles=None, min_zoom=6, max_bounds=True)
+        bigisland_map = folium.Map(location=[19.6, -155.5], zoom_start=8.2, tiles=None, min_zoom=6, max_bounds=True)
         folium.TileLayer('Esri.WorldImagery').add_to(bigisland_map)
         # folium.Marker([19.7297, -155.09], popup='Hilo').add_to(bigisland_map)
         # folium.Marker([19.6406, -155.9956], popup='Kailua-Kona').add_to(bigisland_map)
