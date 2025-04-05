@@ -10,7 +10,6 @@ import folium
 import requests
 from transformers import AutoTokenizer, AutoModelForQuestionAnswering, pipeline
 
-
 # this is a test
 # setting page configuration
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
@@ -279,22 +278,30 @@ with chat_col:
     </style>
     """, unsafe_allow_html=True)
 
-    with st.expander("🌐 Climate Chatbot", expanded=True):
-        chat_history = st.session_state.setdefault('chat_history', [])
+    with st.expander("🌐 Kai Climate Helper", expanded=True):
+        # Initialize chat history if not present
+        chat_history = st.session_state.setdefault("chat_history", [])
 
-        # Input box
-        question = st.text_input("Ask about Hawaii climate:", key="question_input")
+        # Set default system message
+        if not chat_history:
+            chat_history.append({"role": "assistant", "content": "Hi! Ask me anything about Hawaii's climate."})
 
-        # Display chat history
-        for chat in chat_history:
-            st.markdown(f"**You:** {chat['question']}")
-            st.markdown(f"**Bot:** {chat['answer']}")
+        # Display chat messages
+        for msg in chat_history:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
 
-        # Process new input
-        if question:
-            answer = "This is a placeholder answer. Replace with actual model output."
-            chat_history.append({'question': question, 'answer': answer})
+        # User input
+        user_input = st.chat_input("Ask about Hawaii climate")
 
-            # Clear input by resetting the session state on next run
-            st.session_state.pop('question_input')
-            st.rerun()
+        # Handle new user input
+        if user_input:
+            # Add user message to chat
+            st.chat_message("user").markdown(user_input)
+            chat_history.append({"role": "user", "content": user_input})
+
+            bot_reply = "This is a placeholder answer. Replace with actual model output."
+
+            # Add assistant response to chat
+            st.chat_message("assistant").markdown(bot_reply)
+            chat_history.append({"role": "assistant", "content": bot_reply})
