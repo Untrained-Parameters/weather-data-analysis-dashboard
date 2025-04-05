@@ -16,7 +16,8 @@ st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
 # Sidebar
 st.sidebar.markdown("### Location")
-st.session_state.selected_island = st.sidebar.selectbox("Select Island", ["Select Island", "Kauaʻi", "Oʻahu", "Molokaʻi", "Lānaʻi", "Maui", "Hawaiʻi (Big Island)"])
+# st.session_state.selected_island = st.sidebar.selectbox("Select Island", ["Kauaʻi", "Oʻahu", "Molokaʻi", "Lānaʻi", "Maui", "Hawaiʻi (Big Island)"])
+selected_page = st.sidebar.selectbox('Select a Page:', ('All Islands', 'Kauaʻi', 'Oʻahu', 'Molokaʻi', 'Lānaʻi', 'Maui', 'Hawaiʻi (Big Island)'))
 
 metric_view = st.sidebar.radio("Select View:", ["Daily", "Monthly"])
 
