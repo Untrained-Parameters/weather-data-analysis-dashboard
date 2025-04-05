@@ -5,6 +5,7 @@ import streamlit as st
 import altair as alt
 import matplotlib.pyplot as plt 
 import streamlit.components.v1 as components
+from streamlit_folium import folium_static
 
 # this is a test
 # setting page configuration
@@ -126,10 +127,9 @@ elif selected_city == 'Oahu':
     > Oʻahu, known as "The Gathering Place," is the third-largest of the Hawaiian Islands...
     ---
     ''')
-    components.iframe(
-        "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d148437.71319776584!2d-157.858333!3d21.4389125!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x7c0053d40df7be8f%3A0x9fa11fc5f0c905a8!2sOahu%2C%20Hawaii!5e0!3m2!1sen!2sus!4v1647202851651!5m2!1sen!2sus&maptype=satellite&style=feature:all|element:labels|visibility:off",
-        height=600,
-        width=900)
+    # Create interactive map using folium
+    oahu_map = folium.Map(location=[21.4389, -158.0001], zoom_start=10, tiles='Stamen Terrain')
+    folium_static(oahu_map)
 
 
 
