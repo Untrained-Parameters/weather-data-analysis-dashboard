@@ -70,26 +70,26 @@ with main_col:
 
     # Main Dashboard (only new blocks for each island below)
     today = datetime.today()
-    def render_time_selectors(view):
-        if view == "Monthly":
-            colm1, colm2 = st.columns([1, 1])
-            with colm1:
-                st.markdown("#### Choose Month")
-                st.session_state.selected_month = months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-            with colm2:
-                st.markdown("#### Choose Year")
-                st.session_state.selected_year = st.slider("", 1990, today.year, today.year, key=f"year_{selected_page}")
-        else:
-            cold1, cold2, cold3 = st.columns([1, 1, 1])
-            with cold1:
-                st.markdown("#### Choose Day")
-                st.session_state.selected_day = st.slider("", 1, 31, today.day, key=f"day_{selected_page}")
-            with cold2:
-                st.markdown("#### Choose Month")
-                st.session_state.selected_month = st.slider("", 1, 12, today.month, key=f"month_{selected_page}")
-            with cold3:
-                st.markdown("#### Choose Year")
-                st.session_state.selected_year = st.slider("", 1990, today.year, today.year, key=f"year_{selected_page}")
+    # def render_time_selectors(view):
+    #     if view == "Monthly":
+    #         colm1, colm2 = st.columns([1, 1])
+    #         with colm1:
+    #             st.markdown("#### Choose Month")
+    #             st.session_state.selected_month = months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    #         with colm2:
+    #             st.markdown("#### Choose Year")
+    #             st.session_state.selected_year = st.slider("", 1990, today.year, today.year, key=f"year_{selected_page}")
+    #     else:
+    #         cold1, cold2, cold3 = st.columns([1, 1, 1])
+    #         with cold1:
+    #             st.markdown("#### Choose Day")
+    #             st.session_state.selected_day = st.slider("", 1, 31, today.day, key=f"day_{selected_page}")
+    #         with cold2:
+    #             st.markdown("#### Choose Month")
+    #             st.session_state.selected_month = st.slider("", 1, 12, today.month, key=f"month_{selected_page}")
+    #         with cold3:
+    #             st.markdown("#### Choose Year")
+    #             st.session_state.selected_year = st.slider("", 1990, today.year, today.year, key=f"year_{selected_page}")
 
     if selected_page == 'Oʻahu':
         page_title = f"Weather Dashboard for Oʻahu" if display_type == "General Overview" else f"{display_type} in Oʻahu"
@@ -129,9 +129,9 @@ with main_col:
                     st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
                 with col6:
                     st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-                oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9, tiles=None, min_zoom=6, max_bounds=True)
-                folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
-                folium_static(oahu_map)
+            oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9, tiles=None, min_zoom=6, max_bounds=True)
+            folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
+            folium_static(oahu_map)
         else:
             oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9, tiles=None, min_zoom=6, max_bounds=True)
             folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
