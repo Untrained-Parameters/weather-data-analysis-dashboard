@@ -34,10 +34,44 @@ display_type = st.sidebar.radio("Choose Data", ["General Overview",
     "Rainfall", "Temperature", "Humidity", "NVDI", "Ignition Probability",
     "Future Climate Predictions", "Contemporary Climatology", "Legacy Climatology"])
 
+# Toggle state setup
+if "view_toggle" not in st.session_state:
+    st.session_state.view_toggle = "Map"
+
 #Main Dashboard
 main_col, chat_col = st.columns([4,1])
 
 with main_col:
+    # Floating Toggle Button using Streamlit buttons
+    st.markdown("""
+        <style>
+        div[data-testid="toggle-button-container"] {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #f0f2f6;
+            border-radius: 25px;
+            padding: 6px 20px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.15);
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    with st.container():
+        st.markdown('<div data-testid="toggle-button-container">', unsafe_allow_html=True)
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("🗺 Map"):
+                st.session_state.view_toggle = "Map"
+        with col2:
+            if st.button("📊 Chart"):
+                st.session_state.view_toggle = "Chart"
+        st.markdown('</div>', unsafe_allow_html=True)
+
     # Default Homepage Map if no selection yet or fallback
     if selected_page == 'All Islands':
         st.markdown('''
@@ -66,7 +100,44 @@ with main_col:
             ).add_to(all_map)
 
         all_map.fit_bounds(bounds)
-        folium_static(all_map)
+        if st.session_state.view_toggle == "Map":
+            folium_static(all_map)
+        else:
+            chart_data = pd.DataFrame(
+                np.random.randn(1000, 2) / [50, 50] + [37.76, -122.4],
+                columns=["lat", "lon"],
+            )
+
+            st.pydeck_chart(
+                pdk.Deck(
+                    map_style=None,
+                    initial_view_state=pdk.ViewState(
+                        latitude=37.76,
+                        longitude=-122.4,
+                        zoom=11,
+                        pitch=50,
+                    ),
+                    layers=[
+                        pdk.Layer(
+                            "HexagonLayer",
+                            data=chart_data,
+                            get_position="[lon, lat]",
+                            radius=200,
+                            elevation_scale=4,
+                            elevation_range=[0, 1000],
+                            pickable=True,
+                            extruded=True,
+                        ),
+                        pdk.Layer(
+                            "ScatterplotLayer",
+                            data=chart_data,
+                            get_position="[lon, lat]",
+                            get_color="[200, 30, 0, 160]",
+                            get_radius=200,
+                        ),
+                    ],
+                )
+            )
 
     # Main Dashboard (only new blocks for each island below)
     today = datetime.today()
