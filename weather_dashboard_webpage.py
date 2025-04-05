@@ -98,8 +98,6 @@ with main_col:
         > Oʻahu, known as "The Gathering Place," is the third-largest of the Hawaiian Islands...
         ---
         ''')
-        render_time_selectors(metric_view)
-
         if display_type == "General Overview":
             # Conditional Metrics Based on View
             col1, col2, col3, col4, col5, col6 = st.columns(6)
