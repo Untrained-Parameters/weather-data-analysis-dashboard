@@ -275,14 +275,17 @@ with chat_col:
         overflow: hidden;
         display: flex;
         flex-direction: column;
+        background-color: #f8f9fa;
+        color: black;
+        border-radius: 15px; /* Added border-radius for rounded corners */
     }
 
     .scrollable-chat-container {
         flex-grow: 1;
         max-height: 60vh;
         overflow-y: auto;
-        padding: 10px;
-        border: 1px solid #ccc;
+        padding: 0px;
+        border: 0px solid #ccc;
         border-radius: 10px;
         background-color: #f8f9fa;
         margin-bottom: 10px;
@@ -295,6 +298,7 @@ with chat_col:
         padding: 10px;
         border-radius: 10px;
         margin-bottom: 10px;
+        margin-left: 40px;
         text-align: right;
         font-size: 16px;
         color: #000000;
@@ -305,6 +309,7 @@ with chat_col:
         padding: 10px;
         border-radius: 10px;
         margin-bottom: 10px;
+        margin-right: 40px;
         text-align: left;
         font-size: 16px;
         color: white;
@@ -344,7 +349,3 @@ with chat_col:
             chat_html += f'<div class="{role_class}">{msg["content"]}</div>'
         chat_html += '</div>'
         st.markdown(chat_html, unsafe_allow_html=True)
-
-
-
-
