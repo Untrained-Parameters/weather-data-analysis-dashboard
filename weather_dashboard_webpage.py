@@ -6,6 +6,7 @@ import altair as alt
 import matplotlib.pyplot as plt 
 import streamlit.components.v1 as components
 from streamlit_folium import folium_static
+import folium
 
 # this is a test
 # setting page configuration
