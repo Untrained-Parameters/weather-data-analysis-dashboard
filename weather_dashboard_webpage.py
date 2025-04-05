@@ -30,7 +30,7 @@ else:
     st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/YYYY)", datetime.today().strftime("%m/%Y"))
 
 st.sidebar.markdown("### Display Type")
-display_type = st.sidebar.radio("Choose Data", [
+display_type = st.sidebar.radio("Choose Data", ["General Overview", 
     "Rainfall", "Temperature", "Humidity", "NVDI", "Ignition Probability",
     "Future Climate Predictions", "Contemporary Climatology", "Legacy Climatology"])
 
@@ -42,7 +42,7 @@ with main_col:
     if selected_page == 'All Islands':
         st.markdown('''
         # Hawaiian Islands Overview
-        > Explore the main islands of Hawaiʻi. Each island is labeled and zooming is limited to the archipelago region.
+        > Explore climate data in the main islands of Hawaiʻi. 
         ---
         ''')
         bounds = [[18.5, -161.0], [22.25, -154.5]]
@@ -92,7 +92,7 @@ with main_col:
                 st.session_state.selected_year = st.slider("", 1990, today.year, today.year, key=f"year_{selected_page}")
 
     if selected_page == 'Oʻahu':
-        page_title = f"{display_type} in Oʻahu" if display_type else "Weather Dashboard for Oʻahu"
+        page_title = f"Weather Dashboard for Oʻahu" if display_type == "General Overview" else f"{display_type} in Oʻahu"
         st.markdown(f'''
         # {page_title} in Oʻahu
         > Oʻahu, known as "The Gathering Place," is the third-largest of the Hawaiian Islands...
@@ -100,53 +100,42 @@ with main_col:
         ''')
         render_time_selectors(metric_view)
 
-        # Conditional Metrics Based on View
-        col1, col2, col3, col4, col5, col6 = st.columns(6)
-        if metric_view == "Daily":
-            with col1:
-                st.metric("Daily Precip", "3.2 mm")
-            with col2:
-                st.metric("Max Temp", "30.1 °C")
-            with col3:
-                st.metric("Min Temp", "21.7 °C")
-            with col4:
-                st.metric("Humidity", "75%")
-            with col5:
-                st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
-            with col6:
-                st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
+        if display_type == "General Overview":
+            # Conditional Metrics Based on View
+            col1, col2, col3, col4, col5, col6 = st.columns(6)
+            if metric_view == "Daily":
+                with col1:
+                    st.metric("Daily Precip", "3.2 mm")
+                with col2:
+                    st.metric("Max Temp", "30.1 °C")
+                with col3:
+                    st.metric("Min Temp", "21.7 °C")
+                with col4:
+                    st.metric("Humidity", "75%")
+                with col5:
+                    st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
+                with col6:
+                    st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
+            else:
+                with col1:
+                    st.metric("Monthly Precip", "85 mm")
+                with col2:
+                    st.metric("Avg Max Temp", "29.5 °C")
+                with col3:
+                    st.metric("Avg Min Temp", "22.3 °C")
+                with col4:
+                    st.metric("Avg Humidity", "77%")
+                with col5:
+                    st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
+                with col6:
+                    st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
+                oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9, tiles=None, min_zoom=6, max_bounds=True)
+                folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
+                folium_static(oahu_map)
         else:
-            with col1:
-                st.metric("Monthly Precip", "85 mm")
-            with col2:
-                st.metric("Avg Max Temp", "29.5 °C")
-            with col3:
-                st.metric("Avg Min Temp", "22.3 °C")
-            with col4:
-                st.metric("Avg Humidity", "77%")
-            with col5:
-                st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
-            with col6:
-                st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-
-        # Climate Metrics Displayed Horizontally with color indicators
-        col1, col2, col3, col4, col5, col6 = st.columns(6)
-        with col1:
-            st.metric("Avg Daily Precip", "3.2 mm", "+12%")
-        with col2:
-            st.metric("Avg Max Temp", "29.5 °C", "-1.2 °C")
-        with col3:
-            st.metric("Avg Min Temp", "22.3 °C", "+0.5 °C")
-        with col4:
-            st.metric("Avg Humidity", "77%", "+3%")
-        with col5:
-            st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
-        with col6:
-            st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-        oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9, tiles=None, min_zoom=6, max_bounds=True)
-        folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
-        folium_static(oahu_map)
-
+            oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9, tiles=None, min_zoom=6, max_bounds=True)
+            folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
+            folium_static(oahu_map)
 
     elif selected_page == 'Kauaʻi':
         st.markdown(f'''
