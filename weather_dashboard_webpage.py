@@ -248,3 +248,53 @@ with main_col:
         # folium.Marker([19.7297, -155.09], popup='Hilo').add_to(bigisland_map)
         # folium.Marker([19.6406, -155.9956], popup='Kailua-Kona').add_to(bigisland_map)
         folium_static(bigisland_map)
+
+
+with chat_col:
+    st.markdown("""
+    <style>
+    /* Positioning the expander fixed to the bottom-right */
+    div[data-testid="stExpander"] {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        width: 25%;
+        z-index: 1000;
+    }
+
+    /* Increasing font size inside expander content */
+    div[data-testid="stExpander"] div[data-testid="stMarkdownContainer"] p {
+        font-size: 25px !important;
+    }
+
+    /* Increasing font size inside input box */
+    div[data-testid="stExpander"] input[type="text"] {
+        font-size: 18px !important;
+    }
+
+    /* Increasing font size for expander header (title) */
+    div[data-testid="stExpander"] summary {
+        font-size: 20px !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    with st.expander("🌐 Climate Chatbot", expanded=True):
+        chat_history = st.session_state.setdefault('chat_history', [])
+
+        # Input box
+        question = st.text_input("Ask about Hawaii climate:", key="question_input")
+
+        # Display chat history
+        for chat in chat_history:
+            st.markdown(f"**You:** {chat['question']}")
+            st.markdown(f"**Bot:** {chat['answer']}")
+
+        # Process new input
+        if question:
+            answer = "This is a placeholder answer. Replace with actual model output."
+            chat_history.append({'question': question, 'answer': answer})
+
+            # Clear input by resetting the session state on next run
+            st.session_state.pop('question_input')
+            st.rerun()
