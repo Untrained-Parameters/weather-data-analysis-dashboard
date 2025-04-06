@@ -25,7 +25,7 @@ st.sidebar.markdown(
     .sidebar-title {
         font-family: 'IBM Plex Sans', sans-serif;
         font-size: 35px;
-        text-align: center;
+        text-align: top;
         margin-bottom: 50px;
     }
     </style>
