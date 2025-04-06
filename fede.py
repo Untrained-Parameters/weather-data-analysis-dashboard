@@ -15,8 +15,6 @@ import pydeck as pdk
 # setting page configuration
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
-import streamlit as st
-
 # Add a custom font
 st.markdown("""
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
