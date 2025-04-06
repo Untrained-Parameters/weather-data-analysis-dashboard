@@ -268,8 +268,10 @@ with main_col:
                     st.session_state.active_view = "map"
 
             with center_col:
-                st.markdown("<div style='text-align: center; font-size: 20px'>⬅️ &nbsp; <strong>Choose how to visualize the data</strong> &nbsp; ➡️</div>", unsafe_allow_html=True)
-
+                st.markdown(
+                    "<div style='text-align: center; font-size: 20px; color: #808180'>⬅️ &nbsp; <strong>How to visualize data?</strong> &nbsp; ➡️</div>",
+                    unsafe_allow_html=True
+                )
             with right_col:
                 if st.button("📊 Show Graph"):
                     st.session_state.active_view = "graph"
