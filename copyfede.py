@@ -228,16 +228,6 @@ with main_col:
                 plot_chart(date_input=st.session_state.date_input, island_name="All", variable="rainfall")
             elif display_type=="Temperature":
                 plot_chart(date_input=st.session_state.date_input, island_name="All", variable="temperature")
-            elif display_type=='General Overview':
-                pdk.Deck(
-                map_style='mapbox://styles/mapbox/satellite-v9',
-                initial_view_state=pdk.ViewState(
-                latitude=20.5,
-                longitude=-157,
-                zoom=7,
-                pitch=50,
-                ),
-            )
 
         elif st.session_state.active_view == "graph":
             get_chart_98185(use_container_width=True)
