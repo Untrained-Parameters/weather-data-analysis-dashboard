@@ -53,9 +53,11 @@ metric_view = st.sidebar.radio("Select View:", ["Daily", "Monthly"])
 if metric_view == "Daily":
     st.sidebar.markdown("### Date")
     st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/DD/YYYY)", "01/01/2025")
+    elev_factor = 300
 else:
     st.sidebar.markdown("### Date")
-    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/YYYY)","01/01/2025")
+    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/YYYY)","01/2025")
+    elev_factor = 150
 
 st.sidebar.markdown("### Display Type")
 if selected_page != 'All Islands':
@@ -111,6 +113,10 @@ def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", varia
         longi = -157
         zoom = 7
 
+    if variable=='rainfall':
+        units='mm'
+    elif variable=='temperature':
+        units='°C'
     
     st.pydeck_chart(
         pdk.Deck(
@@ -128,24 +134,17 @@ def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", varia
                     get_position="[lon, lat]",
                     auto_highlight=True,
                     radius=300,
-                    elevation_scale=100*np.median(chart_data[variable]),
+                    elevation_scale=elev_factor,
                     get_elevation_weight=variable,
                     elevation_range=[np.min(chart_data[variable]),np.max(chart_data[variable])],
                     coverage=1,
                     pickable=True,
                     extruded=True,
-                    # color_range=[
-                    #     [1, 152, 189],
-                    #     [73, 227, 206],
-                    #     [216, 254, 181],
-                    #     [254, 237, 177],
-                    #     [254, 173, 84],
-                    #     [209, 55, 78],
-                    # ],
+                    color_range=[[255, 255, 0]] * 6,  # RGB for yellow
                 ),
             ],
             tooltip={
-                "text": f"{variable}: {{elevationValue}}",
+                "text": f"{variable}: {{elevationValue}} {units}",
                 "style": {
                     "backgroundColor": "#206af1",
                     "color": "white",
@@ -158,55 +157,126 @@ def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", varia
 main_col, chat_col = st.columns([4,1])
 
 # Function to show chart
-def get_chart_98185(use_container_width: bool):
 
-    source = data.seattle_weather.url
-    step = 20
-    overlap = 1
+# def get_chart_98185(use_container_width=True,date_input=st.session_state.date_input, island_name="Oahu", variable="rainfall"):
 
-    chart = alt.Chart(source, height=step).transform_timeunit(
-        Month='month(date)'
-    ).transform_joinaggregate(
-        mean_temp='mean(temp_max)', groupby=['Month']
-    ).transform_bin(
-        ['bin_max', 'bin_min'], 'temp_max'
-    ).transform_aggregate(
-        value='count()', groupby=['Month', 'mean_temp', 'bin_min', 'bin_max']
-    ).transform_impute(
-        impute='value', groupby=['Month', 'mean_temp'], key='bin_min', value=0
-    ).mark_area(
-        interpolate='monotone',
-        fillOpacity=0.8,
-        stroke='lightgray',
-        strokeWidth=0.5
-    ).encode(
-        alt.X('bin_min:Q', bin='binned', title='Maximum Daily Temperature (C)'),
-        alt.Y(
-            'value:Q',
-            scale=alt.Scale(range=[step, -step * overlap]),
-            axis=None
-        ),
-        alt.Fill(
-            'mean_temp:Q',
-            legend=None,
-            scale=alt.Scale(domain=[30, 5], scheme='redyellowblue')
-        )
-    ).facet(
-        row=alt.Row(
-            'Month:T',
-            title=None,
-            header=alt.Header(labelAngle=0, labelAlign='right', format='%B')
-        )
-    ).properties(
-        title='Seattle Weather',
-        bounds='flush'
-    ).configure_facet(spacing=0).configure_view(stroke=None).configure_title(anchor='end')
+#     # Fetch actual climate data from data_function
+#     df = data_function.get_station_data_for_period(date_input, island_name, variable)
 
-    tab1, tab2 = st.tabs(["Streamlit theme (default)", "Altair native theme"])
-    with tab1:
-        st.altair_chart(chart, theme="streamlit", use_container_width=use_container_width)
-    with tab2:
-        st.altair_chart(chart, theme=None, use_container_width=use_container_width)
+#     # Create a datetime column
+#     df["datetime"] = pd.to_datetime(df["Time"], format="%m/%d/%Y")
+
+#     # Flatten variable names
+#     if variable == "temperature":
+#         df = df.rename(columns={"max-temp": "value"})
+#     elif variable == "rainfall":
+#         df = df.rename(columns={"rainfall": "value"})
+
+#     # Drop rows with missing or null values
+#     df = df.dropna(subset=["value"])
+
+#     # Extract time units for y-axis faceting
+#     if metric_view == "Daily":
+#         df["Hour"] = 12  # Placeholder: no hourly resolution in current dataset
+#         timeunit_field = "Hour"
+#         facet_format = None
+#         step = 20
+#         overlap = 1
+#         facet_title = "Hour"
+#     elif metric_view == "Monthly":
+#         df["Month"] = df["datetime"].dt.month_name()
+#         timeunit_field = "Month"
+#         facet_format = "%B"
+#         step = 20
+#         overlap = 1
+#         facet_title = "Month"
+
+#     chart = alt.Chart(df, height=step).transform_joinaggregate(
+#         mean_val='mean(value)', groupby=[timeunit_field]
+#     ).transform_bin(
+#         ['bin_max', 'bin_min'], 'value'
+#     ).transform_aggregate(
+#         value='count()', groupby=[timeunit_field, 'mean_val', 'bin_min', 'bin_max']
+#     ).transform_impute(
+#         impute='value', groupby=[timeunit_field, 'mean_val'], key='bin_min', value=0
+#     ).mark_area(
+#         interpolate='monotone',
+#         fillOpacity=0.8,
+#         stroke='lightgray',
+#         strokeWidth=0.5
+#     ).encode(
+#         alt.X('bin_min:Q', bin='binned', title=f'{variable} (C)' if 'Temp' in variable else f'{variable} (mm)'),
+#         alt.Y(
+#             'value:Q',
+#             scale=alt.Scale(range=[step, -step * overlap]),
+#             axis=None
+#         ),
+#         alt.Fill(
+#             'mean_val:Q',
+#             legend=None,
+#             scale=alt.Scale(domain=[30, 5] if 'Temp' in variable else [10, 0], scheme='redyellowblue')
+#         )
+#     ).facet(
+#         row=alt.Row(
+#             f'{timeunit_field}:T' if mode == "Monthly" else f'{timeunit_field}:O',
+#             title=None,
+#             header=alt.Header(labelAngle=0, labelAlign='right', format=facet_format)
+#         )
+#     ).properties(
+#         title=f'Hawaiʻi Climate - {variable}',
+#         bounds='flush'
+#     ).configure_facet(spacing=0).configure_view(stroke=None).configure_title(anchor='end')
+
+#     st.altair_chart(chart, theme=None, use_container_width=use_container_width)
+
+
+
+
+# def get_chart_98185(use_container_width: bool):
+
+#     source = data.seattle_weather.url
+#     step = 20
+#     overlap = 1
+
+#     chart = alt.Chart(source, height=step).transform_timeunit(
+#         Month='month(date)'
+#     ).transform_joinaggregate(
+#         mean_temp='mean(temp_max)', groupby=['Month']
+#     ).transform_bin(
+#         ['bin_max', 'bin_min'], 'temp_max'
+#     ).transform_aggregate(
+#         value='count()', groupby=['Month', 'mean_temp', 'bin_min', 'bin_max']
+#     ).transform_impute(
+#         impute='value', groupby=['Month', 'mean_temp'], key='bin_min', value=0
+#     ).mark_area(
+#         interpolate='monotone',
+#         fillOpacity=0.8,
+#         stroke='lightgray',
+#         strokeWidth=0.5
+#     ).encode(
+#         alt.X('bin_min:Q', bin='binned', title='Maximum Daily Temperature (C)'),
+#         alt.Y(
+#             'value:Q',
+#             scale=alt.Scale(range=[step, -step * overlap]),
+#             axis=None
+#         ),
+#         alt.Fill(
+#             'mean_temp:Q',
+#             legend=None,
+#             scale=alt.Scale(domain=[30, 5], scheme='redyellowblue')
+#         )
+#     ).facet(
+#         row=alt.Row(
+#             'Month:T',
+#             title=None,
+#             header=alt.Header(labelAngle=0, labelAlign='right', format='%B')
+#         )
+#     ).properties(
+#         title='Seattle Weather',
+#         bounds='flush'
+#     ).configure_facet(spacing=0).configure_view(stroke=None).configure_title(anchor='end')
+
+#     st.altair_chart(chart, theme=None, use_container_width=use_container_width)
 
 # Initialize state
 if "active_view" not in st.session_state:
