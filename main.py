@@ -48,17 +48,6 @@ st.sidebar.markdown("### Location")
 # st.session_state.selected_island = st.sidebar.selectbox("Select Island", ["Kauaʻi", "Oʻahu", "Molokaʻi", "Lānaʻi", "Maui", "Hawaiʻi (Big Island)"])
 selected_page = st.sidebar.selectbox('Select a Page:', ('All Islands', 'Kauaʻi', 'Oʻahu', 'Molokaʻi', 'Lānaʻi', 'Maui', 'Hawaiʻi (Big Island)'))
 
-metric_view = st.sidebar.radio("Select View:", ["Daily", "Monthly"])
-
-if metric_view == "Daily":
-    st.sidebar.markdown("### Date")
-    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/DD/YYYY)", "12/01/2016")
-    elev_factor = 300
-else:
-    st.sidebar.markdown("### Date")
-    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/YYYY)","01/2025")
-    elev_factor = 150
-
 st.sidebar.markdown("### Display Type")
 if selected_page != 'All Islands':
     display_type = st.sidebar.radio("Choose Data", ["General Overview", 
@@ -68,6 +57,18 @@ else:
     display_type = st.sidebar.radio("Choose Data", [ 
         "Rainfall", "Temperature", "Humidity", "NVDI", "Ignition Probability",
         "Future Climate Predictions", "Contemporary Climatology", "Legacy Climatology"])
+    
+default_index = 1 if display_type == "Future Climate Predictions" else 0
+metric_view = st.sidebar.radio("Select View:", ["Daily", "Monthly"], index=default_index)
+
+if metric_view == "Daily":
+    st.sidebar.markdown("### Date")
+    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/DD/YYYY)", "12/01/2016")
+    elev_factor = 300
+else:
+    st.sidebar.markdown("### Date")
+    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/YYYY)","01/2025")
+    elev_factor = 150
 
 def plot_chart(date_input, island_name, variable):
     if island_name == "All":
@@ -287,7 +288,13 @@ with main_col:
     # today = datetime.today()
     if selected_page == 'Oʻahu':
         if display_type=="Future Climate Predictions":
-            st.write("Hello")
+            metric_view = "Monthly"
+            page_title = f"Future Predictions for Oʻahu"
+            st.markdown(f'''
+            # {page_title}
+            ''')
+            month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
+            Predictions.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
         else:
             page_title = f"Weather Dashboard for Oʻahu" if display_type == "General Overview" else f"{display_type} in Oʻahu"
             st.markdown(f'''
