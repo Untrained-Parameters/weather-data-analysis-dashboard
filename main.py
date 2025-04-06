@@ -94,6 +94,9 @@ def plot_chart(date_input, island_name, variable):
         # chart_data_8 = data_function.get_station_data_for_period(date_input, "Kahoolawe", variable)
 
         chart_data = pd.concat([chart_data_1, chart_data_2, chart_data_3, chart_data_4, chart_data_5, chart_data_6], ignore_index=True)
+
+        chart_data = chart_data.rename(columns={"max-temp": "max_temp"})
+        value_column = "max_temp"
     elif island_name != "All" and variable == 'temperature':
         chart_data = temp.get_station_data_for_period_temp(date_input, island_name, variable)
         chart_data = chart_data.rename(columns={"max-temp": "max_temp"})
@@ -235,7 +238,7 @@ def island_bar_chart(date_input=st.session_state.date_input, variable="rainfall"
 
 
 #Main Dashboard
-main_col, chat_col = st.columns([4,1])
+main_col, chat_col = st.columns([3,1])
 
 # Initialize state
 if "active_view" not in st.session_state:
