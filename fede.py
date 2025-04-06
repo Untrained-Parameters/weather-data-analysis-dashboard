@@ -15,23 +15,97 @@ import pydeck as pdk
 # setting page configuration
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
-# Inject full screen style with no scrolling
-st.markdown("""
+# Top navigation bar with tabs
+query_params = st.experimental_get_query_params()
+top_tab = query_params.get("tab", [None])[0]
+
+st.markdown(f"""
     <style>
-    html, body, [data-testid="stApp"] {
-        overflow: hidden;
-        height: 100vh;
+    .top-bar {{
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 50px;
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        z-index: 1001;
+        transition: background-color 0.3s ease;
+    }}
+    .top-bar h1 {{
+        font-size: 22px;
+        color: #1a2c4a;
         margin: 0;
-        padding: 0;
-    }
-    section.main > div.block-container {
-        padding-top: 0rem;
-        padding-bottom: 0rem;
-        height: 100vh;
-        overflow: hidden;
-    }
+        font-family: 'Segoe UI', sans-serif;
+    }}
+    .top-bar .nav-links a {{
+        margin-left: 20px;
+        text-decoration: none;
+        color: #1a2c4a;
+        font-weight: 500;
+        font-size: 16px;
+        font-family: 'Segoe UI', sans-serif;
+        transition: color 0.2s;
+    }}
+    .top-bar .nav-links a:hover {{
+        text-decoration: underline;
+        color: #205493;
+    }}
+    .top-bar .nav-links .active {{
+        font-weight: bold;
+        color: #0b3d91;
+        text-decoration: underline;
+    }}
     </style>
+    <div class="top-bar">
+        <h1>HI Climate</h1>
+        <div class="nav-links">
+            <a class="{'active' if top_tab == 'About' else ''}" href="/?tab=About">About</a>
+            <a class="{'active' if top_tab == 'Climate tools' else ''}" href="/?tab=Climate+tools">Climate tools</a>
+            <a class="{'active' if top_tab == 'Library' else ''}" href="/?tab=Library">Library</a>
+            <a class="{'active' if top_tab == 'Research' else ''}" href="/?tab=Research">Research</a>
+            <a class="{'active' if top_tab == 'Cultural Resources' else ''}" href="/?tab=Cultural+Resources">Cultural Resources</a>
+        </div>
+    </div>
+    <div style="margin-top: 60px;"></div>
 """, unsafe_allow_html=True)
+
+# Render custom content if a top tab is selected
+if top_tab:
+    st.set_page_config(layout='wide', initial_sidebar_state='collapsed')
+    st.markdown(f"""
+        <div class='main'>
+            <h1 style='font-family:Segoe UI;'>{top_tab}</h1>
+    """, unsafe_allow_html=True)
+
+    if top_tab == "About":
+        st.write("""
+        Welcome to the **HI Climate** platform. This site provides dynamic climate data visualization across the Hawaiian islands.
+        Learn about our mission, collaborators, and the impact of climate analysis on policy and education in Hawaiʻi.
+        """)
+    elif top_tab == "Climate tools":
+        st.write("""
+        Explore powerful tools for interacting with climate data, generating custom reports, and visualizing temperature, precipitation, and vegetation trends.
+        """)
+    elif top_tab == "Library":
+        st.write("""
+        Browse scientific papers, technical documentation, and public resources related to climate modeling and environmental science in Hawaiʻi.
+        """)
+    elif top_tab == "Research":
+        st.write("""
+        Discover active research projects led by our team and collaborators, including field studies, simulations, and machine learning applications.
+        """)
+    elif top_tab == "Cultural Resources":
+        st.write("""
+        Learn how traditional Hawaiian knowledge intersects with modern climate science, highlighting local stories and cultural stewardship.
+        """)
+
+    st.markdown("""</div>""", unsafe_allow_html=True)
+    st.stop()
 
 
 # Sidebar
