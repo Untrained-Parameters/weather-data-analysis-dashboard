@@ -120,7 +120,7 @@ def get_station_data_for_period(date_input: str, island_name: str, variable: str
         if variable == "max-temp":
             agg = "max"
             values = {
-                "datatype": "temperature",
+                "datatype": "max-temp",
                 "aggregation": agg,
                 "period": "day",
                 "date": date_str

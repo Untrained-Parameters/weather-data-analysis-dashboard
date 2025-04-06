@@ -83,7 +83,7 @@ def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", varia
         chart_data = pd.concat([chart_data_1, chart_data_2, chart_data_3, chart_data_4, chart_data_5, chart_data_6, chart_data_7, chart_data_8], ignore_index=True)
     else:
         chart_data = data_function.get_station_data_for_period(date_input, island_name, variable)
-    
+    print(chart_data)
     if island_name=='Oahu':
         lati = 21.44
         longi = -157.9
@@ -327,7 +327,7 @@ with main_col:
             elif display_type=="Rainfall":
                 plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="rainfall")
             elif display_type=="Temperature":
-                plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="temperature")
+                plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="max-temp")
 
 
     elif selected_page == "Kauaʻi":
