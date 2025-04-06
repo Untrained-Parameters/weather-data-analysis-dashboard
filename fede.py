@@ -16,7 +16,7 @@ import pydeck as pdk
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
 # Top navigation bar with tabs
-query_params = st.experimental_get_query_params()
+query_params = st.query_params
 top_tab = query_params.get("tab", [None])[0]
 
 st.markdown(f"""
