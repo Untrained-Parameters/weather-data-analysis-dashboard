@@ -68,7 +68,7 @@ if metric_view == "Daily":
     elev_factor = 300
 else:
     st.sidebar.markdown("### Date")
-    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/YYYY)","01/2025")
+    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/YYYY)","12/2016")
     elev_factor = 150
 
 def plot_chart(date_input, island_name, variable):
