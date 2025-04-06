@@ -284,39 +284,39 @@ if "active_view" not in st.session_state:
 
 with main_col:
     if selected_page == 'All Islands':
-        st.markdown('''
-        # Hawaiian Islands Overview
-        > Explore climate data in the main islands of Hawaiʻi. 
-        ---
-        ''')
-
-        # Create 3 columns: left button, center message, right button
-        left_col, center_col, right_col = st.columns([1, 3, 1])
-
-        with left_col:
-            if st.button("📍 Show Map"):
-                st.session_state.active_view = "map"
-
-        with center_col:
-            st.markdown("<div style='text-align: center; font-size: 26px'>⬅️ &nbsp; <strong>Choose how to visualize the data</strong> &nbsp; ➡️</div>", unsafe_allow_html=True)
-
-        with right_col:
-            if st.button("📊 Show Graph"):
-                st.session_state.active_view = "graph"
-
-
-        # Display the appropriate view
-        if st.session_state.active_view == "map":
-            if display_type=="Rainfall":
-                plot_chart(date_input=st.session_state.date_input, island_name="All", variable="rainfall")
-            elif display_type=="Temperature":
-                plot_chart(date_input=st.session_state.date_input, island_name="All", variable="temperature")
-
-        elif st.session_state.active_view == "graph":
-            get_chart_98185(use_container_width=True)
-
-        if display_type=="Future Climate Predictions"
+        if display_type=="Future Climate Predictions":
             st.write("Hello")
+        else:
+            st.markdown('''
+            # Hawaiian Islands Overview
+            > Explore climate data in the main islands of Hawaiʻi. 
+            ---
+            ''')
+
+            # Create 3 columns: left button, center message, right button
+            left_col, center_col, right_col = st.columns([1, 3, 1])
+
+            with left_col:
+                if st.button("📍 Show Map"):
+                    st.session_state.active_view = "map"
+
+            with center_col:
+                st.markdown("<div style='text-align: center; font-size: 26px'>⬅️ &nbsp; <strong>Choose how to visualize the data</strong> &nbsp; ➡️</div>", unsafe_allow_html=True)
+
+            with right_col:
+                if st.button("📊 Show Graph"):
+                    st.session_state.active_view = "graph"
+
+
+            # Display the appropriate view
+            if st.session_state.active_view == "map":
+                if display_type=="Rainfall":
+                    plot_chart(date_input=st.session_state.date_input, island_name="All", variable="rainfall")
+                elif display_type=="Temperature":
+                    plot_chart(date_input=st.session_state.date_input, island_name="All", variable="temperature")
+
+            elif st.session_state.active_view == "graph":
+                get_chart_98185(use_container_width=True)
         
 # with main_col:
 #     # Default Homepage Map if no selection yet or fallback
