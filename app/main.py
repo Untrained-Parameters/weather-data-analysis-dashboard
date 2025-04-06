@@ -16,6 +16,7 @@ import data_function
 from vega_datasets import data
 import Predictions
 import temp
+from chat import get_chat_response
 
 # setting page configuration
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
@@ -44,20 +45,38 @@ st.sidebar.markdown(
 
 
 st.sidebar.markdown("### Location")
-# st.session_state.selected_island = st.sidebar.selectbox("Select Island", ["Kauaʻi", "Oʻahu", "Molokaʻi", "Lānaʻi", "Maui", "Hawaiʻi (Big Island)"])
-selected_page = st.sidebar.selectbox('Select a Page:', ('All Islands', 'Kauaʻi', 'Oʻahu', 'Molokaʻi', 'Lānaʻi', 'Maui', 'Hawaiʻi (Big Island)'))
+
+islands = {
+    "Oʻahu": "Honolulu",
+    "Kauaʻi": "Kauai",
+    "Molokaʻi": "Molokai",
+    "Maui": "Maui",
+    "Hawaiʻi (Big Island)": "Hawaii",
+    "Lānaʻi": "Lānai"
+}
+
+st.sidebar.selectbox('Select a Page:', ('All Islands', 'Kauaʻi', 'Oʻahu', 'Molokaʻi', 'Lānaʻi', 'Maui', 'Hawaiʻi (Big Island)'), 
+    key="selected_page", on_change=lambda: st.session_state.update({"selected_page": st.session_state.selected_page}))
 
 st.sidebar.markdown("### Display Type")
-if selected_page != 'All Islands':
-    display_type = st.sidebar.radio("Choose Data", ["General Overview", 
-        "Rainfall", "Temperature", "Humidity", "NVDI", "Ignition Probability",
-        "Future Climate Predictions", "Contemporary Climatology", "Legacy Climatology"])
+if st.session_state["selected_page"] != 'All Islands':
+    st.sidebar.radio(
+        "Choose Data",
+        ["General Overview", "Rainfall", "Temperature", "Humidity", "NVDI", "Ignition Probability",
+         "Future Climate Predictions", "Contemporary Climatology", "Legacy Climatology"],
+        key="display_type",
+        on_change=lambda: st.session_state.update({"display_type": st.session_state.display_type})
+    )
 else:
-    display_type = st.sidebar.radio("Choose Data", [ 
-        "Rainfall", "Temperature", "Humidity", "NVDI", "Ignition Probability",
-        "Future Climate Predictions", "Contemporary Climatology", "Legacy Climatology"])
-    
-default_index = 1 if display_type == "Future Climate Predictions" else 0
+    st.sidebar.radio(
+        "Choose Data",
+        ["Rainfall", "Temperature", "Humidity", "NVDI", "Ignition Probability",
+         "Future Climate Predictions", "Contemporary Climatology", "Legacy Climatology"],
+        key="display_type",
+        on_change=lambda: st.session_state.update({"display_type": st.session_state.display_type})
+    )
+
+default_index = 1 if st.session_state["display_type"] == "Future Climate Predictions" else 0
 metric_view = st.sidebar.radio("Select View:", ["Daily", "Monthly"], index=default_index)
 
 if metric_view == "Daily":
@@ -245,8 +264,9 @@ if "active_view" not in st.session_state:
     st.session_state.active_view = "map"
 
 with main_col:
-    if selected_page == 'All Islands':
-        if display_type=="Future Climate Predictions":
+    # Use st.session_state["selected_page"] instead of selected_page
+    if st.session_state["selected_page"] == 'All Islands':
+        if st.session_state["display_type"] == "Future Climate Predictions":
             metric_view = "Monthly"
             page_title = f"Future Predictions for All Islands"
             st.markdown(f'''
@@ -277,25 +297,21 @@ with main_col:
                 if st.button("📊 Show Graph"):
                     st.session_state.active_view = "graph"
 
-
             # Display the appropriate view
             if st.session_state.active_view == "map":
-                if display_type=="Rainfall":
+                if st.session_state["display_type"] == "Rainfall":
                     plot_chart(date_input=st.session_state.date_input, island_name="All", variable="rainfall")
-                elif display_type=="Temperature":
+                elif st.session_state["display_type"] == "Temperature":
                     plot_chart(date_input=st.session_state.date_input, island_name="All", variable="temperature")
 
             elif st.session_state.active_view == "graph":
-                if display_type=="Rainfall":
-                    island_bar_chart(use_container_width=True,date_input=st.session_state.date_input,variable="rainfall")
-                elif display_type=="Temperature":
-                    island_bar_chart(use_container_width=True,date_input=st.session_state.date_input,variable="temperature")
+                if st.session_state["display_type"] == "Rainfall":
+                    island_bar_chart(use_container_width=True, date_input=st.session_state.date_input, variable="rainfall")
+                elif st.session_state["display_type"] == "Temperature":
+                    island_bar_chart(use_container_width=True, date_input=st.session_state.date_input, variable="temperature")
 
-
-    # Main Dashboard (only new blocks for each island below)
-    # today = datetime.today()
-    if selected_page == 'Oʻahu':
-        if display_type=="Future Climate Predictions":
+    elif st.session_state["selected_page"] == 'Oʻahu':
+        if st.session_state["display_type"] == "Future Climate Predictions":
             metric_view = "Monthly"
             page_title = f"Future Predictions for Oʻahu"
             st.markdown(f'''
@@ -304,37 +320,37 @@ with main_col:
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
             Predictions.generate_rainfall_forecast_plot(month_pred, 21.688333, -157.952500)
         else:
-            page_title = f"Weather Dashboard for Oʻahu" if display_type == "General Overview" else f"{display_type} in Oʻahu"
+            page_title = f"Weather Dashboard for Oʻahu" if st.session_state["display_type"] == "General Overview" else f"{st.session_state["display_type"]} in Oʻahu"
             st.markdown(f'''
             # {page_title}
             > Oʻahu, known as "The Gathering Place," is the third-largest of the Hawaiian Islands...
             ---
             ''')
-            if display_type == "General Overview":
+            if st.session_state["display_type"] == "General Overview":
                 # Conditional Metrics Based on View
                 col1, col2, col3, col4, col5, col6 = st.columns(6)
                 if metric_view == "Daily":
                     with col1:
-                        st.metric("Daily Precip", "3.2 mm","10%")
+                        st.metric("Daily Precip", "3.2 mm", "10%")
                     with col2:
-                        st.metric("Max Temp", "30.1 °C","2%")
+                        st.metric("Max Temp", "30.1 °C", "2%")
                     with col3:
-                        st.metric("Min Temp", "21.7 °C","-4%")
+                        st.metric("Min Temp", "21.7 °C", "-4%")
                     with col4:
-                        st.metric("Humidity", "75%","12%")
+                        st.metric("Humidity", "75%", "12%")
                     with col5:
                         st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
                     with col6:
                         st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-                else:# monthly metrics
+                else:  # monthly metrics
                     with col1:
-                        st.metric("Monthly Precip", "85 mm","13%")
+                        st.metric("Monthly Precip", "85 mm", "13%")
                     with col2:
-                        st.metric("Avg Max Temp", "29.5 °C","5%")
+                        st.metric("Avg Max Temp", "29.5 °C", "5%")
                     with col3:
-                        st.metric("Avg Min Temp", "22.3 °C","10%")
+                        st.metric("Avg Min Temp", "22.3 °C", "10%")
                     with col4:
-                        st.metric("Avg Humidity", "77%","11%")
+                        st.metric("Avg Humidity", "77%", "11%")
                     with col5:
                         st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
                     with col6:
@@ -347,18 +363,12 @@ with main_col:
                             longitude=-157.9,
                             zoom=9.5,
                             pitch=50,
-                            lati = 21.44
                         ),
                     ),
                 )
-            elif display_type=="Rainfall":
-                plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="rainfall")
-            elif display_type=="Temperature":
-                plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="temperature")
 
-
-    elif selected_page == "Kauaʻi":
-        if display_type=="Future Climate Predictions":
+    elif st.session_state["selected_page"] == "Kauaʻi":
+        if st.session_state["display_type"]=="Future Climate Predictions":
             metric_view = "Monthly"
             page_title = f"Future Predictions for Kauaʻi"
             st.markdown(f'''
@@ -367,13 +377,13 @@ with main_col:
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
             Predictions.generate_rainfall_forecast_plot(month_pred, 21.981570, -159.342206)
         else:
-            page_title = f"Weather Dashboard for Kauaʻi" if display_type == "General Overview" else f"{display_type} in Kauaʻi"
+            page_title = f"Weather Dashboard for Kauaʻi" if st.session_state["display_type"] == "General Overview" else f"{st.session_state["display_type"]} in Kauaʻi"
             st.markdown(f'''
             # {page_title}
             > Kauaʻi, also known as the Garden Isle, is the oldest of the main Hawaiian Islands...
             ---
             ''')
-            if display_type == "General Overview":
+            if st.session_state["display_type"] == "General Overview":
                 # Conditional Metrics Based on View
                 col1, col2, col3, col4, col5, col6 = st.columns(6)
                 if metric_view == "Daily":
@@ -413,13 +423,13 @@ with main_col:
                         ),
                     ),
                 )
-            elif display_type=="Rainfall":
+            elif st.session_state["display_type"]=="Rainfall":
                 plot_chart(date_input=st.session_state.date_input, island_name="Kauai", variable="rainfall")
-            elif display_type=="Temperature":
+            elif st.session_state["display_type"]=="Temperature":
                 plot_chart(date_input=st.session_state.date_input, island_name="Kauai", variable="temperature")
 
-    elif selected_page == 'Molokaʻi':
-        if display_type=="Future Climate Predictions":
+    elif st.session_state["selected_page"] == 'Molokaʻi':
+        if st.session_state["display_type"]=="Future Climate Predictions":
             metric_view = "Monthly"
             page_title = f"Future Predictions for Molokaʻi"
             st.markdown(f'''
@@ -428,13 +438,13 @@ with main_col:
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
             Predictions.generate_rainfall_forecast_plot(month_pred, 21.31667, -158.06667)
         else:
-            page_title = f"Weather Dashboard for Molokaʻi" if display_type == "General Overview" else f"{display_type} in Molokaʻi"
+            page_title = f"Weather Dashboard for Molokaʻi" if st.session_state["display_type"] == "General Overview" else f"{st.session_state["display_type"]} in Molokaʻi"
             st.markdown(f'''
             # {page_title}
             > Molokaʻi is known for its high sea cliffs and rural lifestyle...
             ---
             ''')
-            if display_type == "General Overview":
+            if st.session_state["display_type"] == "General Overview":
                 # Conditional Metrics Based on View
                 col1, col2, col3, col4, col5, col6 = st.columns(6)
                 if metric_view == "Daily":
@@ -474,13 +484,13 @@ with main_col:
                         ),
                     ),
                 )
-            elif display_type=="Rainfall":
+            elif st.session_state["display_type"]=="Rainfall":
                 plot_chart(date_input=st.session_state.date_input, island_name="Molokai", variable="rainfall")
-            elif display_type=="Temperature":
+            elif st.session_state["display_type"]=="Temperature":
                 plot_chart(date_input=st.session_state.date_input, island_name="Molokai", variable="temperature")
 
-    elif selected_page == 'Lānaʻi':
-        if display_type=="Future Climate Predictions":
+    elif st.session_state["selected_page"] == 'Lānaʻi':
+        if st.session_state["display_type"]=="Future Climate Predictions":
             metric_view = "Monthly"
             page_title = f"Future Predictions for Lānaʻi"
             st.markdown(f'''
@@ -489,13 +499,13 @@ with main_col:
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
             Predictions.generate_rainfall_forecast_plot(month_pred, 21.31667, -158.06667)
         else:
-            page_title = f"Weather Dashboard for Lānaʻi" if display_type == "General Overview" else f"{display_type} in Lānaʻi"
+            page_title = f"Weather Dashboard for Lānaʻi" if st.session_state["display_type"] == "General Overview" else f"{st.session_state["display_type"]} in Lānaʻi"
             st.markdown(f'''
             # {page_title}
             > Lānaʻi, the smallest publicly accessible inhabited island in Hawaii...
             ---
             ''')
-            if display_type == "General Overview":
+            if st.session_state["display_type"] == "General Overview":
                 # Conditional Metrics Based on View
                 col1, col2, col3, col4, col5, col6 = st.columns(6)
                 if metric_view == "Daily":
@@ -535,7 +545,7 @@ with main_col:
                         ),
                     ),
                 )
-            elif display_type=="Rainfall":
+            elif st.session_state["display_type"]=="Rainfall":
                 st.pydeck_chart(
                     pdk.Deck(
                         map_style='mapbox://styles/mapbox/satellite-v9',
@@ -547,7 +557,7 @@ with main_col:
                         ),
                     ),
                 )
-            elif display_type=="Temperature":
+            elif st.session_state["display_type"]=="Temperature":
                 st.pydeck_chart(
                     pdk.Deck(
                         map_style='mapbox://styles/mapbox/satellite-v9',
@@ -561,8 +571,8 @@ with main_col:
                 )
 
 
-    elif selected_page == 'Maui':
-        if display_type=="Future Climate Predictions":
+    elif st.session_state["selected_page"] == 'Maui':
+        if st.session_state["display_type"]=="Future Climate Predictions":
             metric_view = "Monthly"
             page_title = f"Future Predictions for Maui"
             st.markdown(f'''
@@ -571,13 +581,13 @@ with main_col:
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
             Predictions.generate_rainfall_forecast_plot(month_pred, 21.31667, -158.06667)
         else:
-            page_title = f"Weather Dashboard for Maui" if display_type == "General Overview" else f"{display_type} in Maui"
+            page_title = f"Weather Dashboard for Maui" if st.session_state["display_type"] == "General Overview" else f"{st.session_state["display_type"]} in Maui"
             st.markdown(f'''
             # {page_title}
             > Maui is known for its beaches, the sacred ʻĪao Valley, and the scenic Hana Highway...
             ---
             ''')
-            if display_type == "General Overview":
+            if st.session_state["display_type"] == "General Overview":
                 # Conditional Metrics Based on View
                 col1, col2, col3, col4, col5, col6 = st.columns(6)
                 if metric_view == "Daily":   
@@ -617,13 +627,13 @@ with main_col:
                         ),
                     ),
                 )
-            elif display_type=="Rainfall":
+            elif st.session_state["display_type"]=="Rainfall":
                 plot_chart(date_input=st.session_state.date_input, island_name="Maui", variable="rainfall")
-            elif display_type=="Temperature":
+            elif st.session_state["display_type"]=="Temperature":
                 plot_chart(date_input=st.session_state.date_input, island_name="Maui", variable="temperature")
 
-    elif selected_page == 'Hawaiʻi (Big Island)':
-        if display_type=="Future Climate Predictions":
+    elif st.session_state["selected_page"] == 'Hawaiʻi (Big Island)':
+        if st.session_state["display_type"]=="Future Climate Predictions":
             metric_view = "Monthly"
             page_title = f"Future Predictions for Hawaiʻi (Big Island)"
             st.markdown(f'''
@@ -632,13 +642,13 @@ with main_col:
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
             Predictions.generate_rainfall_forecast_plot(month_pred, 19.83639, -155.613)
         else:
-            page_title = f"Weather Dashboard for Hawaiʻi (Big Island)" if display_type == "General Overview" else f"{display_type} in Hawaiʻi (Big Island)"
+            page_title = f"Weather Dashboard for Hawaiʻi (Big Island)" if st.session_state["display_type"] == "General Overview" else f"{st.session_state["display_type"]} in Hawaiʻi (Big Island)"
             st.markdown(f'''
             # {page_title}
             > The Big Island is the largest in the Hawaiian archipelago and features diverse climates and active volcanoes...
             ---
             ''')
-            if display_type == "General Overview":
+            if st.session_state["display_type"] == "General Overview":
                 # Conditional Metrics Based on View
                 col1, col2, col3, col4, col5, col6 = st.columns(6)
                 if metric_view == "Daily":   
@@ -678,9 +688,9 @@ with main_col:
                         ),
                     ),
                 )
-            elif display_type=="Rainfall":
+            elif st.session_state["display_type"]=="Rainfall":
                 plot_chart(date_input=st.session_state.date_input, island_name="Hawaii (Big Island)", variable="rainfall")
-            elif display_type=="Temperature":
+            elif st.session_state["display_type"]=="Temperature":
                 plot_chart(date_input=st.session_state.date_input, island_name="Hawaii (Big Island)", variable="temperature")
 
 
@@ -704,8 +714,8 @@ with chat_col:
 
     .scrollable-chat-container {
         flex-grow: 1;
-        max-height: 60vh;
-        overflow-y: auto;
+        max-height: 60vh; /* Fixed height for scrollable container */
+        overflow-y: auto; /* Enable vertical scrolling */
         padding: 0px;
         border: 0px solid #ccc;
         border-radius: 10px;
@@ -751,23 +761,60 @@ with chat_col:
     </style>
     """, unsafe_allow_html=True)
 
-    with st.expander("🌐 Kai-Mate", expanded=False):
-        chat_history = st.session_state.setdefault("chat_history", [])
+    # Initialize chat history in session state
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = [
+            {"role": "model", "content": "Hi! Ask me anything about Hawaii's climate."}
+        ]
 
-        if not chat_history:
-            chat_history.append({"role": "assistant", "content": "Hi! Ask me anything about Hawaii's climate."})
-
-        user_input = st.chat_input("Ask about Hawaii climate")
-
-        if user_input:
-            chat_history.append({"role": "user", "content": user_input})
-            bot_reply = "This is a placeholder answer. Replace with actual model output."
-            chat_history.append({"role": "assistant", "content": bot_reply})
-
-        # Scrollable chat area
+    # Function to render the conversation using chat_html
+    def render_conversation():
+        chat_history = st.session_state.get("chat_history", [])
         chat_html = '<div class="scrollable-chat-container" id="chat-box">'
-        for msg in chat_history:
-            role_class = "chat-bubble-user" if msg["role"] == "user" else "chat-bubble-assistant"
-            chat_html += f'<div class="{role_class}">{msg["content"]}</div>'
+        for message in chat_history:
+            role_class = "chat-bubble-user" if message["role"] == "user" else "chat-bubble-assistant"
+            chat_html += f'<div class="{role_class}">{message["content"]}</div>'
         chat_html += '</div>'
         st.markdown(chat_html, unsafe_allow_html=True)
+
+    # Function to handle user input
+    def handle_user_input():
+        user_input = st.session_state.get("user_prompt", "")
+        if user_input:
+            # Add user input to chat history
+            st.session_state.chat_history.append({"role": "user", "content": user_input})
+            
+            # Call the model API to get the response
+            response = get_chat_response(st.session_state.chat_history)
+            if isinstance(response, str):
+                bot_reply = response
+                extra_params = None
+            else:
+                chat_response, extra_params = response.get("response", ""), response.get("extra_params", None)
+                bot_reply = chat_response
+
+            st.session_state.chat_history.append({"role": "model", "content": bot_reply})
+
+            if extra_params is not None:
+                print(extra_params)
+                if extra_params.get("county", None) is not None:
+                    if islands.get(extra_params["county"], None) is not None:
+                        st.session_state["selected_page"] = extra_params["county"]
+                if extra_params.get("variable", None) is not None:
+                    st.session_state["display_type"] = extra_params["variable"].title()
+
+            # st.session_state["selected_page"] = "Oʻahu"
+
+            # Clear the input field by removing the key
+            del st.session_state["user_prompt"]
+            
+    # Render the chat interface
+    with st.expander("🌐 Kai-Mate", expanded=False):
+        render_conversation()
+
+        # Wrap the chat input with bottom()
+        st.chat_input(
+            "Ask about Hawaii climate",
+            key="user_prompt",
+            on_submit=handle_user_input
+        )
