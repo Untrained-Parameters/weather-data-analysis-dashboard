@@ -269,7 +269,7 @@ with main_col:
 
             with center_col:
                 st.markdown(
-                    "<div style='text-align: center; font-size: 20px; color: #808180'>⬅️ &nbsp; <strong>How to visualize data?</strong> &nbsp; ➡️</div>",
+                    "<div style='text-align: center; font-size: 24px; color: #808180'>⬅️ &nbsp; <strong>How to visualize data?</strong> &nbsp; ➡️</div>",
                     unsafe_allow_html=True
                 )
             with right_col:
