@@ -229,7 +229,7 @@ with main_col:
             metric_view = "Monthly"
             page_title = f"Future Predictions for Oʻahu"
             month_pred = st.text_input("Enter Month (MM/YYYY)", "01/2025")
-            Predictions.plot_rainfall_forecast("04/2025", 21.31667, -158.06667)
+            Predictions.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
         else:
             page_title = f"Weather Dashboard for Oʻahu" if display_type == "General Overview" else f"{display_type} in Oʻahu"
             st.markdown(f'''

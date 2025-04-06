@@ -94,28 +94,51 @@ def get_station_data_for_period(date_input: str, island_name: str, variable: str
         display_date = date.strftime("%m/%d/%Y")
         all_station_data = {}
 
-        if variable == "temperature":
-            for agg in ["max", "min", "mean"]:
-                values = {
-                    "datatype": "temperature",
-                    "aggregation": agg,
-                    "period": "day",
-                    "date": date_str
-                }
-                data = get_station_data(values, metadata)
-                for item in data:
-                    if not ("lat" in item and "lng" in item): continue
-                    lat, lon = float(item["lat"]), float(item["lng"])
-                    if get_island(lat, lon) != matched_island:
-                        continue
-                    sid = item["station_id"]
-                    if sid not in all_station_data:
-                        all_station_data[sid] = {
-                            "Time": display_date,
-                            "lat": lat,
-                            "lon": lon
-                        }
-                    all_station_data[sid][f"{agg}-temp"] = float(item["value"])
+        # if variable == "temperature":
+        #     for agg in ["max", "min", "mean"]:
+        #         values = {
+        #             "datatype": "temperature",
+        #             "aggregation": agg,
+        #             "period": "day",
+        #             "date": date_str
+        #         }
+        #         data = get_station_data(values, metadata)
+        #         for item in data:
+        #             if not ("lat" in item and "lng" in item): continue
+        #             lat, lon = float(item["lat"]), float(item["lng"])
+        #             if get_island(lat, lon) != matched_island:
+        #                 continue
+        #             sid = item["station_id"]
+        #             if sid not in all_station_data:
+        #                 all_station_data[sid] = {
+        #                     "Time": display_date,
+        #                     "lat": lat,
+        #                     "lon": lon
+        #                 }
+        #             all_station_data[sid][f"{agg}-temp"] = float(item["value"])
+
+        if variable == "max-temp":
+            agg = "max"
+            values = {
+                "datatype": "temperature",
+                "aggregation": agg,
+                "period": "day",
+                "date": date_str
+            }
+            data = get_station_data(values, metadata)
+            for item in data:
+                if not ("lat" in item and "lng" in item): continue
+                lat, lon = float(item["lat"]), float(item["lng"])
+                if get_island(lat, lon) != matched_island:
+                    continue
+                sid = item["station_id"]
+                if sid not in all_station_data:
+                    all_station_data[sid] = {
+                        "Time": display_date,
+                        "lat": lat,
+                        "lon": lon
+                    }
+                all_station_data[sid]["max-temp"] = float(item["value"])
 
         elif variable == "rainfall":
             values = {

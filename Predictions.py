@@ -6,6 +6,8 @@ from shapely.geometry import Point
 from datetime import datetime, timedelta
 from sklearn.ensemble import RandomForestRegressor
 from dateutil.relativedelta import relativedelta
+import plotly.graph_objects as go
+import streamlit as st
 
 def plot_rainfall_forecast(input_month: str, lat: float, lon: float):
     """
@@ -139,7 +141,7 @@ def plot_rainfall_forecast(input_month: str, lat: float, lon: float):
         x=df_forecast["date"],
         y=df_forecast["predicted_rainfall"],
         mode='lines',
-        name=f'Predicted Rainfall ({input_month} from Apr 3)',
+        name=f'Predicted Rainfall ({input_month})',
         line=dict(width=2)
     ))
     
@@ -149,7 +151,9 @@ def plot_rainfall_forecast(input_month: str, lat: float, lon: float):
         yaxis_title="Rainfall (mm)",
         legend=dict(x=0.01, y=0.99),
         template='plotly_white',
-        height=500
+        height=500,
+        xaxis=dict(showgrid=False),
+        yaxis=dict(showgrid=False)
     )
     
-    fig.show()
+    st.plotly_chart(fig)
