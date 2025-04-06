@@ -2,13 +2,13 @@
 import pandas as pd
 import numpy as np
 import streamlit as st
-import altair as alt
+# import altair as alt
 import matplotlib.pyplot as plt 
 import streamlit.components.v1 as components
 from streamlit_folium import folium_static
 import folium
 import requests
-from transformers import AutoTokenizer, AutoModelForQuestionAnswering, pipeline
+# from transformers import AutoTokenizer, AutoModelForQuestionAnswering, pipeline
 from datetime import datetime
 import pydeck as pdk
 
