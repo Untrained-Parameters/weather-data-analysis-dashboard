@@ -15,6 +15,7 @@ import plotly.graph_objects as go
 import warnings
 from streamlit_extras.stylable_container import stylable_container
 import data_function
+from vega_datasets import data
 
 
 # setting page configuration
@@ -51,30 +52,23 @@ metric_view = st.sidebar.radio("Select View:", ["Daily", "Monthly"])
 
 if metric_view == "Daily":
     st.sidebar.markdown("### Date")
-    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/DD/YYYY)", datetime.today().strftime("%m/%d/%Y"))
+    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/DD/YYYY)", "01/01/2025")
 else:
     st.sidebar.markdown("### Date")
-    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/YYYY)", datetime.today().strftime("%m/%Y"))
+    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/YYYY)","01/01/2025")
 
 st.sidebar.markdown("### Display Type")
-display_type = st.sidebar.radio("Choose Data", ["General Overview", 
-    "Rainfall", "Temperature", "Humidity", "NVDI", "Ignition Probability",
-    "Future Climate Predictions", "Contemporary Climatology", "Legacy Climatology"])
+if selected_page != 'All Islands':
+    display_type = st.sidebar.radio("Choose Data", ["General Overview", 
+        "Rainfall", "Temperature", "Humidity", "NVDI", "Ignition Probability",
+        "Future Climate Predictions", "Contemporary Climatology", "Legacy Climatology"])
+else:
+    display_type = st.sidebar.radio("Choose Data", [ 
+        "Rainfall", "Temperature", "Humidity", "NVDI", "Ignition Probability",
+        "Future Climate Predictions", "Contemporary Climatology", "Legacy Climatology"])
 
 def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="rainfall"):
-    if island_name == "All":
-        chart_data_1 = data_function.get_station_data_for_period(date_input, "Oahu", variable)
-        chart_data_2 = data_function.get_station_data_for_period(date_input, "Kauai", variable)
-        chart_data_3 = data_function.get_station_data_for_period(date_input, "Molokai", variable)
-        chart_data_4 = data_function.get_station_data_for_period(date_input, "Lānai", variable)
-        chart_data_5 = data_function.get_station_data_for_period(date_input, "Maui", variable)
-        chart_data_6 = data_function.get_station_data_for_period(date_input, "Hawaii (Big Island)", variable)
-        chart_data_7 = data_function.get_station_data_for_period(date_input, "Niihau", variable)
-        chart_data_8 = data_function.get_station_data_for_period(date_input, "Kahoolawe", variable)
-
-        chart_data = pd.concat([chart_data_1, chart_data_2, chart_data_3, chart_data_4, chart_data_5, chart_data_6, chart_data_7, chart_data_8], ignore_index=True)
-    else:
-        chart_data = data_function.get_station_data_for_period(date_input, island_name, variable)
+    chart_data = data_function.get_station_data_for_period(date_input, island_name, variable)
     if island_name=='Oahu':
         lati = 21.44
         longi = -157.9
@@ -99,6 +93,10 @@ def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", varia
         lati = 18.9
         longi = -156.1
         zoom = 10
+    elif island_name=='All':
+        lati = 20.5
+        longi = -157
+        zoom = 7
 
     
     st.pydeck_chart(
@@ -148,8 +146,6 @@ main_col, chat_col = st.columns([4,1])
 
 # Function to show chart
 def get_chart_98185(use_container_width: bool):
-    import altair as alt
-    from vega_datasets import data
 
     source = data.seattle_weather.url
     step = 20
@@ -228,27 +224,28 @@ with main_col:
 
         # Display the appropriate view
         if st.session_state.active_view == "map":
-            st.pydeck_chart(pdk.Deck(
+            if display_type=="Rainfall":
+                plot_chart(date_input=st.session_state.date_input, island_name="All", variable="rainfall")
+            elif display_type=="Temperature":
+                plot_chart(date_input=st.session_state.date_input, island_name="All", variable="temperature")
+            elif display_type=='General Overview':
+                pdk.Deck(
                 map_style='mapbox://styles/mapbox/satellite-v9',
                 initial_view_state=pdk.ViewState(
-                    latitude=20.5,
-                    longitude=-157.0,
-                    zoom=7,
-                    pitch=50,
+                latitude=20.5,
+                longitude=-157,
+                zoom=7,
+                pitch=50,
                 ),
-                layers=[]
-            ))
+            )
+
         elif st.session_state.active_view == "graph":
             get_chart_98185(use_container_width=True)
 
         # Continue with the rest of your content
         # if display_type == "General Overview":
         #     plot_chart()
-        if display_type=="Rainfall":
-            plot_chart(date_input=st.session_state.date_input, island_name="All", variable="rainfall")
-        elif display_type=="Temperature":
-            plot_chart(date_input=st.session_state.date_input, island_name="All", variable="temperature")
-
+        
 # with main_col:
 #     # Default Homepage Map if no selection yet or fallback
 #     if selected_page == 'All Islands':
