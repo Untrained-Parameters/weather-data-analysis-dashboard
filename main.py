@@ -173,7 +173,7 @@ def island_bar_chart(date_input=st.session_state.date_input, variable="rainfall"
             df = df.rename(columns={"rainfall": "value"})
             agg_value = df["value"].median()
         else:
-            df = df.rename(columns={"max-temp": "value"})
+            df = df.rename(columns={"temperature": "value"})
             agg_value = df["value"].max()
         data.append({"Island": label, "value": agg_value})
 
@@ -243,7 +243,7 @@ with main_col:
                 if display_type=="Rainfall":
                     island_bar_chart(use_container_width=True,date_input=st.session_state.date_input,variable="rainfall")
                 elif display_type=="Temperature":
-                    island_bar_chart(use_container_width=True,date_input=st.session_state.date_input,variable="max-temp")
+                    island_bar_chart(use_container_width=True,date_input=st.session_state.date_input,variable="temperature")
         
 # with main_col:
 #     # Default Homepage Map if no selection yet or fallback
@@ -330,7 +330,7 @@ with main_col:
             elif display_type=="Rainfall":
                 plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="rainfall")
             elif display_type=="Temperature":
-                plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="max-temp")
+                plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="temperature")
 
 
     elif selected_page == "Kauaʻi":
