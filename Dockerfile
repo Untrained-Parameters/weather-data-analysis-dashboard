@@ -61,4 +61,4 @@ EXPOSE 8001
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD ["poetry", "run", "streamlit", "run", "app.py", "--server.port", "8001"]
+CMD ["poetry", "run", "streamlit", "run", "app/main.py", "--server.port", "8001"]
