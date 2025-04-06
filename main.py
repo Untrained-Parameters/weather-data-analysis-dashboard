@@ -5,8 +5,6 @@ import streamlit as st
 import altair as alt
 import matplotlib.pyplot as plt 
 import streamlit.components.v1 as components
-# from streamlit_folium import folium_static
-# import folium
 import requests
 from datetime import datetime
 import pydeck as pdk

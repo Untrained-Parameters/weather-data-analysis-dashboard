@@ -1,3 +1,13 @@
+import json
+import requests
+import pandas as pd
+import plotly.graph_objects as go
+from shapely.geometry import Point
+from datetime import datetime, timedelta
+from sklearn.ensemble import RandomForestRegressor
+from dateutil.relativedelta import relativedelta
+import streamlit as st
+
 def generate_rainfall_forecast_plot(month: str, latitude: float, longitude: float):
     """
     Generate and display a Plotly chart of actual vs predicted daily rainfall.
@@ -10,15 +20,6 @@ def generate_rainfall_forecast_plot(month: str, latitude: float, longitude: floa
         latitude (float): Latitude of location
         longitude (float): Longitude of location
     """
-    import json
-    import requests
-    import pandas as pd
-    import plotly.graph_objects as go
-    from shapely.geometry import Point
-    from datetime import datetime, timedelta
-    from sklearn.ensemble import RandomForestRegressor
-    from dateutil.relativedelta import relativedelta
-    import streamlit as st
 
     hcdp_api_token = "c8aebebea3d9684526cfdab0fc62cbd6"
     api_base_url = "https://api.hcdp.ikewai.org"
