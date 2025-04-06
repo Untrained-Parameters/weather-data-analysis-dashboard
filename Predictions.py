@@ -134,26 +134,40 @@ def plot_rainfall_forecast(input_month: str, lat: float, lon: float):
         y=df_actual["rainfall"],
         mode='lines',
         name='Actual Rainfall (Past 5 Months)',
-        line=dict(width=2)
+        line=dict(width=3)
     ))
-    
+
     fig.add_trace(go.Scatter(
         x=df_forecast["date"],
         y=df_forecast["predicted_rainfall"],
         mode='lines',
         name=f'Predicted Rainfall ({input_month})',
-        line=dict(width=2)
+        line=dict(width=3)
     ))
-    
+
     fig.update_layout(
-        title="Actual vs Predicted Daily Rainfall",
-        xaxis_title="Date",
-        yaxis_title="Rainfall (mm)",
-        legend=dict(x=0.01, y=0.99),
+        title=dict(
+            text="Actual vs Predicted Daily Rainfall",
+            font=dict(size=25)
+        ),
+        xaxis=dict(
+            title=dict(text="Date", font=dict(size=24)),
+            tickfont=dict(size=20),
+            showgrid=False
+        ),
+        yaxis=dict(
+            title=dict(text="Rainfall (mm)", font=dict(size=24)),
+            tickfont=dict(size=20),
+            showgrid=False
+        ),
+        legend=dict(
+            x=0.01,
+            y=0.99,
+            font=dict(size=20)
+        ),
+        font=dict(size=18),  # Base font size
         template='plotly_white',
-        height=500,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=False)
+        height=500
     )
-    
+
     st.plotly_chart(fig)
