@@ -1,4 +1,22 @@
+# Core libraries
 pandas
 numpy
-streamlit
+requests
+datetime
+pytz
+dateutil
+shapely
+
+# Plotting and visualization
+matplotlib
 altair
+pydeck
+plotly
+vega_datasets
+
+# Streamlit and related
+streamlit
+streamlit-extras
+
+# Machine learning
+scikit-learn
