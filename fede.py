@@ -16,6 +16,16 @@ import pydeck as pdk
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
 # Sidebar
+
+st.sidebar.markdown(
+    """
+    <div style="background-color:#e0f7fa; padding: 10px; border-radius: 10px;">
+        <h3 style="color:#00695c; text-align:center;">🌺 Hawaiʻi Climate Explorer</h3>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 st.sidebar.markdown("### Location")
 # st.session_state.selected_island = st.sidebar.selectbox("Select Island", ["Kauaʻi", "Oʻahu", "Molokaʻi", "Lānaʻi", "Maui", "Hawaiʻi (Big Island)"])
 selected_page = st.sidebar.selectbox('Select a Page:', ('All Islands', 'Kauaʻi', 'Oʻahu', 'Molokaʻi', 'Lānaʻi', 'Maui', 'Hawaiʻi (Big Island)'))
