@@ -60,9 +60,9 @@ display_type = st.sidebar.radio("Choose Data", ["General Overview",
     "Rainfall", "Temperature", "Humidity", "NVDI", "Ignition Probability",
     "Future Climate Predictions", "Contemporary Climatology", "Legacy Climatology"])
 
-# Toggle state setup
-if "view_toggle" not in st.session_state:
-    st.session_state.view_toggle = "Map"
+# # Toggle state setup
+# if "view_toggle" not in st.session_state:
+#     st.session_state.view_toggle = "Map"
 
 #Main Dashboard
 main_col, chat_col = st.columns([4,1])
@@ -101,7 +101,7 @@ with main_col:
 
         chart_data = pd.read_csv("2016-2022.csv")
         chart_data = chart_data.rename(columns={'longitude': 'lon', 'latitude': 'lat'})
-        chart_data = chart_data[chart_data['Time'] == '01/01/2016']
+        chart_data = chart_data[chart_data['Time'] == st.session_state.date_input]
 
         weight_column = "rainfall"
 
@@ -150,7 +150,7 @@ with main_col:
         
 
     # Main Dashboard (only new blocks for each island below)
-    today = datetime.today()
+    # today = datetime.today()
     if selected_page == 'Oʻahu':
         page_title = f"Weather Dashboard for Oʻahu" if display_type == "General Overview" else f"{display_type} in Oʻahu"
         st.markdown(f'''
