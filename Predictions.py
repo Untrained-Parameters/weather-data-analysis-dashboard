@@ -116,13 +116,31 @@ def plot_rainfall_forecast(input_month: str, lat: float, lon: float):
     ]).sort_values("date")
 
     # Plot
-    plt.figure(figsize=(12, 6))
-    plt.plot(df_actual["date"], df_actual["rainfall"], label="Actual Rainfall (Past 5 Months)", linewidth=2)
-    plt.plot(df_forecast["date"], df_forecast["predicted_rainfall"], label=f"Predicted Rainfall ({input_month} from Apr 3)", linewidth=2)
-    plt.xlabel("Date")
-    plt.ylabel("Rainfall (mm)")
-    plt.title("Actual vs Predicted Daily Rainfall")
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(
+        x=df_actual["date"],
+        y=df_actual["rainfall"],
+        mode='lines',
+        name='Actual Rainfall (Past 5 Months)',
+        line=dict(width=2)
+    ))
+    
+    fig.add_trace(go.Scatter(
+        x=df_forecast["date"],
+        y=df_forecast["predicted_rainfall"],
+        mode='lines',
+        name=f'Predicted Rainfall ({input_month} from Apr 3)',
+        line=dict(width=2)
+    ))
+    
+    fig.update_layout(
+        title="Actual vs Predicted Daily Rainfall",
+        xaxis_title="Date",
+        yaxis_title="Rainfall (mm)",
+        legend=dict(x=0.01, y=0.99),
+        template='plotly_white',
+        height=500
+    )
+    
+    fig.show()
