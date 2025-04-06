@@ -359,48 +359,51 @@ with main_col:
     # Main Dashboard (only new blocks for each island below)
     # today = datetime.today()
     if selected_page == 'Oʻahu':
-        page_title = f"Weather Dashboard for Oʻahu" if display_type == "General Overview" else f"{display_type} in Oʻahu"
-        st.markdown(f'''
-        # {page_title}
-        > Oʻahu, known as "The Gathering Place," is the third-largest of the Hawaiian Islands...
-        ---
-        ''')
-        if display_type == "General Overview":
-            # Conditional Metrics Based on View
-            col1, col2, col3, col4, col5, col6 = st.columns(6)
-            if metric_view == "Daily":
-                with col1:
-                    st.metric("Daily Precip", "3.2 mm","10%")
-                with col2:
-                    st.metric("Max Temp", "30.1 °C","2%")
-                with col3:
-                    st.metric("Min Temp", "21.7 °C","-4%")
-                with col4:
-                    st.metric("Humidity", "75%","12%")
-                with col5:
-                    st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
-                with col6:
-                    st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-            else:
-                with col1:
-                    st.metric("Monthly Precip", "85 mm","13%")
-                with col2:
-                    st.metric("Avg Max Temp", "29.5 °C","5%")
-                with col3:
-                    st.metric("Avg Min Temp", "22.3 °C","10%")
-                with col4:
-                    st.metric("Avg Humidity", "77%","11%")
-                with col5:
-                    st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
-                with col6:
-                    st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-            oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9, tiles=None, min_zoom=6, max_bounds=True)
-            folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
-            folium_static(oahu_map)
-        elif display_type=="Rainfall":
-            plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="rainfall")
-        elif display_type=="Temperature":
-            plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="temperature")
+        if display_type=="Future Climate Predictions":
+            st.write("Hello")
+        else:
+            page_title = f"Weather Dashboard for Oʻahu" if display_type == "General Overview" else f"{display_type} in Oʻahu"
+            st.markdown(f'''
+            # {page_title}
+            > Oʻahu, known as "The Gathering Place," is the third-largest of the Hawaiian Islands...
+            ---
+            ''')
+            if display_type == "General Overview":
+                # Conditional Metrics Based on View
+                col1, col2, col3, col4, col5, col6 = st.columns(6)
+                if metric_view == "Daily":
+                    with col1:
+                        st.metric("Daily Precip", "3.2 mm","10%")
+                    with col2:
+                        st.metric("Max Temp", "30.1 °C","2%")
+                    with col3:
+                        st.metric("Min Temp", "21.7 °C","-4%")
+                    with col4:
+                        st.metric("Humidity", "75%","12%")
+                    with col5:
+                        st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
+                    with col6:
+                        st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
+                else:
+                    with col1:
+                        st.metric("Monthly Precip", "85 mm","13%")
+                    with col2:
+                        st.metric("Avg Max Temp", "29.5 °C","5%")
+                    with col3:
+                        st.metric("Avg Min Temp", "22.3 °C","10%")
+                    with col4:
+                        st.metric("Avg Humidity", "77%","11%")
+                    with col5:
+                        st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
+                    with col6:
+                        st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
+                oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9, tiles=None, min_zoom=6, max_bounds=True)
+                folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
+                folium_static(oahu_map)
+            elif display_type=="Rainfall":
+                plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="rainfall")
+            elif display_type=="Temperature":
+                plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="temperature")
 
 
     elif selected_page == "Kauaʻi":
