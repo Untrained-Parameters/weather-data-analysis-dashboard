@@ -12,6 +12,9 @@ from transformers import AutoTokenizer, AutoModelForQuestionAnswering, pipeline
 from datetime import datetime
 import pydeck as pdk
 
+# setting page configuration
+st.set_page_config(layout='wide', initial_sidebar_state='expanded')
+
 # Inject full screen style with no scrolling
 st.markdown("""
     <style>
@@ -30,9 +33,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-
-# setting page configuration
-st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
 # Sidebar
 st.sidebar.markdown("### Location")
