@@ -320,7 +320,7 @@ with main_col:
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
             Predictions.generate_rainfall_forecast_plot(month_pred, 21.688333, -157.952500)
         else:
-            page_title = f"Weather Dashboard for Oʻahu" if st.session_state["display_type"] == "General Overview" else f"{st.session_state["display_type"]} in Oʻahu"
+            page_title = f"Weather Dashboard for Oʻahu" if st.session_state["display_type"] == "General Overview" else f"{st.session_state['display_type']} in Oʻahu"
             st.markdown(f'''
             # {page_title}
             > Oʻahu, known as "The Gathering Place," is the third-largest of the Hawaiian Islands...
@@ -377,7 +377,7 @@ with main_col:
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
             Predictions.generate_rainfall_forecast_plot(month_pred, 21.981570, -159.342206)
         else:
-            page_title = f"Weather Dashboard for Kauaʻi" if st.session_state["display_type"] == "General Overview" else f"{st.session_state["display_type"]} in Kauaʻi"
+            page_title = f"Weather Dashboard for Kauaʻi" if st.session_state["display_type"] == "General Overview" else f"{st.session_state['display_type']} in Kauaʻi"
             st.markdown(f'''
             # {page_title}
             > Kauaʻi, also known as the Garden Isle, is the oldest of the main Hawaiian Islands...
@@ -438,7 +438,7 @@ with main_col:
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
             Predictions.generate_rainfall_forecast_plot(month_pred, 21.31667, -158.06667)
         else:
-            page_title = f"Weather Dashboard for Molokaʻi" if st.session_state["display_type"] == "General Overview" else f"{st.session_state["display_type"]} in Molokaʻi"
+            page_title = f"Weather Dashboard for Molokaʻi" if st.session_state["display_type"] == "General Overview" else f"{st.session_state['display_type']} in Molokaʻi"
             st.markdown(f'''
             # {page_title}
             > Molokaʻi is known for its high sea cliffs and rural lifestyle...
@@ -499,7 +499,7 @@ with main_col:
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
             Predictions.generate_rainfall_forecast_plot(month_pred, 21.31667, -158.06667)
         else:
-            page_title = f"Weather Dashboard for Lānaʻi" if st.session_state["display_type"] == "General Overview" else f"{st.session_state["display_type"]} in Lānaʻi"
+            page_title = f"Weather Dashboard for Lānaʻi" if st.session_state["display_type"] == "General Overview" else f"{st.session_state['display_type']} in Lānaʻi"
             st.markdown(f'''
             # {page_title}
             > Lānaʻi, the smallest publicly accessible inhabited island in Hawaii...
@@ -581,7 +581,7 @@ with main_col:
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
             Predictions.generate_rainfall_forecast_plot(month_pred, 21.31667, -158.06667)
         else:
-            page_title = f"Weather Dashboard for Maui" if st.session_state["display_type"] == "General Overview" else f"{st.session_state["display_type"]} in Maui"
+            page_title = f"Weather Dashboard for Maui" if st.session_state["display_type"] == "General Overview" else f"{st.session_state['display_type']} in Maui"
             st.markdown(f'''
             # {page_title}
             > Maui is known for its beaches, the sacred ʻĪao Valley, and the scenic Hana Highway...
@@ -642,7 +642,7 @@ with main_col:
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
             Predictions.generate_rainfall_forecast_plot(month_pred, 19.83639, -155.613)
         else:
-            page_title = f"Weather Dashboard for Hawaiʻi (Big Island)" if st.session_state["display_type"] == "General Overview" else f"{st.session_state["display_type"]} in Hawaiʻi (Big Island)"
+            page_title = f"Weather Dashboard for Hawaiʻi (Big Island)" if st.session_state["display_type"] == "General Overview" else f"{st.session_state['display_type']} in Hawaiʻi (Big Island)"
             st.markdown(f'''
             # {page_title}
             > The Big Island is the largest in the Hawaiian archipelago and features diverse climates and active volcanoes...
