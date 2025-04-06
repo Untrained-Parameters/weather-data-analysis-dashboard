@@ -101,10 +101,10 @@ def plot_chart(date_input, island_name, variable):
         chart_data = chart_data.rename(columns={"max-temp": "max_temp"})
         value_column = "max_temp"
 
-    print('--------------------------')
-    print('--------------------------')
-    print(variable)
-    print(chart_data)
+    # print('--------------------------')
+    # print('--------------------------')
+    # print(variable)
+    # print(chart_data)
     if island_name=='Oahu':
         lati = 21.44
         longi = -157.9
@@ -143,8 +143,8 @@ def plot_chart(date_input, island_name, variable):
         units = "°C"
         color = [[255, 255, 0]] * 6
 
-    print(np.min(chart_data[value_column]), np.max(chart_data[value_column]))
-    print(chart_data[value_column].dtype)
+    # print(np.min(chart_data[value_column]), np.max(chart_data[value_column]))
+    # print(chart_data[value_column].dtype)
 
     st.pydeck_chart(
         pdk.Deck(
@@ -218,8 +218,17 @@ def island_bar_chart(date_input=st.session_state.date_input, variable="rainfall"
         )
         .properties(
             width=600,
-            height=300,
+            height=400,
             title=f"{'Median Rainfall' if variable == 'rainfall' else 'Max Temperature'} by Island"
+        )
+        .configure_title(fontSize=25)
+        .configure_axis(
+            labelFontSize=20,
+            titleFontSize=24
+        )
+        .configure_legend(
+            labelFontSize=20,
+            titleFontSize=20
         )
     )
 
