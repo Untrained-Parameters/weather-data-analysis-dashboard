@@ -11,7 +11,7 @@ def get_chat_response(chat_history):
     Returns:
         str: The model's response.
     """
-    url = "http://localhost:8000/chat"  # Ensure the URL is correct and includes the protocol (http://)
+    url = "http://backend/chat"  # Ensure the URL is correct and includes the protocol (http://)
     
     payload = json.dumps({
         "messages": chat_history
