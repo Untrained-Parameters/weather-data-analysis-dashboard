@@ -62,10 +62,6 @@ display_type = st.sidebar.radio("Choose Data", ["General Overview",
     "Rainfall", "Temperature", "Humidity", "NVDI", "Ignition Probability",
     "Future Climate Predictions", "Contemporary Climatology", "Legacy Climatology"])
 
-# # Toggle state setup
-# if "view_toggle" not in st.session_state:
-#     st.session_state.view_toggle = "Map"
-
 #Main Dashboard
 main_col, chat_col = st.columns([4,1])
 
@@ -184,13 +180,20 @@ with main_col:
         ---
         ''')
 
-        col1, col2, _ = st.columns([0.2, 0.05, 0.2])
-        with col1:
-            if st.button("📍 Show Map"):
+        # Create 3 columns: left button, center message, right button
+        left_col, center_col, right_col = st.columns([1, 3, 1])
+
+        with left_col:
+            if st.button("📍 Show Map"):
                 st.session_state.active_view = "map"
-        with col2:
-            if st.button("📊 Show Graph"):
+
+        with center_col:
+            st.markdown("<div style='text-align: center; font-size: 26px'>⬅️ &nbsp; <strong>Choose how to visualize the data</strong> &nbsp; ➡️</div>", unsafe_allow_html=True)
+
+        with right_col:
+            if st.button("📊 Show Graph"):
                 st.session_state.active_view = "graph"
+
 
         # Display the appropriate view
         if st.session_state.active_view == "map":
