@@ -16,20 +16,15 @@ import pydeck as pdk
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
 # Sidebar
-st.markdown(
+
+st.sidebar.markdown(
     """
     <style>
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@700&family=Inter:wght@400&display=swap');
 
-    /* Apply Inter to everything in the app */
-    html, body, [class*="css"]  {
-        font-family: 'Inter', sans-serif !important;
-    }
-
-    /* Custom title in sidebar using IBM Plex Sans */
     .sidebar-title {
-        font-family: 'IBM Plex Sans', sans-serif !important;
-        color: #004d40;
+        font-family: 'IBM Plex Sans', sans-serif;
+        color: #206af1;
         font-size: 35px;
         text-align: center;
         margin-bottom: 20px;
@@ -42,8 +37,6 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
-
 
 
 
