@@ -68,11 +68,11 @@ if metric_view == "Daily":
     elev_factor = 300
 else:
     st.sidebar.markdown("### Date")
-    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/YYYY)","12/2016")
+    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/YYYY)","01/2025")
     elev_factor = 150
 
 def plot_chart(date_input, island_name, variable):
-    if island_name == "All":
+    if island_name == "All" and variable == 'rainfall':
         chart_data_1 = data_function.get_station_data_for_period(date_input, "Oahu", variable)
         chart_data_2 = data_function.get_station_data_for_period(date_input, "Kauai", variable)
         chart_data_3 = data_function.get_station_data_for_period(date_input, "Molokai", variable)
@@ -81,14 +81,26 @@ def plot_chart(date_input, island_name, variable):
         chart_data_6 = data_function.get_station_data_for_period(date_input, "Hawaii (Big Island)", variable)
         # chart_data_7 = data_function.get_station_data_for_period(date_input, "Niihau", variable)
         # chart_data_8 = data_function.get_station_data_for_period(date_input, "Kahoolawe", variable)
-
         chart_data = pd.concat([chart_data_1, chart_data_2, chart_data_3, chart_data_4, chart_data_5, chart_data_6], ignore_index=True)
-    else:
+    elif island_name != "All" and variable == 'rainfall':
         chart_data = data_function.get_station_data_for_period(date_input, island_name, variable)
-    # print('--------------------------')
-    # print('--------------------------')
-    # print(variable)
-    # print(chart_data)
+    elif island_name == "All" and variable == 'temperature':
+        chart_data_1 = temp.get_station_data_for_period_temp(date_input, "Oahu", variable)
+        chart_data_2 = temp.get_station_data_for_period_temp(date_input, "Kauai", variable)
+        chart_data_3 = temp.get_station_data_for_period_temp(date_input, "Molokai", variable)
+        chart_data_4 = temp.get_station_data_for_period_temp(date_input, "Lānai", variable)
+        chart_data_5 = temp.get_station_data_for_period_temp(date_input, "Maui", variable)
+        chart_data_6 = temp.get_station_data_for_period_temp(date_input, "Hawaii (Big Island)", variable)
+        # chart_data_7 = data_function.get_station_data_for_period(date_input, "Niihau", variable)
+        # chart_data_8 = data_function.get_station_data_for_period(date_input, "Kahoolawe", variable)
+        chart_data = pd.concat([chart_data_1, chart_data_2, chart_data_3, chart_data_4, chart_data_5, chart_data_6], ignore_index=True)
+    elif island_name != "All" and variable == 'temperature':
+        chart_data = temp.get_station_data_for_period_temp(date_input, island_name, variable)
+
+    print('--------------------------')
+    print('--------------------------')
+    print(variable)
+    print(chart_data)
     if island_name=='Oahu':
         lati = 21.44
         longi = -157.9
@@ -674,7 +686,7 @@ with chat_col:
     </style>
     """, unsafe_allow_html=True)
 
-    with st.expander("🌐 Kai Climate Helper", expanded=False):
+    with st.expander("🌐 Kai Climate Helper", expanded=True):
         chat_history = st.session_state.setdefault("chat_history", [])
 
         if not chat_history:
