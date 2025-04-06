@@ -74,7 +74,7 @@ chart_data = chart_data[chart_data['Time'] == st.session_state.date_input]
 def plot_chart(chart_data=chart_data, weight_column='rainfall'):
     st.pydeck_chart(
         pdk.Deck(
-            map_style=None,
+            map_style='mapbox://styles/mapbox/satellite-v9',
             initial_view_state=pdk.ViewState(
                 latitude=20.5,
                 longitude=-157.0,
