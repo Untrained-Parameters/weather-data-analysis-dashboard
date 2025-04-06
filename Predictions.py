@@ -18,6 +18,7 @@ def generate_rainfall_forecast_plot(month: str, latitude: float, longitude: floa
     from datetime import datetime, timedelta
     from sklearn.ensemble import RandomForestRegressor
     from dateutil.relativedelta import relativedelta
+    import streamlit as st
 
     hcdp_api_token = "c8aebebea3d9684526cfdab0fc62cbd6"
     api_base_url = "https://api.hcdp.ikewai.org"
@@ -166,4 +167,4 @@ def generate_rainfall_forecast_plot(month: str, latitude: float, longitude: floa
         height=500
     )
 
-    fig.show()
+    st.plotly_chart(fig)

@@ -216,7 +216,7 @@ with main_col:
             # {page_title}
             ''')
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
-            Predictions.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
+            Predictions.generate_rainfall_forecast_plot(month_pred, 21.31667, -158.06667)
         else:
             st.markdown('''
             # Hawaiian Islands Overview
@@ -300,7 +300,7 @@ with main_col:
             # {page_title}
             ''')
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
-            Predictions.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
+            Predictions.generate_rainfall_forecast_plot(month_pred, 21.688333, -157.952500)
         else:
             page_title = f"Weather Dashboard for Oʻahu" if display_type == "General Overview" else f"{display_type} in Oʻahu"
             st.markdown(f'''
@@ -354,7 +354,7 @@ with main_col:
             # {page_title}
             ''')
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
-            Predictions.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
+            Predictions.generate_rainfall_forecast_plot(month_pred, 21.981570, -159.342206)
         else:
             page_title = f"Weather Dashboard for Kauaʻi" if display_type == "General Overview" else f"{display_type} in Kauaʻi"
             st.markdown(f'''
@@ -405,7 +405,7 @@ with main_col:
             # {page_title}
             ''')
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
-            Predictions.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
+            Predictions.generate_rainfall_forecast_plot(month_pred, 21.31667, -158.06667)
         else:
             page_title = f"Weather Dashboard for Molokaʻi" if display_type == "General Overview" else f"{display_type} in Molokaʻi"
             st.markdown(f'''
@@ -457,7 +457,7 @@ with main_col:
             # {page_title}
             ''')
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
-            Predictions.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
+            Predictions.generate_rainfall_forecast_plot(month_pred, 21.31667, -158.06667)
         else:
             page_title = f"Weather Dashboard for Lānaʻi" if display_type == "General Overview" else f"{display_type} in Lānaʻi"
             st.markdown(f'''
@@ -511,7 +511,7 @@ with main_col:
             # {page_title}
             ''')
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
-            Predictions.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
+            Predictions.generate_rainfall_forecast_plot(month_pred, 21.31667, -158.06667)
         else:
             page_title = f"Weather Dashboard for Maui" if display_type == "General Overview" else f"{display_type} in Maui"
             st.markdown(f'''
@@ -562,7 +562,7 @@ with main_col:
             # {page_title}
             ''')
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
-            Predictions.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
+            Predictions.generate_rainfall_forecast_plot(month_pred, 19.83639, -155.613)
         else:
             page_title = f"Weather Dashboard for Hawaiʻi (Big Island)" if display_type == "General Overview" else f"{display_type} in Hawaiʻi (Big Island)"
             st.markdown(f'''
