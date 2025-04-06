@@ -20,10 +20,13 @@ st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 st.sidebar.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@700&family=Inter:wght@400&display=swap');
 
+    html, body, [class*="css"]  {
+        font-family: 'Inter', sans-serif;
+    }
     .sidebar-title {
-        font-family: 'Poppins', sans-serif;
+        font-family: 'IBM Plex Sans', sans-serif;
         color: #206af1;
         font-size: 26px;
         text-align: center;
