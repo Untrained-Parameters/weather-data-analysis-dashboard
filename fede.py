@@ -95,6 +95,7 @@ with main_col:
 
         all_map.fit_bounds(bounds)
         folium_static(all_map)
+
         chart_data = pd.read_csv("2016-2022.csv")
         chart_data = chart_data.rename(columns={'longitude': 'lon', 'latitude': 'lat'})
         chart_data = chart_data[chart_data['Time'] == '01/01/2016']
@@ -142,6 +143,8 @@ with main_col:
                 }
             )
         )
+
+        
 
     # Main Dashboard (only new blocks for each island below)
     today = datetime.today()
