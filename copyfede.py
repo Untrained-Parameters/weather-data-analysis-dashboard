@@ -8,13 +8,13 @@ import streamlit.components.v1 as components
 from streamlit_folium import folium_static
 import folium
 import requests
-from transformers import AutoTokenizer, AutoModelForQuestionAnswering, pipeline
 from datetime import datetime
 import pydeck as pdk
 import plotly.express as px
 import plotly.graph_objects as go
 import warnings
 from streamlit_extras.stylable_container import stylable_container
+import data_function
 
 
 # setting page configuration
@@ -62,14 +62,12 @@ display_type = st.sidebar.radio("Choose Data", ["General Overview",
     "Rainfall", "Temperature", "Humidity", "NVDI", "Ignition Probability",
     "Future Climate Predictions", "Contemporary Climatology", "Legacy Climatology"])
 
-#Main Dashboard
-main_col, chat_col = st.columns([4,1])
-
-chart_data = pd.read_csv("2016-2022.csv")
-chart_data = chart_data.rename(columns={'longitude': 'lon', 'latitude': 'lat'})
-chart_data = chart_data[chart_data['Time'] == st.session_state.date_input]
-
-def plot_chart(chart_data=chart_data, weight_column='rainfall'):
+def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="rainfall"):
+    # print(date_input)
+    # print(island_name)
+    # print(variable)
+    chart_data = data_function.get_station_data_for_period(date_input, island_name, variable)
+    print(chart_data)
     st.pydeck_chart(
         pdk.Deck(
             map_style='mapbox://styles/mapbox/satellite-v9',
@@ -90,7 +88,7 @@ def plot_chart(chart_data=chart_data, weight_column='rainfall'):
                     elevation_range=[0, 1000],
                     pickable=True,
                     extruded=True,
-                    get_elevation_weight=weight_column,  # You can change this to 'max-temp' or any other numeric column
+                    get_elevation_weight=variable,  # You can change this to 'max-temp' or any other numeric column
                     elevation_aggregation='SUM',
                 ),
                 pdk.Layer(
@@ -103,7 +101,7 @@ def plot_chart(chart_data=chart_data, weight_column='rainfall'):
                 ),
             ],
             tooltip={
-                "text": f"{weight_column} (sum): {{elevationValue}}",
+                "text": f"{variable} (sum): {{elevationValue}}",
                 "style": {
                     "backgroundColor": "#206af1",
                     "color": "white"
@@ -112,8 +110,8 @@ def plot_chart(chart_data=chart_data, weight_column='rainfall'):
         )
     )
 
-import streamlit as st
-import pydeck as pdk
+#Main Dashboard
+main_col, chat_col = st.columns([4,1])
 
 # Function to show chart
 def get_chart_98185(use_container_width: bool):
@@ -213,10 +211,10 @@ with main_col:
         # Continue with the rest of your content
         # if display_type == "General Overview":
         #     plot_chart()
-        if display_type == "Rainfall":
-            plot_chart(weight_column='rainfall')
-        elif display_type == "Temperature":
-            plot_chart(weight_column='avg-temp')
+        if display_type=="Rainfall":
+            plot_chart(date_input=st.session_state.date_input, island_name="All", variable="rainfall")
+        elif display_type=="Temperature":
+            plot_chart(date_input=st.session_state.date_input, island_name="All", variable="temperature")
 
 # with main_col:
 #     # Default Homepage Map if no selection yet or fallback
@@ -297,10 +295,11 @@ with main_col:
             oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9, tiles=None, min_zoom=6, max_bounds=True)
             folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
             folium_static(oahu_map)
-        else:
-            oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9, tiles=None, min_zoom=6, max_bounds=True)
-            folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
-            folium_static(oahu_map)
+        elif display_type=="Rainfall":
+            plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="rainfall")
+        elif display_type=="Temperature":
+            plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="temperature")
+
 
     elif selected_page == "Kauaʻi":
         page_title = f"Weather Dashboard for Kauaʻi" if display_type == "General Overview" else f"{display_type} in Kauaʻi"
