@@ -174,7 +174,7 @@ def compare_islands_plot(use_container_width=True,date_input=st.session_state.da
 
     chart = alt.Chart(source).transform_fold(
         ['Kauaʻi', 'Oʻahu', 'Molokaʻi', 'Lānaʻi', 'Maui', 'Hawaiʻi (Big Island)'],
-        as_=['Experiment', 'Measurement']
+        as_=['Hawaiian Islands', f'''# {variable}]''']
     ).mark_bar(
         opacity=0.3,
         binSpacing=0
@@ -184,12 +184,7 @@ def compare_islands_plot(use_container_width=True,date_input=st.session_state.da
         alt.Color('Experiment:N')
     )
 
-    tab1, tab2 = st.tabs(["Streamlit theme (default)", "Altair native theme"])
-
-    with tab1:
-        st.altair_chart(chart, theme="streamlit", use_container_width=True)
-    with tab2:
-        st.altair_chart(chart, theme=None, use_container_width=True)
+    st.altair_chart(chart, theme=None, use_container_width=True)
 
 
 #Main Dashboard
@@ -233,7 +228,10 @@ with main_col:
                     plot_chart(date_input=st.session_state.date_input, island_name="All", variable="temperature")
 
             elif st.session_state.active_view == "graph":
-                compare_islands_plot(use_container_width=True)
+                if display_type=="Rainfall":
+                    compare_islands_plot(use_container_width=True,date_input=st.session_state.date_input,variable="rainfall")
+                elif display_type=="Temperature":
+                    compare_islands_plot(use_container_width=True,date_input=st.session_state.date_input,variable="temperature")
         
 # with main_col:
 #     # Default Homepage Map if no selection yet or fallback
