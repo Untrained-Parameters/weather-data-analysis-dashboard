@@ -24,13 +24,12 @@ st.sidebar.markdown(
 
     .fancy-title {
         font-family: 'Playfair Display', serif;
-        color: #004d40;
+        color: #206af1;
         font-size: 28px;
         text-align: center;
         padding: 10px;
         background-color: #e0f2f1;
         border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
     </style>
 
