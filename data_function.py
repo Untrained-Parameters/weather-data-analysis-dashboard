@@ -4,7 +4,7 @@ def get_station_data_for_period(date_input: str, island_name: str, variable: str
 
     Parameters:
     - date_input (str): Either "MM/YYYY" for full month or "MM/DD/YYYY" for a specific day
-    - island_name (str): Name of the island (e.g., "Oahu", "Maui", "Lanai", etc.)
+    - island_name (str): Name of the island (e.g., "Oahu", "Maui", "Lanai", etc., or "All" for all islands)
     - variable (str): Either "temperature" or "rainfall"
 
     Returns:
@@ -43,7 +43,6 @@ def get_station_data_for_period(date_input: str, island_name: str, variable: str
             return [item | metadata.get(item["station_id"], {}) for item in res]
         return res
 
-    # Define all island polygons
     islands = {
         "Hawaii (Big Island)": Polygon([(-156.1, 18.9), (-154.7, 18.9), (-154.7, 20.3), (-156.1, 20.3)]),
         "Maui": Polygon([(-156.8, 20.5), (-156.2, 20.5), (-156.2, 21.0), (-156.8, 21.0)]),
@@ -52,7 +51,8 @@ def get_station_data_for_period(date_input: str, island_name: str, variable: str
         "Molokai": Polygon([(-157.4, 20.5), (-156.7, 20.5), (-156.7, 21.2), (-157.4, 21.2)]),
         "Lānai": Polygon([(-157.1, 20.7), (-156.8, 20.7), (-156.8, 21.0), (-157.1, 21.0)]),
         "Niihau": Polygon([(-160.3, 21.8), (-160.0, 21.8), (-160.0, 22.0), (-160.3, 22.0)]),
-        "Kahoolawe": Polygon([(-156.7, 20.5), (-156.5, 20.5), (-156.5, 20.7), (-156.7, 20.7)])
+        "Kahoolawe": Polygon([(-156.7, 20.5), (-156.5, 20.5), (-156.5, 20.7), (-156.7, 20.7)]),
+        "All": Polygon([(-160.3, 18.9), (-154.7, 18.9), (-154.7, 22.3), (-160.3, 22.3)])
     }
 
     def get_island(lat, lon):
@@ -62,9 +62,8 @@ def get_station_data_for_period(date_input: str, island_name: str, variable: str
                 return name
         return "Unknown or offshore"
 
-    # Normalize island input
     island_name = island_name.lower()
-    is_all_islands = island_name == "All"
+    is_all_islands = island_name == "all"
     matched_island = None
     if not is_all_islands:
         for name in islands.keys():
@@ -74,7 +73,6 @@ def get_station_data_for_period(date_input: str, island_name: str, variable: str
         if not matched_island:
             raise ValueError(f"Island '{island_name}' not recognized.")
 
-    # Determine date range
     try:
         if len(date_input) == 7:  # MM/YYYY
             start_date = datetime.strptime("01/" + date_input, "%d/%m/%Y")
@@ -159,5 +157,6 @@ def get_station_data_for_period(date_input: str, island_name: str, variable: str
     return df
 
 
-# df_test = get_station_data_for_period("01/01/2016","Oahu","rainfall")
+# # Example usage with "All"
+# df_test = get_station_data_for_period("01/01/2016", "All", "rainfall")
 # print(df_test)
