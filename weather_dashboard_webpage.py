@@ -34,10 +34,6 @@ display_type = st.sidebar.radio("Choose Data", ["General Overview",
     "Rainfall", "Temperature", "Humidity", "NVDI", "Ignition Probability",
     "Future Climate Predictions", "Contemporary Climatology", "Legacy Climatology"])
 
-# Toggle state setup
-if "view_toggle" not in st.session_state:
-    st.session_state.view_toggle = "Map"
-
 #Main Dashboard
 main_col, chat_col = st.columns([4,1])
 
@@ -70,44 +66,55 @@ with main_col:
             ).add_to(all_map)
 
         all_map.fit_bounds(bounds)
-        if st.session_state.view_toggle == "Map":
-            folium_static(all_map)
-        elif st.session_state.view_toggle == "Chart":
-            chart_data = pd.DataFrame(
-                np.random.randn(1000, 2) / [50, 50] + [37.76, -122.4],
-                columns=["lat", "lon"],
-            )
+        folium_static(all_map)
 
-            st.pydeck_chart(
-                pdk.Deck(
-                    map_style=None,
-                    initial_view_state=pdk.ViewState(
-                        latitude=37.76,
-                        longitude=-122.4,
-                        zoom=11,
-                        pitch=50,
+        chart_data = pd.read_csv("2016-2022.csv")
+        chart_data = chart_data.rename(columns={'longitude': 'lon', 'latitude': 'lat'})
+        chart_data = chart_data[chart_data['Time'] == '01/01/2016']
+
+        weight_column = "rainfall"
+
+        st.pydeck_chart(
+            pdk.Deck(
+                map_style=None,
+                initial_view_state=pdk.ViewState(
+                    latitude=20.5,
+                    longitude=-157.0,
+                    zoom=7,
+                    pitch=50,
+                ),
+                layers=[
+                    pdk.Layer(
+                        "HexagonLayer",
+                        data=chart_data,
+                        get_position='[lon, lat]',
+                        auto_highlight=True,
+                        radius=200,
+                        elevation_scale=50,
+                        elevation_range=[0, 1000],
+                        pickable=True,
+                        extruded=True,
+                        get_elevation_weight=weight_column,  # You can change this to 'max-temp' or any other numeric column
+                        elevation_aggregation='SUM',
                     ),
-                    layers=[
-                        pdk.Layer(
-                            "HexagonLayer",
-                            data=chart_data,
-                            get_position="[lon, lat]",
-                            radius=200,
-                            elevation_scale=4,
-                            elevation_range=[0, 1000],
-                            pickable=True,
-                            extruded=True,
-                        ),
-                        pdk.Layer(
-                            "ScatterplotLayer",
-                            data=chart_data,
-                            get_position="[lon, lat]",
-                            get_color="[200, 30, 0, 160]",
-                            get_radius=200,
-                        ),
-                    ],
-                )
+                    pdk.Layer(
+                        "ScatterplotLayer",
+                        data=chart_data,
+                        get_position='[lon, lat]',
+                        get_color='[0, 0, 0, 0]',  # Fully transparent, just for hover info
+                        get_radius=1,
+                        pickable=True,
+                    ),
+                ],
+                tooltip={
+                    "text": f"{weight_column} (sum): {{elevationValue}}",
+                    "style": {
+                        "backgroundColor": "#206af1",
+                        "color": "white"
+                    }
+                }
             )
+        )
 
     # Main Dashboard (only new blocks for each island below)
     today = datetime.today()
@@ -275,61 +282,6 @@ with main_col:
         bigisland_map = folium.Map(location=[19.6, -155.5], zoom_start=8, tiles=None, min_zoom=6, max_bounds=True)
         folium.TileLayer('Esri.WorldImagery').add_to(bigisland_map)
         folium_static(bigisland_map)
-
-    # Inject styles
-    st.markdown("""
-        <style>
-        .toggle-btn-container {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #f0f2f6;
-            border-radius: 50px;
-            padding: 8px 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            display: flex;
-            gap: 10px;
-            z-index: 1000;
-        }
-        .toggle-btn {
-            padding: 8px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 25px;
-            border: none;
-            cursor: pointer;
-            background-color: #e0e0e0;
-            color: black;
-        }
-        .toggle-btn-active {
-            background-color: #1f77b4;
-            color: white;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
-    # Use HTML for button appearance and Streamlit for logic
-    col1, col2, _ = st.columns([1, 1, 2])
-    with col1:
-        if st.button("🗺 Map"):
-            st.session_state.view_toggle = "Map"
-    with col2:
-        if st.button("📊 Chart"):
-            st.session_state.view_toggle = "Chart"
-
-    # Re-render the floating buttons using HTML and show which one is active
-    active_map = "toggle-btn toggle-btn-active" if st.session_state.view_toggle == "Map" else "toggle-btn"
-    active_chart = "toggle-btn toggle-btn-active" if st.session_state.view_toggle == "Chart" else "toggle-btn"
-
-    st.markdown(f"""
-        <div class="toggle-btn-container">
-            <form method="get">
-                <button class="{active_map}" onclick="window.location.reload()">🗺 Map</button>
-                <button class="{active_chart}" onclick="window.location.reload()">📊 Chart</button>
-            </form>
-        </div>
-    """, unsafe_allow_html=True)
 
 
 with chat_col:
