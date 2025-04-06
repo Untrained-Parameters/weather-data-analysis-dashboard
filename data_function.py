@@ -157,5 +157,5 @@ def get_station_data_for_period(date_input: str, island_name: str, variable: str
     return df
 
 
-# df_test = get_station_data_for_period("01/01/2016","Oahu","rainfall")
-# print(df_test)
+df_test = get_station_data_for_period("01/01/2016","Oahu","rainfall")
+print(df_test)
