@@ -674,7 +674,7 @@ with chat_col:
     </style>
     """, unsafe_allow_html=True)
 
-    with st.expander("🌐 Kai Climate Helper", expanded=True):
+    with st.expander("🌐 Kai Climate Helper", expanded=False):
         chat_history = st.session_state.setdefault("chat_history", [])
 
         if not chat_history:
