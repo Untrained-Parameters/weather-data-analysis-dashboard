@@ -12,6 +12,25 @@ from transformers import AutoTokenizer, AutoModelForQuestionAnswering, pipeline
 from datetime import datetime
 import pydeck as pdk
 
+# Inject full screen style with no scrolling
+st.markdown("""
+    <style>
+    html, body, [data-testid="stApp"] {
+        overflow: hidden;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+    }
+    section.main > div.block-container {
+        padding-top: 0rem;
+        padding-bottom: 0rem;
+        height: 100vh;
+        overflow: hidden;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+
 # setting page configuration
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
