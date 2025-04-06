@@ -43,7 +43,6 @@ st.sidebar.markdown(
 )
 
 
-
 st.sidebar.markdown("### Location")
 # st.session_state.selected_island = st.sidebar.selectbox("Select Island", ["Kauaʻi", "Oʻahu", "Molokaʻi", "Lānaʻi", "Maui", "Hawaiʻi (Big Island)"])
 selected_page = st.sidebar.selectbox('Select a Page:', ('All Islands', 'Kauaʻi', 'Oʻahu', 'Molokaʻi', 'Lānaʻi', 'Maui', 'Hawaiʻi (Big Island)'))
@@ -63,19 +62,52 @@ display_type = st.sidebar.radio("Choose Data", ["General Overview",
     "Future Climate Predictions", "Contemporary Climatology", "Legacy Climatology"])
 
 def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="rainfall"):
-    # print(date_input)
-    # print(island_name)
-    # print(variable)
-    chart_data = data_function.get_station_data_for_period(date_input, island_name, variable)
-    print(chart_data)
+    if island_name == "All":
+        chart_data_1 = data_function.get_station_data_for_period(date_input, "Oahu", variable)
+        chart_data_2 = data_function.get_station_data_for_period(date_input, "Kauai", variable)
+        chart_data_3 = data_function.get_station_data_for_period(date_input, "Molokai", variable)
+        chart_data_4 = data_function.get_station_data_for_period(date_input, "Lānai", variable)
+        chart_data_5 = data_function.get_station_data_for_period(date_input, "Maui", variable)
+        chart_data_6 = data_function.get_station_data_for_period(date_input, "Hawaii (Big Island)", variable)
+        chart_data_7 = data_function.get_station_data_for_period(date_input, "Niihau", variable)
+        chart_data_8 = data_function.get_station_data_for_period(date_input, "Kahoolawe", variable)
+
+        chart_data = pd.concat([chart_data_1, chart_data_2, chart_data_3, chart_data_4, chart_data_5, chart_data_6, chart_data_7, chart_data_8], ignore_index=True)
+    else:
+        chart_data = data_function.get_station_data_for_period(date_input, island_name, variable)
+    if island_name=='Oahu':
+        lati = 21.44
+        longi = -157.9
+        zoom = 9.5
+    elif island_name=='Kauai':
+        lati = 22.1
+        longi = -159.5
+        zoom = 10
+    elif island_name=='Molokai':
+        lati = 21.13
+        longi = -157.02
+        zoom = 10
+    elif island_name=='Maui':
+        lati = 20.8
+        longi = -156.3
+        zoom = 10
+    elif island_name=='Lānai':
+        lati = 20.83
+        longi = -156.92
+        zoom = 10
+    elif island_name=='Hawaii (Big Island)':
+        lati = 18.9
+        longi = -156.1
+        zoom = 10
+
+    
     st.pydeck_chart(
         pdk.Deck(
             map_style='mapbox://styles/mapbox/satellite-v9',
-            # map_style = None,
             initial_view_state=pdk.ViewState(
-                latitude=20.5,
-                longitude=-157,
-                zoom=7,
+                latitude=lati,
+                longitude=longi,
+                zoom=zoom,
                 pitch=50,
             ),
             layers=[
@@ -83,59 +115,33 @@ def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", varia
                     "HexagonLayer",
                     data=chart_data,
                     get_position="[lon, lat]",
+                    auto_highlight=True,
                     radius=300,
-                    elevation_scale=50,
-                    elevation_range=[0, 1000],
+                    elevation_scale=100*np.median(chart_data[variable]),
                     get_elevation_weight=variable,
-                    elevation_aggregation='SUM',
+                    elevation_range=[np.min(chart_data[variable]),np.max(chart_data[variable])],
+                    coverage=1,
                     pickable=True,
                     extruded=True,
+                    # color_range=[
+                    #     [1, 152, 189],
+                    #     [73, 227, 206],
+                    #     [216, 254, 181],
+                    #     [254, 237, 177],
+                    #     [254, 173, 84],
+                    #     [209, 55, 78],
+                    # ],
                 ),
             ],
+            tooltip={
+                "text": f"{variable}: {{elevationValue}}",
+                "style": {
+                    "backgroundColor": "#206af1",
+                    "color": "white",
+                },
+            },
         ),
     )
-
-    # st.pydeck_chart(
-    #     pdk.Deck(
-    #         map_style='mapbox://styles/mapbox/satellite-v9',
-    #         initial_view_state=pdk.ViewState(
-    #             latitude=20.5,
-    #             longitude=-157.0,
-    #             zoom=7,
-    #             pitch=50,
-    #         ),
-    #         layers=[
-    #             pdk.Layer(
-    #                 "HexagonLayer",
-    #                 data=chart_data,
-    #                 get_position='[lon, lat]',
-    #                 auto_highlight=True,
-    #                 radius=200,
-    #                 elevation_scale=50,
-    #                 elevation_range=[0, 1000],
-    #                 pickable=True,
-    #                 extruded=True,
-    #                 get_elevation_weight=variable,  # You can change this to 'max-temp' or any other numeric column
-    #                 elevation_aggregation='SUM',
-    #             ),
-    #             pdk.Layer(
-    #                 "ScatterplotLayer",
-    #                 data=chart_data,
-    #                 get_position='[lon, lat]',
-    #                 get_color='[0, 0, 0, 0]',  # Fully transparent, just for hover info
-    #                 get_radius=1,
-    #                 pickable=True,
-    #             ),
-    #         ],
-    #         tooltip={
-    #             "text": f"{variable} (sum): {{elevationValue}}",
-    #             "style": {
-    #                 "backgroundColor": "#206af1",
-    #                 "color": "white"
-    #             }
-    #         }
-    #     )
-    # )
 
 #Main Dashboard
 main_col, chat_col = st.columns([4,1])
