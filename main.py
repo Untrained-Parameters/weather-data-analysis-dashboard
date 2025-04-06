@@ -5,8 +5,8 @@ import streamlit as st
 import altair as alt
 import matplotlib.pyplot as plt 
 import streamlit.components.v1 as components
-from streamlit_folium import folium_static
-import folium
+# from streamlit_folium import folium_static
+# import folium
 import requests
 from datetime import datetime
 import pydeck as pdk
@@ -270,44 +270,7 @@ with main_col:
                     island_bar_chart(use_container_width=True,date_input=st.session_state.date_input,variable="rainfall")
                 elif display_type=="Temperature":
                     island_bar_chart(use_container_width=True,date_input=st.session_state.date_input,variable="temperature")
-        
-# with main_col:
-#     # Default Homepage Map if no selection yet or fallback
-#     if selected_page == 'All Islands':
-#         st.markdown('''
-#         # Hawaiian Islands Overview
-#         > Explore climate data in the main islands of Hawaiʻi. 
-#         ---
-#         ''')
-#         # bounds = [[18.5, -161.0], [22.25, -154.5]]
-#         # all_map = folium.Map(location=[20.5, -157.0], zoom_start=7, tiles=None, min_zoom=6, max_bounds=True)
-#         # folium.TileLayer('Esri.WorldImagery').add_to(all_map)
 
-#         # islands_info = {
-#         #     "Kauaʻi": [22.1, -159.5],
-#         #     'Oʻahu': [21.4389, -158.0],
-#         #     'Molokaʻi': [21.1333, -157.0167],
-#         #     'Lānaʻi': [20.8333, -156.9167],
-#         #     'Maui': [20.8, -156.3],
-#         #     'Hawaiʻi (Big Island)': [19.6, -155.5]
-#         # }
-#         # for name, coords in islands_info.items():
-#         #     folium.map.Marker(
-#         #         location=coords,
-#         #         icon=folium.DivIcon(
-#         #             html=f'<div style="font-size:16px;color:white;font-weight:bold;text-shadow:1px 1px 2px black;">{name}</div>'
-#         #         )
-#         #     ).add_to(all_map)
-
-#         # all_map.fit_bounds(bounds)
-#         # folium_static(all_map)
-
-#         if display_type=="General Overview":
-#             plot_chart()
-#         elif display_type=="Rainfall":
-#             plot_chart(weight_column='rainfall')
-#         elif display_type=="Temperature":
-#             plot_chart(weight_column='avg-temp')
 
     # Main Dashboard (only new blocks for each island below)
     # today = datetime.today()
@@ -356,9 +319,18 @@ with main_col:
                         st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
                     with col6:
                         st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-                oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9, tiles=None, min_zoom=6, max_bounds=True)
-                folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
-                folium_static(oahu_map)
+                st.pydeck_chart(
+                    pdk.Deck(
+                        map_style='mapbox://styles/mapbox/satellite-v9',
+                        initial_view_state=pdk.ViewState(
+                            latitude=21.44,
+                            longitude=-157.9,
+                            zoom=9.5,
+                            pitch=50,
+                            lati = 21.44
+                        ),
+                    ),
+                )
             elif display_type=="Rainfall":
                 plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="rainfall")
             elif display_type=="Temperature":
@@ -410,9 +382,17 @@ with main_col:
                         st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
                     with col6:
                         st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-                kauai_map = folium.Map(location=[22.1, -159.5], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
-                folium.TileLayer('Esri.WorldImagery').add_to(kauai_map)
-                folium_static(kauai_map)
+                st.pydeck_chart(
+                    pdk.Deck(
+                        map_style='mapbox://styles/mapbox/satellite-v9',
+                        initial_view_state=pdk.ViewState(
+                            latitude=22.1,
+                            longitude=-159.5,
+                            zoom=9.5,
+                            pitch=50,
+                        ),
+                    ),
+                )
             elif display_type=="Rainfall":
                 plot_chart(date_input=st.session_state.date_input, island_name="Kauai", variable="rainfall")
 
@@ -461,9 +441,17 @@ with main_col:
                         st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
                     with col6:
                         st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-                molokai_map = folium.Map(location=[21.1333, -157.0167], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
-                folium.TileLayer('Esri.WorldImagery').add_to(molokai_map)
-                folium_static(molokai_map)
+                st.pydeck_chart(
+                    pdk.Deck(
+                        map_style='mapbox://styles/mapbox/satellite-v9',
+                        initial_view_state=pdk.ViewState(
+                            latitude=21.13,
+                            longitude=-157.02,
+                            zoom=9.5,
+                            pitch=50, 
+                        ),
+                    ),
+                )
 
             elif display_type=="Rainfall":
                 plot_chart(date_input=st.session_state.date_input, island_name="Molokai", variable="rainfall")
@@ -513,13 +501,29 @@ with main_col:
                         st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
                     with col6:
                         st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-                lanai_map = folium.Map(location=[20.8333, -156.9167], zoom_start=11, tiles=None, min_zoom=6, max_bounds=True)
-                folium.TileLayer('Esri.WorldImagery').add_to(lanai_map)
-                folium_static(lanai_map)
+                st.pydeck_chart(
+                    pdk.Deck(
+                        map_style='mapbox://styles/mapbox/satellite-v9',
+                        initial_view_state=pdk.ViewState(
+                            latitude=20.83,
+                            longitude=-156.92,
+                            zoom=10,
+                            pitch=50,
+                        ),
+                    ),
+                )
             else:
-                lanai_map = folium.Map(location=[20.8333, -156.9167], zoom_start=11, tiles=None, min_zoom=6, max_bounds=True)
-                folium.TileLayer('Esri.WorldImagery').add_to(lanai_map)
-                folium_static(lanai_map)
+                st.pydeck_chart(
+                    pdk.Deck(
+                        map_style='mapbox://styles/mapbox/satellite-v9',
+                        initial_view_state=pdk.ViewState(
+                            latitude=20.83,
+                            longitude=-156.92,
+                            zoom=10,
+                            pitch=50,
+                        ),
+                    ),
+                )
 
 
     elif selected_page == 'Maui':
@@ -567,9 +571,17 @@ with main_col:
                         st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
                     with col6:
                         st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-                maui_map = folium.Map(location=[20.8, -156.3], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
-                folium.TileLayer('Esri.WorldImagery').add_to(maui_map)
-                folium_static(maui_map)
+                st.pydeck_chart(
+                    pdk.Deck(
+                        map_style='mapbox://styles/mapbox/satellite-v9',
+                        initial_view_state=pdk.ViewState(
+                            latitude=20.8,
+                            longitude=-156.3,
+                            zoom=9,
+                            pitch=50,
+                        ),
+                    ),
+                )
             elif display_type=="Rainfall":
                 plot_chart(date_input=st.session_state.date_input, island_name="Maui", variable="rainfall")
 
@@ -618,9 +630,17 @@ with main_col:
                         st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
                     with col6:
                         st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-                bigisland_map = folium.Map(location=[19.6, -155.5], zoom_start=8, tiles=None, min_zoom=6, max_bounds=True)
-                folium.TileLayer('Esri.WorldImagery').add_to(bigisland_map)
-                folium_static(bigisland_map)
+                st.pydeck_chart(
+                    pdk.Deck(
+                        map_style='mapbox://styles/mapbox/satellite-v9',
+                        initial_view_state=pdk.ViewState(
+                            latitude=19.5,
+                            longitude=-155.5,
+                            zoom=8,
+                            pitch=50,
+                        ),
+                    ),
+                )
             elif display_type=="Rainfall":
                 plot_chart(date_input=st.session_state.date_input, island_name="Hawaii (Big Island)", variable="rainfall")
 
