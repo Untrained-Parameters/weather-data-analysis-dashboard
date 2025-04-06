@@ -5,7 +5,7 @@ def get_station_data_for_period(date_input: str, island_name: str, variable: str
     Parameters:
     - date_input (str): Either "MM/YYYY" for full month or "MM/DD/YYYY" for a specific day
     - island_name (str): Name of the island (e.g., "Oahu", "Maui", "Lanai", etc.)
-    - variable (str): Either "temperature" or "rainfall"
+    - variable (str): Either "max-temp" or "rainfall"
 
     Returns:
     - pd.DataFrame: Daily station-level data for the given time and island

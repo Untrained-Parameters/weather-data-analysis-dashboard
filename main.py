@@ -69,7 +69,7 @@ else:
         "Rainfall", "Temperature", "Humidity", "NVDI", "Ignition Probability",
         "Future Climate Predictions", "Contemporary Climatology", "Legacy Climatology"])
 
-def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="rainfall"):
+def plot_chart(date_input, island_name, variable):
     if island_name == "All":
         chart_data_1 = data_function.get_station_data_for_period(date_input, "Oahu", variable)
         chart_data_2 = data_function.get_station_data_for_period(date_input, "Kauai", variable)
@@ -77,12 +77,15 @@ def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", varia
         chart_data_4 = data_function.get_station_data_for_period(date_input, "Lānai", variable)
         chart_data_5 = data_function.get_station_data_for_period(date_input, "Maui", variable)
         chart_data_6 = data_function.get_station_data_for_period(date_input, "Hawaii (Big Island)", variable)
-        chart_data_7 = data_function.get_station_data_for_period(date_input, "Niihau", variable)
-        chart_data_8 = data_function.get_station_data_for_period(date_input, "Kahoolawe", variable)
+        # chart_data_7 = data_function.get_station_data_for_period(date_input, "Niihau", variable)
+        # chart_data_8 = data_function.get_station_data_for_period(date_input, "Kahoolawe", variable)
 
-        chart_data = pd.concat([chart_data_1, chart_data_2, chart_data_3, chart_data_4, chart_data_5, chart_data_6, chart_data_7, chart_data_8], ignore_index=True)
+        chart_data = pd.concat([chart_data_1, chart_data_2, chart_data_3, chart_data_4, chart_data_5, chart_data_6], ignore_index=True)
     else:
         chart_data = data_function.get_station_data_for_period(date_input, island_name, variable)
+    print('--------------------------')
+    print('--------------------------')
+    print(variable)
     print(chart_data)
     if island_name=='Oahu':
         lati = 21.44
@@ -240,7 +243,7 @@ with main_col:
                 if display_type=="Rainfall":
                     island_bar_chart(use_container_width=True,date_input=st.session_state.date_input,variable="rainfall")
                 elif display_type=="Temperature":
-                    island_bar_chart(use_container_width=True,date_input=st.session_state.date_input,variable="temperature")
+                    island_bar_chart(use_container_width=True,date_input=st.session_state.date_input,variable="max-temp")
         
 # with main_col:
 #     # Default Homepage Map if no selection yet or fallback
