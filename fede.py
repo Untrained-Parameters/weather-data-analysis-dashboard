@@ -19,12 +19,13 @@ st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
 st.sidebar.markdown(
     """
-    <div style="background-color:#e0f7fa; padding: 10px; border-radius: 10px;">
-        <h3 style="color:#00695c; text-align:center;">🌺 Hawaiʻi Climate Explorer</h3>
-    </div>
+    <h1 style='text-align: center; color: teal;'>
+        🌺 Hawaiʻi Climate Explorer
+    </h1>
     """,
     unsafe_allow_html=True
 )
+
 
 st.sidebar.markdown("### Location")
 # st.session_state.selected_island = st.sidebar.selectbox("Select Island", ["Kauaʻi", "Oʻahu", "Molokaʻi", "Lānaʻi", "Maui", "Hawaiʻi (Big Island)"])
