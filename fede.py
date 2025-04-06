@@ -19,12 +19,28 @@ st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
 st.sidebar.markdown(
     """
-    <h1 style='text-align: center; color: teal;'>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
+
+    .fancy-title {
+        font-family: 'Playfair Display', serif;
+        color: #004d40;
+        font-size: 28px;
+        text-align: center;
+        padding: 10px;
+        background-color: #e0f2f1;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    </style>
+
+    <div class="fancy-title">
         🌺 Hawaiʻi Climate Explorer
-    </h1>
+    </div>
     """,
     unsafe_allow_html=True
 )
+
 
 
 st.sidebar.markdown("### Location")
