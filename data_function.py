@@ -118,10 +118,9 @@ def get_station_data_for_period(date_input: str, island_name: str, variable: str
         #             all_station_data[sid][f"{agg}-temp"] = float(item["value"])
 
         if variable == "max-temp":
-            agg = "max"
             values = {
                 "datatype": "max-temp",
-                "aggregation": agg,
+                "production": "new",
                 "period": "day",
                 "date": date_str
             }
@@ -168,10 +167,10 @@ def get_station_data_for_period(date_input: str, island_name: str, variable: str
                 "lat": station_record["lat"],
                 "lon": station_record["lon"]
             }
-            if variable == "temperature":
+            if variable == "max-temp":
                 row["max-temp"] = station_record.get("max-temp")
-                row["min-temp"] = station_record.get("min-temp")
-                row["avg-temp"] = station_record.get("mean-temp")
+                # row["min-temp"] = station_record.get("min-temp")
+                # row["avg-temp"] = station_record.get("mean-temp")
             elif variable == "rainfall":
                 row["rainfall"] = station_record.get("rainfall")
             records.append(row)
