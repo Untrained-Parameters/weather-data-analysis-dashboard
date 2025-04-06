@@ -71,10 +71,11 @@ def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", varia
     st.pydeck_chart(
         pdk.Deck(
             map_style='mapbox://styles/mapbox/satellite-v9',
+            # map_style = None,
             initial_view_state=pdk.ViewState(
-                latitude=37.76,
-                longitude=-122.4,
-                zoom=11,
+                latitude=20.5,
+                longitude=-157,
+                zoom=7,
                 pitch=50,
             ),
             layers=[
