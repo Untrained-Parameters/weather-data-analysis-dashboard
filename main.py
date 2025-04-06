@@ -210,7 +210,13 @@ if "active_view" not in st.session_state:
 with main_col:
     if selected_page == 'All Islands':
         if display_type=="Future Climate Predictions":
-            st.write("Hello")
+            metric_view = "Monthly"
+            page_title = f"Future Predictions for Oʻahu"
+            st.markdown(f'''
+            # {page_title}
+            ''')
+            month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
+            Predictions.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
         else:
             st.markdown('''
             # Hawaiian Islands Overview
