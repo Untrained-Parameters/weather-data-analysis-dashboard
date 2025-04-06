@@ -315,9 +315,8 @@ with main_col:
         elif st.session_state.active_view == "graph":
             get_chart_98185(use_container_width=True)
 
-        # Continue with the rest of your content
-        # if display_type == "General Overview":
-        #     plot_chart()
+        if display_type=="Future Climate Predictions"
+            st.write("Hello")
         
 # with main_col:
 #     # Default Homepage Map if no selection yet or fallback
