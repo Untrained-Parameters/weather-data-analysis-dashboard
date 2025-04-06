@@ -145,7 +145,12 @@ with main_col:
         # all_map.fit_bounds(bounds)
         # folium_static(all_map)
 
-    plot_chart()
+        if display_type=="General Overview":
+            plot_chart()
+        elif display_type=="Rainfall":
+            plot_chart(weight_column='rainfall')
+        elif display_type=="Temperature":
+            plot_chart(weight_column='avg-temp')
 
     # Main Dashboard (only new blocks for each island below)
     # today = datetime.today()
