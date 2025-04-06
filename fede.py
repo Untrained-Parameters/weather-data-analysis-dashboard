@@ -67,7 +67,19 @@ display_type = st.sidebar.radio("Choose Data", ["General Overview",
 main_col, chat_col = st.columns([4,1])
 
 def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="rainfall"):
-    chart_data = data_function.get_station_data_for_period(date_input, island_name, variable)
+    if island_name == "All":
+        chart_data_1 = data_function.get_station_data_for_period(date_input, "Oahu", variable)
+        chart_data_2 = data_function.get_station_data_for_period(date_input, "Kauai", variable)
+        chart_data_3 = data_function.get_station_data_for_period(date_input, "Molokai", variable)
+        chart_data_4 = data_function.get_station_data_for_period(date_input, "Lānai", variable)
+        chart_data_5 = data_function.get_station_data_for_period(date_input, "Maui", variable)
+        chart_data_6 = data_function.get_station_data_for_period(date_input, "Hawaii (Big Island)", variable)
+        chart_data_7 = data_function.get_station_data_for_period(date_input, "Niihau", variable)
+        chart_data_8 = data_function.get_station_data_for_period(date_input, "Kahoolawe", variable)
+
+        chart_data = pd.concat([chart_data_1, chart_data_2, chart_data_3, chart_data_4, chart_data_5, chart_data_6, chart_data_7, chart_data_8], ignore_index=True)
+    else:
+        chart_data = data_function.get_station_data_for_period(date_input, island_name, variable)
     st.pydeck_chart(
         pdk.Deck(
             map_style='mapbox://styles/mapbox/satellite-v9',
