@@ -16,7 +16,8 @@ import warnings
 from streamlit_extras.stylable_container import stylable_container
 import data_function
 from vega_datasets import data
-import Predictions_old
+import Predictions
+import temp
 
 # setting page configuration
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
@@ -71,7 +72,7 @@ else:
     elev_factor = 150
 
 def plot_chart(date_input, island_name, variable):
-    if island_name == "All":
+    if island_name == "All" and variable == 'rainfall':
         chart_data_1 = data_function.get_station_data_for_period(date_input, "Oahu", variable)
         chart_data_2 = data_function.get_station_data_for_period(date_input, "Kauai", variable)
         chart_data_3 = data_function.get_station_data_for_period(date_input, "Molokai", variable)
@@ -80,10 +81,22 @@ def plot_chart(date_input, island_name, variable):
         chart_data_6 = data_function.get_station_data_for_period(date_input, "Hawaii (Big Island)", variable)
         # chart_data_7 = data_function.get_station_data_for_period(date_input, "Niihau", variable)
         # chart_data_8 = data_function.get_station_data_for_period(date_input, "Kahoolawe", variable)
-
         chart_data = pd.concat([chart_data_1, chart_data_2, chart_data_3, chart_data_4, chart_data_5, chart_data_6], ignore_index=True)
-    else:
+    elif island_name != "All" and variable == 'rainfall':
         chart_data = data_function.get_station_data_for_period(date_input, island_name, variable)
+    elif island_name == "All" and variable == 'temperature':
+        chart_data_1 = temp.get_station_data_for_period_temp(date_input, "Oahu", variable)
+        chart_data_2 = temp.get_station_data_for_period_temp(date_input, "Kauai", variable)
+        chart_data_3 = temp.get_station_data_for_period_temp(date_input, "Molokai", variable)
+        chart_data_4 = temp.get_station_data_for_period_temp(date_input, "Lānai", variable)
+        chart_data_5 = temp.get_station_data_for_period_temp(date_input, "Maui", variable)
+        chart_data_6 = temp.get_station_data_for_period_temp(date_input, "Hawaii (Big Island)", variable)
+        # chart_data_7 = data_function.get_station_data_for_period(date_input, "Niihau", variable)
+        # chart_data_8 = data_function.get_station_data_for_period(date_input, "Kahoolawe", variable)
+        chart_data = pd.concat([chart_data_1, chart_data_2, chart_data_3, chart_data_4, chart_data_5, chart_data_6], ignore_index=True)
+    elif island_name != "All" and variable == 'temperature':
+        chart_data = temp.get_station_data_for_period_temp(date_input, island_name, variable)
+
     print('--------------------------')
     print('--------------------------')
     print(variable)
@@ -117,11 +130,13 @@ def plot_chart(date_input, island_name, variable):
         longi = -157
         zoom = 6.5
 
-    if variable=='rainfall':
-        units='mm'
-    elif variable=='temperature':
-        units='°C'
-    
+    if variable == "rainfall":
+        value_column = "rainfall"
+        units = "mm"
+    else:
+        value_column = "max-temp"
+        units = "°C"
+
     st.pydeck_chart(
         pdk.Deck(
             map_style='mapbox://styles/mapbox/satellite-v9',
@@ -139,12 +154,12 @@ def plot_chart(date_input, island_name, variable):
                     auto_highlight=True,
                     radius=500,
                     elevation_scale=elev_factor,
-                    get_elevation_weight=variable,
-                    elevation_range=[np.min(chart_data[variable]),np.max(chart_data[variable])],
+                    get_elevation_weight=value_column,
+                    elevation_range=[np.min(chart_data[value_column]), np.max(chart_data[value_column])],
                     coverage=1,
                     pickable=True,
                     extruded=True,
-                    color_range=[[255, 255, 0]] * 6,  # RGB for yellow
+                    color_range=[[255, 255, 0]] * 6,
                 ),
             ],
             tooltip={
@@ -156,6 +171,42 @@ def plot_chart(date_input, island_name, variable):
             },
         ),
     )
+
+    
+    # st.pydeck_chart(
+    #     pdk.Deck(
+    #         map_style='mapbox://styles/mapbox/satellite-v9',
+    #         initial_view_state=pdk.ViewState(
+    #             latitude=lati,
+    #             longitude=longi,
+    #             zoom=zoom,
+    #             pitch=50,
+    #         ),
+    #         layers=[
+    #             pdk.Layer(
+    #                 "HexagonLayer",
+    #                 data=chart_data,
+    #                 get_position="[lon, lat]",
+    #                 auto_highlight=True,
+    #                 radius=500,
+    #                 elevation_scale=elev_factor,
+    #                 get_elevation_weight=variable,
+    #                 elevation_range=[np.min(chart_data[variable]),np.max(chart_data[variable])],
+    #                 coverage=1,
+    #                 pickable=True,
+    #                 extruded=True,
+    #                 color_range=[[255, 255, 0]] * 6,  # RGB for yellow
+    #             ),
+    #         ],
+    #         tooltip={
+    #             "text": f"{variable}: {{elevationValue}} {units}",
+    #             "style": {
+    #                 "backgroundColor": "#206af1",
+    #                 "color": "white",
+    #             },
+    #         },
+    #     ),
+    # )
 
 def island_bar_chart(date_input=st.session_state.date_input, variable="rainfall", use_container_width=True):
     # Define islands and retrieve data
@@ -216,7 +267,7 @@ with main_col:
             # {page_title}
             ''')
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
-            Predictions_old.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
+            Predictions.generate_rainfall_forecast_plot(month_pred, 21.31667, -158.06667)
         else:
             st.markdown('''
             # Hawaiian Islands Overview
@@ -300,7 +351,7 @@ with main_col:
             # {page_title}
             ''')
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
-            Predictions_old.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
+            Predictions.generate_rainfall_forecast_plot(month_pred, 21.688333, -157.952500)
         else:
             page_title = f"Weather Dashboard for Oʻahu" if display_type == "General Overview" else f"{display_type} in Oʻahu"
             st.markdown(f'''
@@ -354,7 +405,7 @@ with main_col:
             # {page_title}
             ''')
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
-            Predictions_old.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
+            Predictions.generate_rainfall_forecast_plot(month_pred, 21.981570, -159.342206)
         else:
             page_title = f"Weather Dashboard for Kauaʻi" if display_type == "General Overview" else f"{display_type} in Kauaʻi"
             st.markdown(f'''
@@ -405,7 +456,7 @@ with main_col:
             # {page_title}
             ''')
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
-            Predictions_old.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
+            Predictions.generate_rainfall_forecast_plot(month_pred, 21.31667, -158.06667)
         else:
             page_title = f"Weather Dashboard for Molokaʻi" if display_type == "General Overview" else f"{display_type} in Molokaʻi"
             st.markdown(f'''
@@ -457,7 +508,7 @@ with main_col:
             # {page_title}
             ''')
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
-            Predictions_old.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
+            Predictions.generate_rainfall_forecast_plot(month_pred, 21.31667, -158.06667)
         else:
             page_title = f"Weather Dashboard for Lānaʻi" if display_type == "General Overview" else f"{display_type} in Lānaʻi"
             st.markdown(f'''
@@ -511,7 +562,7 @@ with main_col:
             # {page_title}
             ''')
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
-            Predictions_old.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
+            Predictions.generate_rainfall_forecast_plot(month_pred, 21.31667, -158.06667)
         else:
             page_title = f"Weather Dashboard for Maui" if display_type == "General Overview" else f"{display_type} in Maui"
             st.markdown(f'''
@@ -562,7 +613,7 @@ with main_col:
             # {page_title}
             ''')
             month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
-            Predictions_old.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
+            Predictions.generate_rainfall_forecast_plot(month_pred, 21.31667, -158.06667)
         else:
             page_title = f"Weather Dashboard for Hawaiʻi (Big Island)" if display_type == "General Overview" else f"{display_type} in Hawaiʻi (Big Island)"
             st.markdown(f'''
