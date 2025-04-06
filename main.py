@@ -85,10 +85,10 @@ def plot_chart(date_input, island_name, variable):
         chart_data = pd.concat([chart_data_1, chart_data_2, chart_data_3, chart_data_4, chart_data_5, chart_data_6], ignore_index=True)
     else:
         chart_data = data_function.get_station_data_for_period(date_input, island_name, variable)
-    print('--------------------------')
-    print('--------------------------')
-    print(variable)
-    print(chart_data)
+    # print('--------------------------')
+    # print('--------------------------')
+    # print(variable)
+    # print(chart_data)
     if island_name=='Oahu':
         lati = 21.44
         longi = -157.9
