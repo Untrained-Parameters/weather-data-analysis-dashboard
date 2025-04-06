@@ -1,3 +1,10 @@
+import json
+import pytz
+import requests
+import pandas as pd
+from datetime import datetime, timedelta
+from shapely.geometry import Point, Polygon
+
 def get_station_data_for_period_temp(date_input: str, island_name: str, variable: str):
     """
     Fetches station-level climate data for a given island, day/month, and variable.
@@ -10,13 +17,6 @@ def get_station_data_for_period_temp(date_input: str, island_name: str, variable
     Returns:
     - pd.DataFrame: Daily station-level data for the given time and island
     """
-
-    import json
-    import pytz
-    import requests
-    import pandas as pd
-    from datetime import datetime, timedelta
-    from shapely.geometry import Point, Polygon
 
     hcdp_api_token = "c8aebebea3d9684526cfdab0fc62cbd6"
     api_base_url = "https://api.hcdp.ikewai.org"
