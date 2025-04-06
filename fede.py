@@ -17,11 +17,19 @@ st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
 # Top navigation bar with tabs
 query_params = st.query_params
-top_tab = query_params.get("tab", [None])[0]
 
-st.markdown(f"""
+# Fix CSS layout conflict (was previously hiding top bar)
+st.markdown("""
     <style>
-    .top-bar {{
+    html, body, [data-testid="stApp"] {
+        overflow-x: hidden;
+        margin: 0;
+        padding: 0;
+    }
+    section.main > div.block-container {
+        padding-top: 3rem;
+    }
+    .top-bar {
         position: fixed;
         top: 0;
         left: 0;
@@ -35,14 +43,14 @@ st.markdown(f"""
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         z-index: 1001;
         transition: background-color 0.3s ease;
-    }}
-    .top-bar h1 {{
+    }
+    .top-bar h1 {
         font-size: 22px;
         color: #1a2c4a;
         margin: 0;
         font-family: 'Segoe UI', sans-serif;
-    }}
-    .top-bar .nav-links a {{
+    }
+    .top-bar .nav-links a {
         margin-left: 20px;
         text-decoration: none;
         color: #1a2c4a;
@@ -50,29 +58,31 @@ st.markdown(f"""
         font-size: 16px;
         font-family: 'Segoe UI', sans-serif;
         transition: color 0.2s;
-    }}
-    .top-bar .nav-links a:hover {{
+    }
+    .top-bar .nav-links a:hover {
         text-decoration: underline;
         color: #205493;
-    }}
-    .top-bar .nav-links .active {{
+    }
+    .top-bar .nav-links .active {
         font-weight: bold;
         color: #0b3d91;
         text-decoration: underline;
-    }}
+    }
     </style>
     <div class="top-bar">
         <h1>HI Climate</h1>
         <div class="nav-links">
-            <a class="{'active' if top_tab == 'About' else ''}" href="/?tab=About">About</a>
-            <a class="{'active' if top_tab == 'Climate tools' else ''}" href="/?tab=Climate+tools">Climate tools</a>
-            <a class="{'active' if top_tab == 'Library' else ''}" href="/?tab=Library">Library</a>
-            <a class="{'active' if top_tab == 'Research' else ''}" href="/?tab=Research">Research</a>
-            <a class="{'active' if top_tab == 'Cultural Resources' else ''}" href="/?tab=Cultural+Resources">Cultural Resources</a>
+            <a class="{'active' if query_params.get('tab', [None])[0] == 'About' else ''}" href="/?tab=About">About</a>
+            <a class="{'active' if query_params.get('tab', [None])[0] == 'Climate tools' else ''}" href="/?tab=Climate+tools">Climate tools</a>
+            <a class="{'active' if query_params.get('tab', [None])[0] == 'Library' else ''}" href="/?tab=Library">Library</a>
+            <a class="{'active' if query_params.get('tab', [None])[0] == 'Research' else ''}" href="/?tab=Research">Research</a>
+            <a class="{'active' if query_params.get('tab', [None])[0] == 'Cultural Resources' else ''}" href="/?tab=Cultural+Resources">Cultural Resources</a>
         </div>
     </div>
     <div style="margin-top: 60px;"></div>
 """, unsafe_allow_html=True)
+
+top_tab = query_params.get("tab", [None])[0]
 
 # Render custom content if a top tab is selected
 if top_tab:
@@ -105,7 +115,8 @@ if top_tab:
         """)
 
     st.markdown("""</div>""", unsafe_allow_html=True)
-    # st.stop()
+    st.stop()
+
 
 
 # Sidebar
