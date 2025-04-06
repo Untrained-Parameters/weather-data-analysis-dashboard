@@ -20,25 +20,24 @@ st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 st.sidebar.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
 
-    .fancy-title {
-        font-family: 'Inria Sans';
+    .sidebar-title {
+        font-family: 'Poppins', sans-serif;
         color: #206af1;
-        font-size: 28px;
+        font-size: 26px;
         text-align: center;
-        padding: 10px;
-        background-color: #e0f2f1;
-        border-radius: 12px;
+        margin-bottom: 20px;
     }
     </style>
 
-    <div class="fancy-title">
-        🌺 Hawaiʻi Climate Explorer
+    <div class="sidebar-title">
+        🌴 Hawaiʻi Climate Explorer
     </div>
     """,
     unsafe_allow_html=True
 )
+
 
 
 
