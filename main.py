@@ -5,7 +5,10 @@ import streamlit as st
 import altair as alt
 import matplotlib.pyplot as plt 
 import streamlit.components.v1 as components
+# from streamlit_folium import folium_static
+# import folium
 import requests
+from datetime import datetime
 import pydeck as pdk
 import plotly.express as px
 import plotly.graph_objects as go
@@ -13,12 +16,6 @@ import warnings
 from streamlit_extras.stylable_container import stylable_container
 import data_function
 from vega_datasets import data
-import json
-from shapely.geometry import Point
-from datetime import datetime, timedelta
-from sklearn.ensemble import RandomForestRegressor
-from dateutil.relativedelta import relativedelta
-import Predictions
 
 
 # setting page configuration
@@ -156,16 +153,27 @@ def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", varia
         ),
     )
 
-def compare_islands_plot(use_container_width: bool):
-    # Generating Data
+def compare_islands_plot(use_container_width=True,date_input=st.session_state.date_input, variable="rainfall"):
+    # Retrieving Data
+    chart_data_1 = data_function.get_station_data_for_period(date_input, "Oahu", variable)
+    chart_data_2 = data_function.get_station_data_for_period(date_input, "Kauai", variable)
+    chart_data_3 = data_function.get_station_data_for_period(date_input, "Molokai", variable)
+    chart_data_4 = data_function.get_station_data_for_period(date_input, "Lānai", variable)
+    chart_data_5 = data_function.get_station_data_for_period(date_input, "Maui", variable)
+    chart_data_6 = data_function.get_station_data_for_period(date_input, "Hawaii (Big Island)", variable)
+    
     source = pd.DataFrame({
-        'Trial A': np.random.normal(0, 0.8, 1000),
-        'Trial B': np.random.normal(-2, 1, 1000),
-        'Trial C': np.random.normal(3, 2, 1000)
+        'Kauaʻi': chart_data_2[variable],
+        'Oʻahu': chart_data_1[variable],
+        'Molokaʻi': chart_data_3[variable],
+        'Lānaʻi': chart_data_4[variable],
+        'Maui': chart_data_5[variable],
+        'Hawaiʻi (Big Island)': chart_data_6[variable],
+
     })
 
     chart = alt.Chart(source).transform_fold(
-        ['Trial A', 'Trial B', 'Trial C'],
+        ['Kauaʻi', 'Oʻahu', 'Molokaʻi', 'Lānaʻi', 'Maui', 'Hawaiʻi (Big Island)'],
         as_=['Experiment', 'Measurement']
     ).mark_bar(
         opacity=0.3,
