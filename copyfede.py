@@ -72,43 +72,69 @@ def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", varia
         pdk.Deck(
             map_style='mapbox://styles/mapbox/satellite-v9',
             initial_view_state=pdk.ViewState(
-                latitude=20.5,
-                longitude=-157.0,
-                zoom=7,
+                latitude=37.76,
+                longitude=-122.4,
+                zoom=11,
                 pitch=50,
             ),
             layers=[
                 pdk.Layer(
                     "HexagonLayer",
                     data=chart_data,
-                    get_position='[lon, lat]',
-                    auto_highlight=True,
-                    radius=200,
+                    get_position="[lon, lat]",
+                    radius=300,
                     elevation_scale=50,
                     elevation_range=[0, 1000],
+                    get_elevation_weight=variable,
+                    elevation_aggregation='SUM',
                     pickable=True,
                     extruded=True,
-                    get_elevation_weight=variable,  # You can change this to 'max-temp' or any other numeric column
-                    elevation_aggregation='SUM',
-                ),
-                pdk.Layer(
-                    "ScatterplotLayer",
-                    data=chart_data,
-                    get_position='[lon, lat]',
-                    get_color='[0, 0, 0, 0]',  # Fully transparent, just for hover info
-                    get_radius=1,
-                    pickable=True,
                 ),
             ],
-            tooltip={
-                "text": f"{variable} (sum): {{elevationValue}}",
-                "style": {
-                    "backgroundColor": "#206af1",
-                    "color": "white"
-                }
-            }
-        )
+        ),
     )
+
+    # st.pydeck_chart(
+    #     pdk.Deck(
+    #         map_style='mapbox://styles/mapbox/satellite-v9',
+    #         initial_view_state=pdk.ViewState(
+    #             latitude=20.5,
+    #             longitude=-157.0,
+    #             zoom=7,
+    #             pitch=50,
+    #         ),
+    #         layers=[
+    #             pdk.Layer(
+    #                 "HexagonLayer",
+    #                 data=chart_data,
+    #                 get_position='[lon, lat]',
+    #                 auto_highlight=True,
+    #                 radius=200,
+    #                 elevation_scale=50,
+    #                 elevation_range=[0, 1000],
+    #                 pickable=True,
+    #                 extruded=True,
+    #                 get_elevation_weight=variable,  # You can change this to 'max-temp' or any other numeric column
+    #                 elevation_aggregation='SUM',
+    #             ),
+    #             pdk.Layer(
+    #                 "ScatterplotLayer",
+    #                 data=chart_data,
+    #                 get_position='[lon, lat]',
+    #                 get_color='[0, 0, 0, 0]',  # Fully transparent, just for hover info
+    #                 get_radius=1,
+    #                 pickable=True,
+    #             ),
+    #         ],
+    #         tooltip={
+    #             "text": f"{variable} (sum): {{elevationValue}}",
+    #             "style": {
+    #                 "backgroundColor": "#206af1",
+    #                 "color": "white"
+    #             }
+    #         }
+    #     )
+    # )
 
 #Main Dashboard
 main_col, chat_col = st.columns([4,1])
