@@ -66,9 +66,9 @@ if metric_view == "Daily":
     st.sidebar.markdown("### Date")
     st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/DD/YYYY)", "12/01/2016")
     elev_factor = 300
-else:
+elif metric_view == "Monthly":
     st.sidebar.markdown("### Date")
-    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/YYYY)","01/2025")
+    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/YYYY)","12/2016")
     elev_factor = 150
 
 def plot_chart(date_input, island_name, variable):
@@ -98,6 +98,8 @@ def plot_chart(date_input, island_name, variable):
         chart_data = pd.concat([chart_data_1, chart_data_2, chart_data_3, chart_data_4, chart_data_5, chart_data_6], ignore_index=True)
     elif island_name != "All" and variable == 'temperature':
         chart_data = temp.get_station_data_for_period_temp(date_input, island_name, variable)
+        chart_data = chart_data.rename(columns={"max-temp": "max_temp"})
+        value_column = "max_temp"
 
     print('--------------------------')
     print('--------------------------')
@@ -135,9 +137,14 @@ def plot_chart(date_input, island_name, variable):
     if variable == "rainfall":
         value_column = "rainfall"
         units = "mm"
-    else:
-        value_column = "max-temp"
+        color = [[255, 0, 255]] * 6
+    elif variable == "temperature":
+        value_column = "max_temp"
         units = "°C"
+        color = [[255, 255, 0]] * 6
+
+    print(np.min(chart_data[value_column]), np.max(chart_data[value_column]))
+    print(chart_data[value_column].dtype)
 
     st.pydeck_chart(
         pdk.Deck(
@@ -161,7 +168,7 @@ def plot_chart(date_input, island_name, variable):
                     coverage=1,
                     pickable=True,
                     extruded=True,
-                    color_range=[[255, 255, 0]] * 6,
+                    color_range=color,
                 ),
             ],
             tooltip={
@@ -188,12 +195,13 @@ def island_bar_chart(date_input=st.session_state.date_input, variable="rainfall"
 
     data = []
     for label, name in islands.items():
-        df = data_function.get_station_data_for_period(date_input, name, variable)
+        df = temp.get_station_data_for_period_temp(date_input, name, variable)
+        df = df.rename(columns={"max-temp": "max_temp"})
         if variable == "rainfall":
             df = df.rename(columns={"rainfall": "value"})
             agg_value = df["value"].median()
         else:
-            df = df.rename(columns={"temperature": "value"})
+            df = df.rename(columns={"max_temp": "value"})
             agg_value = df["value"].max()
         data.append({"Island": label, "value": agg_value})
 
@@ -395,6 +403,8 @@ with main_col:
                 )
             elif display_type=="Rainfall":
                 plot_chart(date_input=st.session_state.date_input, island_name="Kauai", variable="rainfall")
+            elif display_type=="Temperature":
+                plot_chart(date_input=st.session_state.date_input, island_name="Kauai", variable="temperature")
 
     elif selected_page == 'Molokaʻi':
         if display_type=="Future Climate Predictions":
@@ -452,9 +462,10 @@ with main_col:
                         ),
                     ),
                 )
-
             elif display_type=="Rainfall":
                 plot_chart(date_input=st.session_state.date_input, island_name="Molokai", variable="rainfall")
+            elif display_type=="Temperature":
+                plot_chart(date_input=st.session_state.date_input, island_name="Molokai", variable="temperature")
 
     elif selected_page == 'Lānaʻi':
         if display_type=="Future Climate Predictions":
@@ -512,18 +523,10 @@ with main_col:
                         ),
                     ),
                 )
-            else:
-                st.pydeck_chart(
-                    pdk.Deck(
-                        map_style='mapbox://styles/mapbox/satellite-v9',
-                        initial_view_state=pdk.ViewState(
-                            latitude=20.83,
-                            longitude=-156.92,
-                            zoom=10,
-                            pitch=50,
-                        ),
-                    ),
-                )
+            elif display_type=="Rainfall":
+                plot_chart(date_input=st.session_state.date_input, island_name="Lānai", variable="rainfall")
+            elif display_type=="Temperature":
+                plot_chart(date_input=st.session_state.date_input, island_name="Lānai", variable="temperature")
 
 
     elif selected_page == 'Maui':
@@ -584,6 +587,8 @@ with main_col:
                 )
             elif display_type=="Rainfall":
                 plot_chart(date_input=st.session_state.date_input, island_name="Maui", variable="rainfall")
+            elif display_type=="Temperature":
+                plot_chart(date_input=st.session_state.date_input, island_name="Maui", variable="temperature")
 
     elif selected_page == 'Hawaiʻi (Big Island)':
         if display_type=="Future Climate Predictions":
@@ -643,6 +648,8 @@ with main_col:
                 )
             elif display_type=="Rainfall":
                 plot_chart(date_input=st.session_state.date_input, island_name="Hawaii (Big Island)", variable="rainfall")
+            elif display_type=="Temperature":
+                plot_chart(date_input=st.session_state.date_input, island_name="Hawaii (Big Island)", variable="temperature")
 
 
 with chat_col:
