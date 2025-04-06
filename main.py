@@ -132,11 +132,13 @@ def plot_chart(date_input, island_name, variable):
         longi = -157
         zoom = 6.5
 
-    if variable=='rainfall':
-        units='mm'
-    elif variable=='temperature':
-        units='°C'
-    
+    if variable == "rainfall":
+        value_column = "rainfall"
+        units = "mm"
+    else:
+        value_column = "max-temp"
+        units = "°C"
+
     st.pydeck_chart(
         pdk.Deck(
             map_style='mapbox://styles/mapbox/satellite-v9',
@@ -154,12 +156,12 @@ def plot_chart(date_input, island_name, variable):
                     auto_highlight=True,
                     radius=500,
                     elevation_scale=elev_factor,
-                    get_elevation_weight=variable,
-                    elevation_range=[np.min(chart_data[variable]),np.max(chart_data[variable])],
+                    get_elevation_weight=value_column,
+                    elevation_range=[np.min(chart_data[value_column]), np.max(chart_data[value_column])],
                     coverage=1,
                     pickable=True,
                     extruded=True,
-                    color_range=[[255, 255, 0]] * 6,  # RGB for yellow
+                    color_range=[[255, 255, 0]] * 6,
                 ),
             ],
             tooltip={
@@ -171,6 +173,8 @@ def plot_chart(date_input, island_name, variable):
             },
         ),
     )
+
+    
 
 def island_bar_chart(date_input=st.session_state.date_input, variable="rainfall", use_container_width=True):
     # Define islands and retrieve data
