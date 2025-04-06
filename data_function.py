@@ -64,7 +64,7 @@ def get_station_data_for_period(date_input: str, island_name: str, variable: str
 
     # Normalize island input
     island_name = island_name.lower()
-    is_all_islands = island_name == "all"
+    is_all_islands = island_name == "All"
     matched_island = None
     if not is_all_islands:
         for name in islands.keys():
@@ -108,7 +108,7 @@ def get_station_data_for_period(date_input: str, island_name: str, variable: str
                 for item in data:
                     if not ("lat" in item and "lng" in item): continue
                     lat, lon = float(item["lat"]), float(item["lng"])
-                    if get_island(lat, lon) != matched_island:
+                    if not is_all_islands and get_island(lat, lon) != matched_island:
                         continue
                     sid = item["station_id"]
                     if sid not in all_station_data:
@@ -130,7 +130,7 @@ def get_station_data_for_period(date_input: str, island_name: str, variable: str
             for item in data:
                 if not ("lat" in item and "lng" in item): continue
                 lat, lon = float(item["lat"]), float(item["lng"])
-                if get_island(lat, lon) != matched_island:
+                if not is_all_islands and get_island(lat, lon) != matched_island:
                     continue
                 sid = item["station_id"]
                 if sid not in all_station_data:
