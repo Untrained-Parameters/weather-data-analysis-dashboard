@@ -5,7 +5,10 @@ import streamlit as st
 import altair as alt
 import matplotlib.pyplot as plt 
 import streamlit.components.v1 as components
+from streamlit_folium import folium_static
+import folium
 import requests
+from datetime import datetime
 import pydeck as pdk
 import plotly.express as px
 import plotly.graph_objects as go
@@ -60,14 +63,14 @@ metric_view = st.sidebar.radio("Select View:", ["Daily", "Monthly"], index=defau
 
 if metric_view == "Daily":
     st.sidebar.markdown("### Date")
-    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/DD/YYYY)", "01/01/2025")
+    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/DD/YYYY)", "12/01/2016")
     elev_factor = 300
 else:
     st.sidebar.markdown("### Date")
     st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/YYYY)","01/2025")
     elev_factor = 150
 
-def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="rainfall"):
+def plot_chart(date_input, island_name, variable):
     if island_name == "All":
         chart_data_1 = data_function.get_station_data_for_period(date_input, "Oahu", variable)
         chart_data_2 = data_function.get_station_data_for_period(date_input, "Kauai", variable)
@@ -75,13 +78,16 @@ def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", varia
         chart_data_4 = data_function.get_station_data_for_period(date_input, "Lānai", variable)
         chart_data_5 = data_function.get_station_data_for_period(date_input, "Maui", variable)
         chart_data_6 = data_function.get_station_data_for_period(date_input, "Hawaii (Big Island)", variable)
-        chart_data_7 = data_function.get_station_data_for_period(date_input, "Niihau", variable)
-        chart_data_8 = data_function.get_station_data_for_period(date_input, "Kahoolawe", variable)
+        # chart_data_7 = data_function.get_station_data_for_period(date_input, "Niihau", variable)
+        # chart_data_8 = data_function.get_station_data_for_period(date_input, "Kahoolawe", variable)
 
-        chart_data = pd.concat([chart_data_1, chart_data_2, chart_data_3, chart_data_4, chart_data_5, chart_data_6, chart_data_7, chart_data_8], ignore_index=True)
+        chart_data = pd.concat([chart_data_1, chart_data_2, chart_data_3, chart_data_4, chart_data_5, chart_data_6], ignore_index=True)
     else:
         chart_data = data_function.get_station_data_for_period(date_input, island_name, variable)
-    
+    print('--------------------------')
+    print('--------------------------')
+    print(variable)
+    print(chart_data)
     if island_name=='Oahu':
         lati = 21.44
         longi = -157.9
@@ -89,27 +95,27 @@ def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", varia
     elif island_name=='Kauai':
         lati = 22.1
         longi = -159.5
-        zoom = 10
+        zoom = 9.5
     elif island_name=='Molokai':
         lati = 21.13
         longi = -157.02
-        zoom = 10
+        zoom = 9.5
     elif island_name=='Maui':
         lati = 20.8
         longi = -156.3
-        zoom = 10
+        zoom = 9
     elif island_name=='Lānai':
         lati = 20.83
         longi = -156.92
         zoom = 10
     elif island_name=='Hawaii (Big Island)':
-        lati = 18.9
-        longi = -156.1
-        zoom = 10
+        lati = 19.5
+        longi = -155.5
+        zoom = 8
     elif island_name=='All':
         lati = 20.5
         longi = -157
-        zoom = 7
+        zoom = 6.5
 
     if variable=='rainfall':
         units='mm'
@@ -131,7 +137,7 @@ def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", varia
                     data=chart_data,
                     get_position="[lon, lat]",
                     auto_highlight=True,
-                    radius=300,
+                    radius=500,
                     elevation_scale=elev_factor,
                     get_elevation_weight=variable,
                     elevation_range=[np.min(chart_data[variable]),np.max(chart_data[variable])],
@@ -151,32 +157,47 @@ def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", varia
         ),
     )
 
-def compare_islands_plot(use_container_width: bool):
-    # Generating Data
-    source = pd.DataFrame({
-        'Trial A': np.random.normal(0, 0.8, 1000),
-        'Trial B': np.random.normal(-2, 1, 1000),
-        'Trial C': np.random.normal(3, 2, 1000)
-    })
+def island_bar_chart(date_input=st.session_state.date_input, variable="rainfall", use_container_width=True):
+    # Define islands and retrieve data
+    islands = {
+        "Oʻahu": "Oahu",
+        "Kauaʻi": "Kauai",
+        "Molokaʻi": "Molokai",
+        "Maui": "Maui",
+        "Hawaiʻi (Big Island)": "Hawaii (Big Island)"
+    }
 
-    chart = alt.Chart(source).transform_fold(
-        ['Trial A', 'Trial B', 'Trial C'],
-        as_=['Experiment', 'Measurement']
-    ).mark_bar(
-        opacity=0.3,
-        binSpacing=0
-    ).encode(
-        alt.X('Measurement:Q', bin=alt.Bin(maxbins=100)),
-        alt.Y('count()', stack=None),
-        alt.Color('Experiment:N')
+    data = []
+    for label, name in islands.items():
+        df = data_function.get_station_data_for_period(date_input, name, variable)
+        if variable == "rainfall":
+            df = df.rename(columns={"rainfall": "value"})
+            agg_value = df["value"].median()
+        else:
+            df = df.rename(columns={"temperature": "value"})
+            agg_value = df["value"].max()
+        data.append({"Island": label, "value": agg_value})
+
+    df_summary = pd.DataFrame(data)
+
+    bar_chart = (
+        alt.Chart(df_summary)
+        .mark_bar()
+        .encode(
+            y=alt.Y("Island:N", sort="-x", title="Island"),
+            x=alt.X("value:Q", title="Median Rainfall (mm)" if variable == "rainfall" else "Max Temperature (°C)"),
+            color=alt.Color("Island:N", legend=None),
+            tooltip=["Island:N", "value:Q"]
+        )
+        .properties(
+            width=600,
+            height=300,
+            title=f"{'Median Rainfall' if variable == 'rainfall' else 'Max Temperature'} by Island"
+        )
     )
 
-    tab1, tab2 = st.tabs(["Streamlit theme (default)", "Altair native theme"])
+    st.altair_chart(bar_chart, theme=None, use_container_width=use_container_width)
 
-    with tab1:
-        st.altair_chart(chart, theme="streamlit", use_container_width=True)
-    with tab2:
-        st.altair_chart(chart, theme=None, use_container_width=True)
 
 
 #Main Dashboard
@@ -189,7 +210,13 @@ if "active_view" not in st.session_state:
 with main_col:
     if selected_page == 'All Islands':
         if display_type=="Future Climate Predictions":
-            st.write("Hello")
+            metric_view = "Monthly"
+            page_title = f"Future Predictions for All Islands"
+            st.markdown(f'''
+            # {page_title}
+            ''')
+            month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
+            Predictions.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
         else:
             st.markdown('''
             # Hawaiian Islands Overview
@@ -220,8 +247,48 @@ with main_col:
                     plot_chart(date_input=st.session_state.date_input, island_name="All", variable="temperature")
 
             elif st.session_state.active_view == "graph":
-                compare_islands_plot(use_container_width=True)
-    
+                if display_type=="Rainfall":
+                    island_bar_chart(use_container_width=True,date_input=st.session_state.date_input,variable="rainfall")
+                elif display_type=="Temperature":
+                    island_bar_chart(use_container_width=True,date_input=st.session_state.date_input,variable="temperature")
+        
+# with main_col:
+#     # Default Homepage Map if no selection yet or fallback
+#     if selected_page == 'All Islands':
+#         st.markdown('''
+#         # Hawaiian Islands Overview
+#         > Explore climate data in the main islands of Hawaiʻi. 
+#         ---
+#         ''')
+#         # bounds = [[18.5, -161.0], [22.25, -154.5]]
+#         # all_map = folium.Map(location=[20.5, -157.0], zoom_start=7, tiles=None, min_zoom=6, max_bounds=True)
+#         # folium.TileLayer('Esri.WorldImagery').add_to(all_map)
+
+#         # islands_info = {
+#         #     "Kauaʻi": [22.1, -159.5],
+#         #     'Oʻahu': [21.4389, -158.0],
+#         #     'Molokaʻi': [21.1333, -157.0167],
+#         #     'Lānaʻi': [20.8333, -156.9167],
+#         #     'Maui': [20.8, -156.3],
+#         #     'Hawaiʻi (Big Island)': [19.6, -155.5]
+#         # }
+#         # for name, coords in islands_info.items():
+#         #     folium.map.Marker(
+#         #         location=coords,
+#         #         icon=folium.DivIcon(
+#         #             html=f'<div style="font-size:16px;color:white;font-weight:bold;text-shadow:1px 1px 2px black;">{name}</div>'
+#         #         )
+#         #     ).add_to(all_map)
+
+#         # all_map.fit_bounds(bounds)
+#         # folium_static(all_map)
+
+#         if display_type=="General Overview":
+#             plot_chart()
+#         elif display_type=="Rainfall":
+#             plot_chart(weight_column='rainfall')
+#         elif display_type=="Temperature":
+#             plot_chart(weight_column='avg-temp')
 
     # Main Dashboard (only new blocks for each island below)
     # today = datetime.today()
@@ -257,7 +324,7 @@ with main_col:
                         st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
                     with col6:
                         st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-                else:
+                else:# monthly metrics
                     with col1:
                         st.metric("Monthly Precip", "85 mm","13%")
                     with col2:
@@ -281,7 +348,13 @@ with main_col:
 
     elif selected_page == "Kauaʻi":
         if display_type=="Future Climate Predictions":
-            st.write("Hello")
+            metric_view = "Monthly"
+            page_title = f"Future Predictions for Kauaʻi"
+            st.markdown(f'''
+            # {page_title}
+            ''')
+            month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
+            Predictions.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
         else:
             page_title = f"Weather Dashboard for Kauaʻi" if display_type == "General Overview" else f"{display_type} in Kauaʻi"
             st.markdown(f'''
@@ -321,186 +394,216 @@ with main_col:
                 kauai_map = folium.Map(location=[22.1, -159.5], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
                 folium.TileLayer('Esri.WorldImagery').add_to(kauai_map)
                 folium_static(kauai_map)
-            else:
-                kauai_map = folium.Map(location=[22.1, -159.5], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
-                folium.TileLayer('Esri.WorldImagery').add_to(kauai_map)
-                folium_static(kauai_map)
+            elif display_type=="Rainfall":
+                plot_chart(date_input=st.session_state.date_input, island_name="Kauai", variable="rainfall")
 
     elif selected_page == 'Molokaʻi':
-        page_title = f"Weather Dashboard for Molokaʻi" if display_type == "General Overview" else f"{display_type} in Molokaʻi"
-        st.markdown(f'''
-        # {page_title}
-        > Molokaʻi is known for its high sea cliffs and rural lifestyle...
-        ---
-        ''')
-        if display_type == "General Overview":
-            # Conditional Metrics Based on View
-            col1, col2, col3, col4, col5, col6 = st.columns(6)
-            if metric_view == "Daily":
-                with col1:
-                    st.metric("Daily Precip", "3.2 mm","10%")
-                with col2:
-                    st.metric("Max Temp", "30.1 °C","2%")
-                with col3:
-                    st.metric("Min Temp", "21.7 °C","-4%")
-                with col4:
-                    st.metric("Humidity", "75%","12%")
-                with col5:
-                    st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
-                with col6:
-                    st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-            else:
-                with col1:
-                    st.metric("Monthly Precip", "85 mm","13%")
-                with col2:
-                    st.metric("Avg Max Temp", "29.5 °C","5%")
-                with col3:
-                    st.metric("Avg Min Temp", "22.3 °C","10%")
-                with col4:
-                    st.metric("Avg Humidity", "77%","11%")
-                with col5:
-                    st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
-                with col6:
-                    st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-            molokai_map = folium.Map(location=[21.1333, -157.0167], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
-            folium.TileLayer('Esri.WorldImagery').add_to(molokai_map)
-            folium_static(molokai_map)
+        if display_type=="Future Climate Predictions":
+            metric_view = "Monthly"
+            page_title = f"Future Predictions for Molokaʻi"
+            st.markdown(f'''
+            # {page_title}
+            ''')
+            month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
+            Predictions.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
         else:
-            molokai_map = folium.Map(location=[21.1333, -157.0167], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
-            folium.TileLayer('Esri.WorldImagery').add_to(molokai_map)
-            folium_static(molokai_map)
+            page_title = f"Weather Dashboard for Molokaʻi" if display_type == "General Overview" else f"{display_type} in Molokaʻi"
+            st.markdown(f'''
+            # {page_title}
+            > Molokaʻi is known for its high sea cliffs and rural lifestyle...
+            ---
+            ''')
+            if display_type == "General Overview":
+                # Conditional Metrics Based on View
+                col1, col2, col3, col4, col5, col6 = st.columns(6)
+                if metric_view == "Daily":
+                    with col1:
+                        st.metric("Daily Precip", "3.2 mm","10%")
+                    with col2:
+                        st.metric("Max Temp", "30.1 °C","2%")
+                    with col3:
+                        st.metric("Min Temp", "21.7 °C","-4%")
+                    with col4:
+                        st.metric("Humidity", "75%","12%")
+                    with col5:
+                        st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
+                    with col6:
+                        st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
+                else:
+                    with col1:
+                        st.metric("Monthly Precip", "85 mm","13%")
+                    with col2:
+                        st.metric("Avg Max Temp", "29.5 °C","5%")
+                    with col3:
+                        st.metric("Avg Min Temp", "22.3 °C","10%")
+                    with col4:
+                        st.metric("Avg Humidity", "77%","11%")
+                    with col5:
+                        st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
+                    with col6:
+                        st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
+                molokai_map = folium.Map(location=[21.1333, -157.0167], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
+                folium.TileLayer('Esri.WorldImagery').add_to(molokai_map)
+                folium_static(molokai_map)
+
+            elif display_type=="Rainfall":
+                plot_chart(date_input=st.session_state.date_input, island_name="Molokai", variable="rainfall")
 
     elif selected_page == 'Lānaʻi':
-        page_title = f"Weather Dashboard for Lānaʻi" if display_type == "General Overview" else f"{display_type} in Lānaʻi"
-        st.markdown(f'''
-        # {page_title}
-        > Lānaʻi, the smallest publicly accessible inhabited island in Hawaii...
-        ---
-        ''')
-        if display_type == "General Overview":
-            # Conditional Metrics Based on View
-            col1, col2, col3, col4, col5, col6 = st.columns(6)
-            if metric_view == "Daily":
-                with col1:
-                    st.metric("Daily Precip", "3.2 mm","10%")
-                with col2:
-                    st.metric("Max Temp", "30.1 °C","2%")
-                with col3:
-                    st.metric("Min Temp", "21.7 °C","-4%")
-                with col4:
-                    st.metric("Humidity", "75%","12%")
-                with col5:
-                    st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
-                with col6:
-                    st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-            else:
-                with col1:
-                    st.metric("Monthly Precip", "85 mm","13%")
-                with col2:
-                    st.metric("Avg Max Temp", "29.5 °C","5%")
-                with col3:
-                    st.metric("Avg Min Temp", "22.3 °C","10%")
-                with col4:
-                    st.metric("Avg Humidity", "77%","11%")
-                with col5:
-                    st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
-                with col6:
-                    st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-            lanai_map = folium.Map(location=[20.8333, -156.9167], zoom_start=11, tiles=None, min_zoom=6, max_bounds=True)
-            folium.TileLayer('Esri.WorldImagery').add_to(lanai_map)
-            folium_static(lanai_map)
+        if display_type=="Future Climate Predictions":
+            metric_view = "Monthly"
+            page_title = f"Future Predictions for Lānaʻi"
+            st.markdown(f'''
+            # {page_title}
+            ''')
+            month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
+            Predictions.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
         else:
-            lanai_map = folium.Map(location=[20.8333, -156.9167], zoom_start=11, tiles=None, min_zoom=6, max_bounds=True)
-            folium.TileLayer('Esri.WorldImagery').add_to(lanai_map)
-            folium_static(lanai_map)
+            page_title = f"Weather Dashboard for Lānaʻi" if display_type == "General Overview" else f"{display_type} in Lānaʻi"
+            st.markdown(f'''
+            # {page_title}
+            > Lānaʻi, the smallest publicly accessible inhabited island in Hawaii...
+            ---
+            ''')
+            if display_type == "General Overview":
+                # Conditional Metrics Based on View
+                col1, col2, col3, col4, col5, col6 = st.columns(6)
+                if metric_view == "Daily":
+                    with col1:
+                        st.metric("Daily Precip", "3.2 mm","10%")
+                    with col2:
+                        st.metric("Max Temp", "30.1 °C","2%")
+                    with col3:
+                        st.metric("Min Temp", "21.7 °C","-4%")
+                    with col4:
+                        st.metric("Humidity", "75%","12%")
+                    with col5:
+                        st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
+                    with col6:
+                        st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
+                else:
+                    with col1:
+                        st.metric("Monthly Precip", "85 mm","13%")
+                    with col2:
+                        st.metric("Avg Max Temp", "29.5 °C","5%")
+                    with col3:
+                        st.metric("Avg Min Temp", "22.3 °C","10%")
+                    with col4:
+                        st.metric("Avg Humidity", "77%","11%")
+                    with col5:
+                        st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
+                    with col6:
+                        st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
+                lanai_map = folium.Map(location=[20.8333, -156.9167], zoom_start=11, tiles=None, min_zoom=6, max_bounds=True)
+                folium.TileLayer('Esri.WorldImagery').add_to(lanai_map)
+                folium_static(lanai_map)
+            else:
+                lanai_map = folium.Map(location=[20.8333, -156.9167], zoom_start=11, tiles=None, min_zoom=6, max_bounds=True)
+                folium.TileLayer('Esri.WorldImagery').add_to(lanai_map)
+                folium_static(lanai_map)
+
 
     elif selected_page == 'Maui':
-        page_title = f"Weather Dashboard for Maui" if display_type == "General Overview" else f"{display_type} in Maui"
-        st.markdown(f'''
-        # {page_title}
-        > Maui is known for its beaches, the sacred ʻĪao Valley, and the scenic Hana Highway...
-        ---
-        ''')
-        if display_type == "General Overview":
-            # Conditional Metrics Based on View
-            col1, col2, col3, col4, col5, col6 = st.columns(6)
-            if metric_view == "Daily":   
-                with col1:
-                    st.metric("Daily Precip", "3.2 mm","10%")
-                with col2:
-                    st.metric("Max Temp", "30.1 °C","2%")
-                with col3:
-                    st.metric("Min Temp", "21.7 °C","-4%")
-                with col4:
-                    st.metric("Humidity", "75%","12%")
-                with col5:
-                    st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
-                with col6:
-                    st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-            else:
-                with col1:
-                    st.metric("Monthly Precip", "85 mm","13%")
-                with col2:
-                    st.metric("Avg Max Temp", "29.5 °C","5%")
-                with col3:
-                    st.metric("Avg Min Temp", "22.3 °C","10%")
-                with col4:
-                    st.metric("Avg Humidity", "77%","11%")
-                with col5:
-                    st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
-                with col6:
-                    st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-            maui_map = folium.Map(location=[20.8, -156.3], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
-            folium.TileLayer('Esri.WorldImagery').add_to(maui_map)
-            folium_static(maui_map)
+        if display_type=="Future Climate Predictions":
+            metric_view = "Monthly"
+            page_title = f"Future Predictions for Maui"
+            st.markdown(f'''
+            # {page_title}
+            ''')
+            month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
+            Predictions.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
         else:
-            maui_map = folium.Map(location=[20.8, -156.3], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
-            folium.TileLayer('Esri.WorldImagery').add_to(maui_map)
-            folium_static(maui_map)
+            page_title = f"Weather Dashboard for Maui" if display_type == "General Overview" else f"{display_type} in Maui"
+            st.markdown(f'''
+            # {page_title}
+            > Maui is known for its beaches, the sacred ʻĪao Valley, and the scenic Hana Highway...
+            ---
+            ''')
+            if display_type == "General Overview":
+                # Conditional Metrics Based on View
+                col1, col2, col3, col4, col5, col6 = st.columns(6)
+                if metric_view == "Daily":   
+                    with col1:
+                        st.metric("Daily Precip", "3.2 mm","10%")
+                    with col2:
+                        st.metric("Max Temp", "30.1 °C","2%")
+                    with col3:
+                        st.metric("Min Temp", "21.7 °C","-4%")
+                    with col4:
+                        st.metric("Humidity", "75%","12%")
+                    with col5:
+                        st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
+                    with col6:
+                        st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
+                else:
+                    with col1:
+                        st.metric("Monthly Precip", "85 mm","13%")
+                    with col2:
+                        st.metric("Avg Max Temp", "29.5 °C","5%")
+                    with col3:
+                        st.metric("Avg Min Temp", "22.3 °C","10%")
+                    with col4:
+                        st.metric("Avg Humidity", "77%","11%")
+                    with col5:
+                        st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
+                    with col6:
+                        st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
+                maui_map = folium.Map(location=[20.8, -156.3], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
+                folium.TileLayer('Esri.WorldImagery').add_to(maui_map)
+                folium_static(maui_map)
+            elif display_type=="Rainfall":
+                plot_chart(date_input=st.session_state.date_input, island_name="Maui", variable="rainfall")
 
     elif selected_page == 'Hawaiʻi (Big Island)':
-        page_title = f"Weather Dashboard for Hawaiʻi (Big Island)" if display_type == "General Overview" else f"{display_type} in Hawaiʻi (Big Island)"
-        st.markdown(f'''
-        # {page_title}
-        > The Big Island is the largest in the Hawaiian archipelago and features diverse climates and active volcanoes...
-        ---
-        ''')
-        if display_type == "General Overview":
-            # Conditional Metrics Based on View
-            col1, col2, col3, col4, col5, col6 = st.columns(6)
-            if metric_view == "Daily":   
-                with col1:
-                    st.metric("Daily Precip", "3.2 mm","10%")
-                with col2:
-                    st.metric("Max Temp", "30.1 °C","2%")
-                with col3:
-                    st.metric("Min Temp", "21.7 °C","-4%")
-                with col4:
-                    st.metric("Humidity", "75%","12%")
-                with col5:
-                    st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
-                with col6:
-                    st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-            else:
-                with col1:
-                    st.metric("Monthly Precip", "85 mm","13%")
-                with col2:
-                    st.metric("Avg Max Temp", "29.5 °C","5%")
-                with col3:
-                    st.metric("Avg Min Temp", "22.3 °C","10%")
-                with col4:
-                    st.metric("Avg Humidity", "77%","11%")
-                with col5:
-                    st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
-                with col6:
-                    st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-            bigisland_map = folium.Map(location=[19.6, -155.5], zoom_start=8, tiles=None, min_zoom=6, max_bounds=True)
-            folium.TileLayer('Esri.WorldImagery').add_to(bigisland_map)
-            folium_static(bigisland_map)
+        if display_type=="Future Climate Predictions":
+            metric_view = "Monthly"
+            page_title = f"Future Predictions for Hawaiʻi (Big Island)"
+            st.markdown(f'''
+            # {page_title}
+            ''')
+            month_pred = st.text_input("Enter Prediction Month (MM/YYYY)", "04/2025")
+            Predictions.plot_rainfall_forecast(month_pred, 21.31667, -158.06667)
         else:
-            bigisland_map = folium.Map(location=[19.6, -155.5], zoom_start=8, tiles=None, min_zoom=6, max_bounds=True)
-            folium.TileLayer('Esri.WorldImagery').add_to(bigisland_map)
-            folium_static(bigisland_map)
+            page_title = f"Weather Dashboard for Hawaiʻi (Big Island)" if display_type == "General Overview" else f"{display_type} in Hawaiʻi (Big Island)"
+            st.markdown(f'''
+            # {page_title}
+            > The Big Island is the largest in the Hawaiian archipelago and features diverse climates and active volcanoes...
+            ---
+            ''')
+            if display_type == "General Overview":
+                # Conditional Metrics Based on View
+                col1, col2, col3, col4, col5, col6 = st.columns(6)
+                if metric_view == "Daily":   
+                    with col1:
+                        st.metric("Daily Precip", "3.2 mm","10%")
+                    with col2:
+                        st.metric("Max Temp", "30.1 °C","2%")
+                    with col3:
+                        st.metric("Min Temp", "21.7 °C","-4%")
+                    with col4:
+                        st.metric("Humidity", "75%","12%")
+                    with col5:
+                        st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
+                    with col6:
+                        st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
+                else:
+                    with col1:
+                        st.metric("Monthly Precip", "85 mm","13%")
+                    with col2:
+                        st.metric("Avg Max Temp", "29.5 °C","5%")
+                    with col3:
+                        st.metric("Avg Min Temp", "22.3 °C","10%")
+                    with col4:
+                        st.metric("Avg Humidity", "77%","11%")
+                    with col5:
+                        st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
+                    with col6:
+                        st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
+                bigisland_map = folium.Map(location=[19.6, -155.5], zoom_start=8, tiles=None, min_zoom=6, max_bounds=True)
+                folium.TileLayer('Esri.WorldImagery').add_to(bigisland_map)
+                folium_static(bigisland_map)
+            elif display_type=="Rainfall":
+                plot_chart(date_input=st.session_state.date_input, island_name="Hawaii (Big Island)", variable="rainfall")
 
 
 with chat_col:
