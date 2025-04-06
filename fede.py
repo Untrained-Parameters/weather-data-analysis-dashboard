@@ -233,7 +233,7 @@ with main_col:
             kauai_map = folium.Map(location=[22.1, -159.5], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
             folium.TileLayer('Esri.WorldImagery').add_to(kauai_map)
             folium_static(kauai_map)
-        if display_type == "Rainfall":
+        elif display_type == "Rainfall":
             plot_chart(date_input=st.session_state.date_input, island_name="Kauai", variable="rainfall")
         elif display_type == "Temperature":
             plot_chart(date_input=st.session_state.date_input, island_name="Kauai", variable="temperature")

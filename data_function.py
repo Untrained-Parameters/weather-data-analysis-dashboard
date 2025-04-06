@@ -113,7 +113,7 @@ def get_station_data_for_period(date_input: str, island_name: str, variable: str
                         all_station_data[sid] = {
                             "Time": display_date,
                             "lat": lat,
-                            "long": lon
+                            "lon": lon
                         }
                     all_station_data[sid][f"{agg}-temp"] = float(item["value"])
 
@@ -135,7 +135,7 @@ def get_station_data_for_period(date_input: str, island_name: str, variable: str
                     all_station_data[sid] = {
                         "Time": display_date,
                         "lat": lat,
-                        "long": lon
+                        "lon": lon
                     }
                 all_station_data[sid]["rainfall"] = float(item["value"])
 
@@ -143,7 +143,7 @@ def get_station_data_for_period(date_input: str, island_name: str, variable: str
             row = {
                 "Time": station_record["Time"],
                 "lat": station_record["lat"],
-                "long": station_record["long"]
+                "lon": station_record["lon"]
             }
             if variable == "temperature":
                 row["max-temp"] = station_record.get("max-temp")
