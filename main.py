@@ -16,7 +16,7 @@ import warnings
 from streamlit_extras.stylable_container import stylable_container
 import data_function
 from vega_datasets import data
-import Predictions_old
+import Predictions
 import temp
 
 # setting page configuration
