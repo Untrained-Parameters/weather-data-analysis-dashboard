@@ -5,8 +5,8 @@ import streamlit as st
 import altair as alt
 import matplotlib.pyplot as plt 
 import streamlit.components.v1 as components
-# from streamlit_folium import folium_static
-# import folium
+from streamlit_folium import folium_static
+import folium
 import requests
 from datetime import datetime
 import pydeck as pdk
@@ -308,7 +308,7 @@ with main_col:
                         st.markdown('<div style="background-color:#34c759;padding:16px 10px;border-radius:10px;text-align:center;color:white;font-weight:bold;font-size:16px;line-height:1.4;">Flood Warning<br><span style="font-size:18px;">No</span></div>', unsafe_allow_html=True)
                     with col6:
                         st.markdown('<div style="background-color:#ffcc00;padding:10px;border-radius:8px;text-align:center;color:black;font-weight:bold;">Fire Warning<br>Low</div>', unsafe_allow_html=True)
-                else:
+                else:# monthly metrics
                     with col1:
                         st.metric("Monthly Precip", "85 mm","13%")
                     with col2:
