@@ -536,9 +536,29 @@ with main_col:
                     ),
                 )
             elif display_type=="Rainfall":
-                plot_chart(date_input=st.session_state.date_input, island_name="Lānai", variable="rainfall")
+                st.pydeck_chart(
+                    pdk.Deck(
+                        map_style='mapbox://styles/mapbox/satellite-v9',
+                        initial_view_state=pdk.ViewState(
+                            latitude=20.83,
+                            longitude=-156.92,
+                            zoom=10,
+                            pitch=50,
+                        ),
+                    ),
+                )
             elif display_type=="Temperature":
-                plot_chart(date_input=st.session_state.date_input, island_name="Lānai", variable="temperature")
+                st.pydeck_chart(
+                    pdk.Deck(
+                        map_style='mapbox://styles/mapbox/satellite-v9',
+                        initial_view_state=pdk.ViewState(
+                            latitude=20.83,
+                            longitude=-156.92,
+                            zoom=10,
+                            pitch=50,
+                        ),
+                    ),
+                )
 
 
     elif selected_page == 'Maui':
