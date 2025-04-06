@@ -52,7 +52,7 @@ metric_view = st.sidebar.radio("Select View:", ["Daily", "Monthly"])
 
 if metric_view == "Daily":
     st.sidebar.markdown("### Date")
-    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/DD/YYYY)", "01/01/2025")
+    st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/DD/YYYY)", "12/01/2016")
     elev_factor = 300
 else:
     st.sidebar.markdown("### Date")
@@ -133,7 +133,7 @@ def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", varia
                     data=chart_data,
                     get_position="[lon, lat]",
                     auto_highlight=True,
-                    radius=300,
+                    radius=500,
                     elevation_scale=elev_factor,
                     get_elevation_weight=variable,
                     elevation_range=[np.min(chart_data[variable]),np.max(chart_data[variable])],
@@ -153,38 +153,47 @@ def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", varia
         ),
     )
 
-def compare_islands_plot(use_container_width=True,date_input=st.session_state.date_input, variable="rainfall"):
-    # Retrieving Data
-    chart_data_1 = data_function.get_station_data_for_period(date_input, "Oahu", variable)
-    chart_data_2 = data_function.get_station_data_for_period(date_input, "Kauai", variable)
-    chart_data_3 = data_function.get_station_data_for_period(date_input, "Molokai", variable)
-    chart_data_4 = data_function.get_station_data_for_period(date_input, "Lānai", variable)
-    chart_data_5 = data_function.get_station_data_for_period(date_input, "Maui", variable)
-    chart_data_6 = data_function.get_station_data_for_period(date_input, "Hawaii (Big Island)", variable)
-    
-    source = pd.DataFrame({
-        'Kauaʻi': chart_data_2[variable],
-        'Oʻahu': chart_data_1[variable],
-        'Molokaʻi': chart_data_3[variable],
-        'Lānaʻi': chart_data_4[variable],
-        'Maui': chart_data_5[variable],
-        'Hawaiʻi (Big Island)': chart_data_6[variable],
+def island_bar_chart(date_input=st.session_state.date_input, variable="rainfall", use_container_width=True):
+    # Define islands and retrieve data
+    islands = {
+        "Oʻahu": "Oahu",
+        "Kauaʻi": "Kauai",
+        "Molokaʻi": "Molokai",
+        "Maui": "Maui",
+        "Hawaiʻi (Big Island)": "Hawaii (Big Island)"
+    }
 
-    })
+    data = []
+    for label, name in islands.items():
+        df = data_function.get_station_data_for_period(date_input, name, variable)
+        if variable == "rainfall":
+            df = df.rename(columns={"rainfall": "value"})
+            agg_value = df["value"].median()
+        else:
+            df = df.rename(columns={"max-temp": "value"})
+            agg_value = df["value"].max()
+        data.append({"Island": label, "value": agg_value})
 
-    chart = alt.Chart(source).transform_fold(
-        ['Kauaʻi', 'Oʻahu', 'Molokaʻi', 'Lānaʻi', 'Maui', 'Hawaiʻi (Big Island)'],
-        as_=['Hawaiian Islands', f'''# {variable}]''']
-    ).mark_bar(
-        opacity=0.3,
-        binSpacing=0
-    ).encode(
-        alt.X('Measurement:Q', bin=alt.Bin(maxbins=100)),
-        alt.Y('count()', stack=None),
-        alt.Color('Experiment:N')
+    df_summary = pd.DataFrame(data)
+
+    bar_chart = (
+        alt.Chart(df_summary)
+        .mark_bar()
+        .encode(
+            y=alt.Y("Island:N", sort="-x", title="Island"),
+            x=alt.X("value:Q", title="Median Rainfall (mm)" if variable == "rainfall" else "Max Temperature (°C)"),
+            color=alt.Color("Island:N", legend=None),
+            tooltip=["Island:N", "value:Q"]
+        )
+        .properties(
+            width=600,
+            height=300,
+            title=f"{'Median Rainfall' if variable == 'rainfall' else 'Max Temperature'} by Island"
+        )
     )
 
-    st.altair_chart(chart, theme=None, use_container_width=True)
+    st.altair_chart(bar_chart, theme=None, use_container_width=use_container_width)
+
 
 
 #Main Dashboard
@@ -229,9 +238,9 @@ with main_col:
 
             elif st.session_state.active_view == "graph":
                 if display_type=="Rainfall":
-                    compare_islands_plot(use_container_width=True,date_input=st.session_state.date_input,variable="rainfall")
+                    island_bar_chart(use_container_width=True,date_input=st.session_state.date_input,variable="rainfall")
                 elif display_type=="Temperature":
-                    compare_islands_plot(use_container_width=True,date_input=st.session_state.date_input,variable="temperature")
+                    island_bar_chart(use_container_width=True,date_input=st.session_state.date_input,variable="temperature")
         
 # with main_col:
 #     # Default Homepage Map if no selection yet or fallback
