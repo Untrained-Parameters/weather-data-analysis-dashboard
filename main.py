@@ -5,10 +5,7 @@ import streamlit as st
 import altair as alt
 import matplotlib.pyplot as plt 
 import streamlit.components.v1 as components
-# from streamlit_folium import folium_static
-# import folium
 import requests
-from datetime import datetime
 import pydeck as pdk
 import plotly.express as px
 import plotly.graph_objects as go
@@ -16,6 +13,12 @@ import warnings
 from streamlit_extras.stylable_container import stylable_container
 import data_function
 from vega_datasets import data
+import json
+from shapely.geometry import Point
+from datetime import datetime, timedelta
+from sklearn.ensemble import RandomForestRegressor
+from dateutil.relativedelta import relativedelta
+import Predictions
 
 
 # setting page configuration
