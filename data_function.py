@@ -64,13 +64,15 @@ def get_station_data_for_period(date_input: str, island_name: str, variable: str
 
     # Normalize island input
     island_name = island_name.lower()
+    is_all_islands = island_name == "all"
     matched_island = None
-    for name in islands.keys():
-        if island_name in name.lower():
-            matched_island = name
-            break
-    if not matched_island:
-        raise ValueError(f"Island '{island_name}' not recognized.")
+    if not is_all_islands:
+        for name in islands.keys():
+            if island_name in name.lower():
+                matched_island = name
+                break
+        if not matched_island:
+            raise ValueError(f"Island '{island_name}' not recognized.")
 
     # Determine date range
     try:
