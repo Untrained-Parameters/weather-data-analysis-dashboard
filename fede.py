@@ -94,44 +94,54 @@ with main_col:
             ).add_to(all_map)
 
         all_map.fit_bounds(bounds)
-        if st.session_state.view_toggle == "Map":
-            folium_static(all_map)
-        else:
-            chart_data = pd.DataFrame(
-                np.random.randn(1000, 2) / [50, 50] + [37.76, -122.4],
-                columns=["lat", "lon"],
-            )
+        folium_static(all_map)
+        chart_data = pd.read_csv("2016-2022.csv")
+        chart_data = chart_data.rename(columns={'longitude': 'lon', 'latitude': 'lat'})
+        chart_data = chart_data[chart_data['Time'] == '01/01/2016']
 
-            st.pydeck_chart(
-                pdk.Deck(
-                    map_style=None,
-                    initial_view_state=pdk.ViewState(
-                        latitude=37.76,
-                        longitude=-122.4,
-                        zoom=11,
-                        pitch=50,
+        weight_column = "rainfall"
+
+        st.pydeck_chart(
+            pdk.Deck(
+                map_style=None,
+                initial_view_state=pdk.ViewState(
+                    latitude=20.5,
+                    longitude=-157.0,
+                    zoom=7,
+                    pitch=50,
+                ),
+                layers=[
+                    pdk.Layer(
+                        "HexagonLayer",
+                        data=chart_data,
+                        get_position='[lon, lat]',
+                        auto_highlight=True,
+                        radius=200,
+                        elevation_scale=50,
+                        elevation_range=[0, 1000],
+                        pickable=True,
+                        extruded=True,
+                        get_elevation_weight=weight_column,  # You can change this to 'max-temp' or any other numeric column
+                        elevation_aggregation='SUM',
                     ),
-                    layers=[
-                        pdk.Layer(
-                            "HexagonLayer",
-                            data=chart_data,
-                            get_position="[lon, lat]",
-                            radius=200,
-                            elevation_scale=4,
-                            elevation_range=[0, 1000],
-                            pickable=True,
-                            extruded=True,
-                        ),
-                        pdk.Layer(
-                            "ScatterplotLayer",
-                            data=chart_data,
-                            get_position="[lon, lat]",
-                            get_color="[200, 30, 0, 160]",
-                            get_radius=200,
-                        ),
-                    ],
-                )
+                    pdk.Layer(
+                        "ScatterplotLayer",
+                        data=chart_data,
+                        get_position='[lon, lat]',
+                        get_color='[0, 0, 0, 0]',  # Fully transparent, just for hover info
+                        get_radius=1,
+                        pickable=True,
+                    ),
+                ],
+                tooltip={
+                    "text": f"{weight_column} (sum): {{elevationValue}}",
+                    "style": {
+                        "backgroundColor": "#206af1",
+                        "color": "white"
+                    }
+                }
             )
+        )
 
     # Main Dashboard (only new blocks for each island below)
     today = datetime.today()
