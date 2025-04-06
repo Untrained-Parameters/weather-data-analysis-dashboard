@@ -14,6 +14,7 @@ import pydeck as pdk
 import plotly.express as px
 import plotly.graph_objects as go
 import warnings
+import data_function
 
 # setting page configuration
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
@@ -40,8 +41,6 @@ st.sidebar.markdown(
     unsafe_allow_html=True
 )
 
-
-
 st.sidebar.markdown("### Location")
 # st.session_state.selected_island = st.sidebar.selectbox("Select Island", ["Kauaʻi", "Oʻahu", "Molokaʻi", "Lānaʻi", "Maui", "Hawaiʻi (Big Island)"])
 selected_page = st.sidebar.selectbox('Select a Page:', ('All Islands', 'Kauaʻi', 'Oʻahu', 'Molokaʻi', 'Lānaʻi', 'Maui', 'Hawaiʻi (Big Island)'))
@@ -67,11 +66,8 @@ display_type = st.sidebar.radio("Choose Data", ["General Overview",
 #Main Dashboard
 main_col, chat_col = st.columns([4,1])
 
-chart_data = pd.read_csv("2016-2022.csv")
-chart_data = chart_data.rename(columns={'longitude': 'lon', 'latitude': 'lat'})
-chart_data = chart_data[chart_data['Time'] == st.session_state.date_input]
-
-def plot_chart(chart_data=chart_data, weight_column='rainfall'):
+def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="rainfall"):
+    chart_data = data_function.get_station_data_for_period(date_input, island_name, variable)
     st.pydeck_chart(
         pdk.Deck(
             map_style='mapbox://styles/mapbox/satellite-v9',
@@ -92,7 +88,7 @@ def plot_chart(chart_data=chart_data, weight_column='rainfall'):
                     elevation_range=[0, 1000],
                     pickable=True,
                     extruded=True,
-                    get_elevation_weight=weight_column,  # You can change this to 'max-temp' or any other numeric column
+                    get_elevation_weight=variable,  # You can change this to 'max-temp' or any other numeric column
                     elevation_aggregation='SUM',
                 ),
                 pdk.Layer(
@@ -105,7 +101,7 @@ def plot_chart(chart_data=chart_data, weight_column='rainfall'):
                 ),
             ],
             tooltip={
-                "text": f"{weight_column} (sum): {{elevationValue}}",
+                "text": f"{variable} (sum): {{elevationValue}}",
                 "style": {
                     "backgroundColor": "#206af1",
                     "color": "white"
@@ -148,9 +144,9 @@ with main_col:
         if display_type=="General Overview":
             plot_chart()
         elif display_type=="Rainfall":
-            plot_chart(weight_column='rainfall')
+            plot_chart(date_input=st.session_state.date_input, island_name="All", variable="rainfall")
         elif display_type=="Temperature":
-            plot_chart(weight_column='avg-temp')
+            plot_chart(date_input=st.session_state.date_input, island_name="All", variable="temperature")
 
     # Main Dashboard (only new blocks for each island below)
     # today = datetime.today()
@@ -193,10 +189,10 @@ with main_col:
             oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9, tiles=None, min_zoom=6, max_bounds=True)
             folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
             folium_static(oahu_map)
-        else:
-            oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9, tiles=None, min_zoom=6, max_bounds=True)
-            folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
-            folium_static(oahu_map)
+        if display_type == "Rainfall":
+            plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="rainfall")
+        elif display_type == "Temperature":
+            plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="temperature")
 
     elif selected_page == "Kauaʻi":
         page_title = f"Weather Dashboard for Kauaʻi" if display_type == "General Overview" else f"{display_type} in Kauaʻi"
@@ -237,10 +233,10 @@ with main_col:
             kauai_map = folium.Map(location=[22.1, -159.5], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
             folium.TileLayer('Esri.WorldImagery').add_to(kauai_map)
             folium_static(kauai_map)
-        else:
-            kauai_map = folium.Map(location=[22.1, -159.5], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
-            folium.TileLayer('Esri.WorldImagery').add_to(kauai_map)
-            folium_static(kauai_map)
+        if display_type == "Rainfall":
+            plot_chart(date_input=st.session_state.date_input, island_name="Kauai", variable="rainfall")
+        elif display_type == "Temperature":
+            plot_chart(date_input=st.session_state.date_input, island_name="Kauai", variable="temperature")
 
     elif selected_page == 'Molokaʻi':
         page_title = f"Weather Dashboard for Molokaʻi" if display_type == "General Overview" else f"{display_type} in Molokaʻi"
@@ -281,10 +277,10 @@ with main_col:
             molokai_map = folium.Map(location=[21.1333, -157.0167], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
             folium.TileLayer('Esri.WorldImagery').add_to(molokai_map)
             folium_static(molokai_map)
-        else:
-            molokai_map = folium.Map(location=[21.1333, -157.0167], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
-            folium.TileLayer('Esri.WorldImagery').add_to(molokai_map)
-            folium_static(molokai_map)
+        if display_type == "Rainfall":
+            plot_chart(date_input=st.session_state.date_input, island_name="Molokai", variable="rainfall")
+        elif display_type == "Temperature":
+            plot_chart(date_input=st.session_state.date_input, island_name="Molokai", variable="temperature")
 
     elif selected_page == 'Lānaʻi':
         page_title = f"Weather Dashboard for Lānaʻi" if display_type == "General Overview" else f"{display_type} in Lānaʻi"
@@ -325,10 +321,10 @@ with main_col:
             lanai_map = folium.Map(location=[20.8333, -156.9167], zoom_start=11, tiles=None, min_zoom=6, max_bounds=True)
             folium.TileLayer('Esri.WorldImagery').add_to(lanai_map)
             folium_static(lanai_map)
-        else:
-            lanai_map = folium.Map(location=[20.8333, -156.9167], zoom_start=11, tiles=None, min_zoom=6, max_bounds=True)
-            folium.TileLayer('Esri.WorldImagery').add_to(lanai_map)
-            folium_static(lanai_map)
+        if display_type == "Rainfall":
+            plot_chart(date_input=st.session_state.date_input, island_name="Lanai", variable="rainfall")
+        elif display_type == "Temperature":
+            plot_chart(date_input=st.session_state.date_input, island_name="Lanai", variable="temperature")
 
     elif selected_page == 'Maui':
         page_title = f"Weather Dashboard for Maui" if display_type == "General Overview" else f"{display_type} in Maui"
@@ -369,10 +365,10 @@ with main_col:
             maui_map = folium.Map(location=[20.8, -156.3], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
             folium.TileLayer('Esri.WorldImagery').add_to(maui_map)
             folium_static(maui_map)
-        else:
-            maui_map = folium.Map(location=[20.8, -156.3], zoom_start=10, tiles=None, min_zoom=6, max_bounds=True)
-            folium.TileLayer('Esri.WorldImagery').add_to(maui_map)
-            folium_static(maui_map)
+        if display_type == "Rainfall":
+            plot_chart(date_input=st.session_state.date_input, island_name="Maui", variable="rainfall")
+        elif display_type == "Temperature":
+            plot_chart(date_input=st.session_state.date_input, island_name="Maui", variable="temperature")
 
     elif selected_page == 'Hawaiʻi (Big Island)':
         page_title = f"Weather Dashboard for Hawaiʻi (Big Island)" if display_type == "General Overview" else f"{display_type} in Hawaiʻi (Big Island)"
@@ -413,10 +409,10 @@ with main_col:
             bigisland_map = folium.Map(location=[19.6, -155.5], zoom_start=8, tiles=None, min_zoom=6, max_bounds=True)
             folium.TileLayer('Esri.WorldImagery').add_to(bigisland_map)
             folium_static(bigisland_map)
-        else:
-            bigisland_map = folium.Map(location=[19.6, -155.5], zoom_start=8, tiles=None, min_zoom=6, max_bounds=True)
-            folium.TileLayer('Esri.WorldImagery').add_to(bigisland_map)
-            folium_static(bigisland_map)
+        if display_type == "Rainfall":
+            plot_chart(date_input=st.session_state.date_input, island_name="Hawaii", variable="rainfall")
+        elif display_type == "Temperature":
+            plot_chart(date_input=st.session_state.date_input, island_name="Hawaii", variable="temperature")
 
 
 with chat_col:

@@ -11,6 +11,7 @@ import requests
 # from transformers import AutoTokenizer, AutoModelForQuestionAnswering, pipeline
 from datetime import datetime
 import pydeck as pdk
+import data_function
 
 # setting page configuration
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
@@ -34,6 +35,51 @@ display_type = st.sidebar.radio("Choose Data", ["General Overview",
     "Rainfall", "Temperature", "Humidity", "NVDI", "Ignition Probability",
     "Future Climate Predictions", "Contemporary Climatology", "Legacy Climatology"])
 
+def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="rainfall"):
+    chart_data = data_function.get_station_data_for_period(date_input, island_name, variable)
+
+    st.pydeck_chart(
+        pdk.Deck(
+            map_style=None,
+            initial_view_state=pdk.ViewState(
+                latitude=20.5,
+                longitude=-157.0,
+                zoom=7,
+                pitch=50,
+            ),
+            layers=[
+                pdk.Layer(
+                    "HexagonLayer",
+                    data=chart_data,
+                    get_position='[lon, lat]',
+                    auto_highlight=True,
+                    radius=200,
+                    elevation_scale=50,
+                    elevation_range=[0, 1000],
+                    pickable=True,
+                    extruded=True,
+                    get_elevation_weight=weight_column,  # You can change this to 'max-temp' or any other numeric column
+                    elevation_aggregation='SUM',
+                ),
+                pdk.Layer(
+                    "ScatterplotLayer",
+                    data=chart_data,
+                    get_position='[lon, lat]',
+                    get_color='[0, 0, 0, 0]',  # Fully transparent, just for hover info
+                    get_radius=1,
+                    pickable=True,
+                ),
+            ],
+            tooltip={
+                "text": f"{weight_column} (sum): {{elevationValue}}",
+                "style": {
+                    "backgroundColor": "#206af1",
+                    "color": "white"
+                }
+            }
+        )
+    )
+
 #Main Dashboard
 main_col, chat_col = st.columns([4,1])
 
@@ -45,76 +91,31 @@ with main_col:
         > Explore climate data in the main islands of Hawaiʻi. 
         ---
         ''')
-        bounds = [[18.5, -161.0], [22.25, -154.5]]
-        all_map = folium.Map(location=[20.5, -157.0], zoom_start=7, tiles=None, min_zoom=6, max_bounds=True)
-        folium.TileLayer('Esri.WorldImagery').add_to(all_map)
+        # bounds = [[18.5, -161.0], [22.25, -154.5]]
+        # all_map = folium.Map(location=[20.5, -157.0], zoom_start=7, tiles=None, min_zoom=6, max_bounds=True)
+        # folium.TileLayer('Esri.WorldImagery').add_to(all_map)
 
-        islands_info = {
-            "Kauaʻi": [22.1, -159.5],
-            'Oʻahu': [21.4389, -158.0],
-            'Molokaʻi': [21.1333, -157.0167],
-            'Lānaʻi': [20.8333, -156.9167],
-            'Maui': [20.8, -156.3],
-            'Hawaiʻi (Big Island)': [19.6, -155.5]
-        }
-        for name, coords in islands_info.items():
-            folium.map.Marker(
-                location=coords,
-                icon=folium.DivIcon(
-                    html=f'<div style="font-size:16px;color:white;font-weight:bold;text-shadow:1px 1px 2px black;">{name}</div>'
-                )
-            ).add_to(all_map)
+        # islands_info = {
+        #     "Kauaʻi": [22.1, -159.5],
+        #     'Oʻahu': [21.4389, -158.0],
+        #     'Molokaʻi': [21.1333, -157.0167],
+        #     'Lānaʻi': [20.8333, -156.9167],
+        #     'Maui': [20.8, -156.3],
+        #     'Hawaiʻi (Big Island)': [19.6, -155.5]
+        # }
+        # for name, coords in islands_info.items():
+        #     folium.map.Marker(
+        #         location=coords,
+        #         icon=folium.DivIcon(
+        #             html=f'<div style="font-size:16px;color:white;font-weight:bold;text-shadow:1px 1px 2px black;">{name}</div>'
+        #         )
+        #     ).add_to(all_map)
 
-        all_map.fit_bounds(bounds)
-        folium_static(all_map)
+        # all_map.fit_bounds(bounds)
+        # folium_static(all_map)
 
-        chart_data = pd.read_csv("2016-2022.csv")
-        chart_data = chart_data.rename(columns={'longitude': 'lon', 'latitude': 'lat'})
-        chart_data = chart_data[chart_data['Time'] == '01/01/2016']
-
-        weight_column = "rainfall"
-
-        st.pydeck_chart(
-            pdk.Deck(
-                map_style=None,
-                initial_view_state=pdk.ViewState(
-                    latitude=20.5,
-                    longitude=-157.0,
-                    zoom=7,
-                    pitch=50,
-                ),
-                layers=[
-                    pdk.Layer(
-                        "HexagonLayer",
-                        data=chart_data,
-                        get_position='[lon, lat]',
-                        auto_highlight=True,
-                        radius=200,
-                        elevation_scale=50,
-                        elevation_range=[0, 1000],
-                        pickable=True,
-                        extruded=True,
-                        get_elevation_weight=weight_column,  # You can change this to 'max-temp' or any other numeric column
-                        elevation_aggregation='SUM',
-                    ),
-                    pdk.Layer(
-                        "ScatterplotLayer",
-                        data=chart_data,
-                        get_position='[lon, lat]',
-                        get_color='[0, 0, 0, 0]',  # Fully transparent, just for hover info
-                        get_radius=1,
-                        pickable=True,
-                    ),
-                ],
-                tooltip={
-                    "text": f"{weight_column} (sum): {{elevationValue}}",
-                    "style": {
-                        "backgroundColor": "#206af1",
-                        "color": "white"
-                    }
-                }
-            )
-        )
+        if display_type == "Rainfall":
+            plot_chart(date_input=st.session_state.date_input, island_name="All", variable="rainfall")
 
     # Main Dashboard (only new blocks for each island below)
     today = datetime.today()
@@ -157,10 +158,10 @@ with main_col:
             oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9, tiles=None, min_zoom=6, max_bounds=True)
             folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
             folium_static(oahu_map)
-        else:
-            oahu_map = folium.Map(location=[21.4389, -158.0], zoom_start=9, tiles=None, min_zoom=6, max_bounds=True)
-            folium.TileLayer('Esri.WorldImagery').add_to(oahu_map)
-            folium_static(oahu_map)
+        if display_type == "Rainfall":
+            plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="rainfall")
+        elif display_type == "Temperature":
+            plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="temperature")
 
     elif selected_page == "Kauaʻi":
         page_title = f"Weather Dashboard for Kauaʻi" if display_type == "General Overview" else f"{display_type} in Kauaʻi"
