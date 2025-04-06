@@ -153,130 +153,36 @@ def plot_chart(date_input=st.session_state.date_input, island_name="Oahu", varia
         ),
     )
 
+def compare_islands_plot(use_container_width: bool):
+    # Generating Data
+    source = pd.DataFrame({
+        'Trial A': np.random.normal(0, 0.8, 1000),
+        'Trial B': np.random.normal(-2, 1, 1000),
+        'Trial C': np.random.normal(3, 2, 1000)
+    })
+
+    chart = alt.Chart(source).transform_fold(
+        ['Trial A', 'Trial B', 'Trial C'],
+        as_=['Experiment', 'Measurement']
+    ).mark_bar(
+        opacity=0.3,
+        binSpacing=0
+    ).encode(
+        alt.X('Measurement:Q', bin=alt.Bin(maxbins=100)),
+        alt.Y('count()', stack=None),
+        alt.Color('Experiment:N')
+    )
+
+    tab1, tab2 = st.tabs(["Streamlit theme (default)", "Altair native theme"])
+
+    with tab1:
+        st.altair_chart(chart, theme="streamlit", use_container_width=True)
+    with tab2:
+        st.altair_chart(chart, theme=None, use_container_width=True)
+
+
 #Main Dashboard
 main_col, chat_col = st.columns([4,1])
-
-# Function to show chart
-
-# def get_chart_98185(use_container_width=True,date_input=st.session_state.date_input, island_name="Oahu", variable="rainfall"):
-
-#     # Fetch actual climate data from data_function
-#     df = data_function.get_station_data_for_period(date_input, island_name, variable)
-
-#     # Create a datetime column
-#     df["datetime"] = pd.to_datetime(df["Time"], format="%m/%d/%Y")
-
-#     # Flatten variable names
-#     if variable == "temperature":
-#         df = df.rename(columns={"max-temp": "value"})
-#     elif variable == "rainfall":
-#         df = df.rename(columns={"rainfall": "value"})
-
-#     # Drop rows with missing or null values
-#     df = df.dropna(subset=["value"])
-
-#     # Extract time units for y-axis faceting
-#     if metric_view == "Daily":
-#         df["Hour"] = 12  # Placeholder: no hourly resolution in current dataset
-#         timeunit_field = "Hour"
-#         facet_format = None
-#         step = 20
-#         overlap = 1
-#         facet_title = "Hour"
-#     elif metric_view == "Monthly":
-#         df["Month"] = df["datetime"].dt.month_name()
-#         timeunit_field = "Month"
-#         facet_format = "%B"
-#         step = 20
-#         overlap = 1
-#         facet_title = "Month"
-
-#     chart = alt.Chart(df, height=step).transform_joinaggregate(
-#         mean_val='mean(value)', groupby=[timeunit_field]
-#     ).transform_bin(
-#         ['bin_max', 'bin_min'], 'value'
-#     ).transform_aggregate(
-#         value='count()', groupby=[timeunit_field, 'mean_val', 'bin_min', 'bin_max']
-#     ).transform_impute(
-#         impute='value', groupby=[timeunit_field, 'mean_val'], key='bin_min', value=0
-#     ).mark_area(
-#         interpolate='monotone',
-#         fillOpacity=0.8,
-#         stroke='lightgray',
-#         strokeWidth=0.5
-#     ).encode(
-#         alt.X('bin_min:Q', bin='binned', title=f'{variable} (C)' if 'Temp' in variable else f'{variable} (mm)'),
-#         alt.Y(
-#             'value:Q',
-#             scale=alt.Scale(range=[step, -step * overlap]),
-#             axis=None
-#         ),
-#         alt.Fill(
-#             'mean_val:Q',
-#             legend=None,
-#             scale=alt.Scale(domain=[30, 5] if 'Temp' in variable else [10, 0], scheme='redyellowblue')
-#         )
-#     ).facet(
-#         row=alt.Row(
-#             f'{timeunit_field}:T' if mode == "Monthly" else f'{timeunit_field}:O',
-#             title=None,
-#             header=alt.Header(labelAngle=0, labelAlign='right', format=facet_format)
-#         )
-#     ).properties(
-#         title=f'Hawaiʻi Climate - {variable}',
-#         bounds='flush'
-#     ).configure_facet(spacing=0).configure_view(stroke=None).configure_title(anchor='end')
-
-#     st.altair_chart(chart, theme=None, use_container_width=use_container_width)
-
-
-
-
-def get_chart_98185(use_container_width: bool):
-
-    source = data.seattle_weather.url
-    step = 20
-    overlap = 1
-
-    chart = alt.Chart(source, height=step).transform_timeunit(
-        Month='month(date)'
-    ).transform_joinaggregate(
-        mean_temp='mean(temp_max)', groupby=['Month']
-    ).transform_bin(
-        ['bin_max', 'bin_min'], 'temp_max'
-    ).transform_aggregate(
-        value='count()', groupby=['Month', 'mean_temp', 'bin_min', 'bin_max']
-    ).transform_impute(
-        impute='value', groupby=['Month', 'mean_temp'], key='bin_min', value=0
-    ).mark_area(
-        interpolate='monotone',
-        fillOpacity=0.8,
-        stroke='lightgray',
-        strokeWidth=0.5
-    ).encode(
-        alt.X('bin_min:Q', bin='binned', title='Maximum Daily Temperature (C)'),
-        alt.Y(
-            'value:Q',
-            scale=alt.Scale(range=[step, -step * overlap]),
-            axis=None
-        ),
-        alt.Fill(
-            'mean_temp:Q',
-            legend=None,
-            scale=alt.Scale(domain=[30, 5], scheme='redyellowblue')
-        )
-    ).facet(
-        row=alt.Row(
-            'Month:T',
-            title=None,
-            header=alt.Header(labelAngle=0, labelAlign='right', format='%B')
-        )
-    ).properties(
-        title='Seattle Weather',
-        bounds='flush'
-    ).configure_facet(spacing=0).configure_view(stroke=None).configure_title(anchor='end')
-
-    st.altair_chart(chart, theme=None, use_container_width=use_container_width)
 
 # Initialize state
 if "active_view" not in st.session_state:
@@ -316,7 +222,7 @@ with main_col:
                     plot_chart(date_input=st.session_state.date_input, island_name="All", variable="temperature")
 
             elif st.session_state.active_view == "graph":
-                get_chart_98185(use_container_width=True)
+                compare_islands_plot(use_container_width=True)
         
 # with main_col:
 #     # Default Homepage Map if no selection yet or fallback
