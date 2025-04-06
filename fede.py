@@ -23,7 +23,7 @@ st.sidebar.markdown(
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
 
     .fancy-title {
-        font-family: 'Playfair Display', serif;
+        font-family: 'Inria Sans', serif;
         color: #206af1;
         font-size: 28px;
         text-align: center;
