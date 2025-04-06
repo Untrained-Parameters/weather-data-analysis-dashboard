@@ -13,13 +13,7 @@ import warnings
 from streamlit_extras.stylable_container import stylable_container
 import data_function
 from vega_datasets import data
-import json
-from shapely.geometry import Point
-from datetime import datetime, timedelta
-from sklearn.ensemble import RandomForestRegressor
-from dateutil.relativedelta import relativedelta
 import Predictions
-
 
 # setting page configuration
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
@@ -226,51 +220,16 @@ with main_col:
 
             elif st.session_state.active_view == "graph":
                 compare_islands_plot(use_container_width=True)
-        
-# with main_col:
-#     # Default Homepage Map if no selection yet or fallback
-#     if selected_page == 'All Islands':
-#         st.markdown('''
-#         # Hawaiian Islands Overview
-#         > Explore climate data in the main islands of Hawaiʻi. 
-#         ---
-#         ''')
-#         # bounds = [[18.5, -161.0], [22.25, -154.5]]
-#         # all_map = folium.Map(location=[20.5, -157.0], zoom_start=7, tiles=None, min_zoom=6, max_bounds=True)
-#         # folium.TileLayer('Esri.WorldImagery').add_to(all_map)
-
-#         # islands_info = {
-#         #     "Kauaʻi": [22.1, -159.5],
-#         #     'Oʻahu': [21.4389, -158.0],
-#         #     'Molokaʻi': [21.1333, -157.0167],
-#         #     'Lānaʻi': [20.8333, -156.9167],
-#         #     'Maui': [20.8, -156.3],
-#         #     'Hawaiʻi (Big Island)': [19.6, -155.5]
-#         # }
-#         # for name, coords in islands_info.items():
-#         #     folium.map.Marker(
-#         #         location=coords,
-#         #         icon=folium.DivIcon(
-#         #             html=f'<div style="font-size:16px;color:white;font-weight:bold;text-shadow:1px 1px 2px black;">{name}</div>'
-#         #         )
-#         #     ).add_to(all_map)
-
-#         # all_map.fit_bounds(bounds)
-#         # folium_static(all_map)
-
-#         if display_type=="General Overview":
-#             plot_chart()
-#         elif display_type=="Rainfall":
-#             plot_chart(weight_column='rainfall')
-#         elif display_type=="Temperature":
-#             plot_chart(weight_column='avg-temp')
+    
 
     # Main Dashboard (only new blocks for each island below)
     # today = datetime.today()
     if selected_page == 'Oʻahu':
         if display_type=="Future Climate Predictions":
             metric_view = "Monthly"
-            Predictions.plot_rainfall_forecast(st.session_state.date_input, )
+            page_title = f"Future Predictions for Oʻahu"
+            month_pred = st.text_input("Enter Month (MM/YYYY)", "01/2025")
+            Predictions.plot_rainfall_forecast("04/2025", 21.31667, -158.06667)
         else:
             page_title = f"Weather Dashboard for Oʻahu" if display_type == "General Overview" else f"{display_type} in Oʻahu"
             st.markdown(f'''

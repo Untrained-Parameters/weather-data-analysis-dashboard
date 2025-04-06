@@ -1,3 +1,12 @@
+import json
+import requests
+import pandas as pd
+import matplotlib.pyplot as plt
+from shapely.geometry import Point
+from datetime import datetime, timedelta
+from sklearn.ensemble import RandomForestRegressor
+from dateutil.relativedelta import relativedelta
+
 def plot_rainfall_forecast(input_month: str, lat: float, lon: float):
     """
     Trains a model on the past 36 months of daily data, predicts rainfall
