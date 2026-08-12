@@ -1,4 +1,5 @@
 import json
+import os
 import requests
 import pandas as pd
 import plotly.graph_objects as go
@@ -6,22 +7,79 @@ from shapely.geometry import Point
 from datetime import datetime, timedelta
 from sklearn.ensemble import RandomForestRegressor
 from dateutil.relativedelta import relativedelta
+from dotenv import load_dotenv
 import streamlit as st
+import mock_station_csv
+
+# Load environment variables from .env file. override=True because
+# Streamlit pre-populates MAPBOX_API_KEY as an empty string from its own
+# config system before this ever runs, and load_dotenv() otherwise leaves
+# already-set variables alone - silently ignoring the real value in .env.
+load_dotenv(override=True)
+
+
+def _generate_mock_rainfall_forecast_plot(month: str, latitude: float, longitude: float):
+    """
+    Builds an actual-vs-predicted rainfall plot for demo/screenshot purposes
+    when no live OAUTH_TOKEN is configured yet, using a real nearby station's
+    real daily rainfall readings (see mock_station_csv.py) both as the
+    "actual" series and as training data for a real forecast model. Only
+    Jan-Jul 2026 was downloaded, so the requested month is mapped onto that
+    range, and the model is trained on far less history than the live path
+    (7 months instead of 36) - it stops being used automatically once a
+    real OAUTH_TOKEN is set in .env.
+    """
+    skn = mock_station_csv.find_nearest_station("rainfall_new", latitude, longitude)
+    if skn is None:
+        raise ValueError("No mock station data available.")
+
+    series = mock_station_csv.load_station_daily_series("rainfall_new", skn)
+    if not series:
+        raise ValueError("No mock rainfall data available for the nearest station.")
+
+    df_actual = pd.DataFrame(series).rename(columns={"value": "rainfall"})
+
+    df_train = df_actual.copy()
+    df_train["day"] = df_train["date"].dt.day
+    df_train["month"] = df_train["date"].dt.month
+
+    model = RandomForestRegressor(n_estimators=100, random_state=42)
+    model.fit(df_train[["day", "month"]], df_train["rainfall"])
+
+    requested_month = datetime.strptime("01/" + month, "%d/%m/%Y").month
+    target_month = mock_station_csv.available_month(requested_month)
+    forecast_dates = [datetime(2026, target_month, day) for day in range(1, 29)]
+    df_forecast = pd.DataFrame({
+        "date": forecast_dates,
+        "day": [d.day for d in forecast_dates],
+        "month": [d.month for d in forecast_dates],
+    })
+    df_forecast["predicted_rainfall"] = model.predict(df_forecast[["day", "month"]])
+
+    _plot_actual_vs_predicted(df_actual, df_forecast)
+
 
 def generate_rainfall_forecast_plot(month: str, latitude: float, longitude: float):
     """
     Generate and display a Plotly chart of actual vs predicted daily rainfall.
-    
+
     Forecast range: Apr 4, 2025 to end of input month.
     Actuals: Dec 2024 to end of input month.
-    
+
     Parameters:
         month (str): "MM/YYYY" format (e.g., "06/2025")
         latitude (float): Latitude of location
         longitude (float): Longitude of location
     """
 
-    hcdp_api_token = "c8aebebea3d9684526cfdab0fc62cbd6"
+    # Read the API token from the environment variable. If it's not set
+    # yet, fall back to real downloaded HCDP station data (see
+    # mock_station_csv.py) so the app is still usable for demos before a
+    # real HCDP token is available.
+    hcdp_api_token = os.getenv("OAUTH_TOKEN")
+    if not hcdp_api_token:
+        return _generate_mock_rainfall_forecast_plot(month, latitude, longitude)
+
     api_base_url = "https://api.hcdp.ikewai.org"
     header = {"Authorization": f"Bearer {hcdp_api_token}"}
 
@@ -124,7 +182,10 @@ def generate_rainfall_forecast_plot(month: str, latitude: float, longitude: floa
         for r in actual_raw if "value" in r
     ]).sort_values("date")
 
-    # Plotly Plot
+    _plot_actual_vs_predicted(df_actual, df_forecast)
+
+
+def _plot_actual_vs_predicted(df_actual, df_forecast):
     fig = go.Figure()
 
     fig.add_trace(go.Scatter(
