@@ -6,9 +6,42 @@ from datetime import datetime, timedelta
 from shapely.geometry import Point, Polygon
 from dotenv import load_dotenv
 import os
+import mock_station_csv
 
-# Load environment variables from .env file
-load_dotenv()
+# Load environment variables from .env file. override=True because
+# Streamlit pre-populates MAPBOX_API_KEY as an empty string from its own
+# config system before this ever runs, and load_dotenv() otherwise leaves
+# already-set variables alone - silently ignoring the real value in .env.
+load_dotenv(override=True)
+
+
+def _generate_mock_rainfall_data(date_list, matched_island):
+    """
+    Builds rainfall station data for demo/screenshot purposes when no live
+    OAUTH_TOKEN is configured yet, using real station data downloaded from
+    HCDP (see mock_station_csv.py). Returns the same shape as the real
+    HCDP-backed path (columns: Time, lat, lon, rainfall), so callers don't
+    need to change, and this stops being used automatically once a real
+    OAUTH_TOKEN is set in .env.
+    """
+    month = mock_station_csv.available_month(date_list[0].month)
+    records = []
+
+    if len(date_list) == 1:
+        # Daily view: real observations for that specific day
+        display_date = date_list[0].strftime("%m/%d/%Y")
+        stations = mock_station_csv.load_station_values("rainfall_new", matched_island, month, day=date_list[0].day)
+        for s in stations:
+            records.append({"Time": display_date, "lat": s["lat"], "lon": s["lon"], "rainfall": s["value"]})
+    else:
+        # Monthly view: one real monthly total per station
+        display_date = date_list[0].strftime("%m/%d/%Y")
+        stations = mock_station_csv.load_station_values("rainfall_new", matched_island, month)
+        for s in stations:
+            records.append({"Time": display_date, "lat": s["lat"], "lon": s["lon"], "rainfall": s["value"]})
+
+    return pd.DataFrame(records)
+
 
 def get_station_data_for_period(date_input: str, island_name: str, variable: str):
     """
@@ -23,9 +56,11 @@ def get_station_data_for_period(date_input: str, island_name: str, variable: str
     - pd.DataFrame: Daily station-level data for the given time and island
     """
 
-    # Read the API token from the environment variable
+    # Read the API token from the environment variable. If it's not set yet,
+    # rainfall requests fall back to generated mock data (see below) so the
+    # app is still usable for demos before a real HCDP token is available.
     hcdp_api_token = os.getenv("OAUTH_TOKEN")
-    if not hcdp_api_token:
+    if not hcdp_api_token and variable != "rainfall":
         raise ValueError("OAUTH_TOKEN is not set in the .env file")
 
     api_base_url = "https://api.hcdp.ikewai.org"
@@ -95,6 +130,10 @@ def get_station_data_for_period(date_input: str, island_name: str, variable: str
         raise ValueError(f"Date parsing failed: {e}")
 
     date_list = [start_date + timedelta(days=i) for i in range((end_date - start_date).days + 1)]
+
+    if not hcdp_api_token and variable == "rainfall":
+        return _generate_mock_rainfall_data(date_list, matched_island)
+
     metadata = get_station_metadata()
     records = []
 

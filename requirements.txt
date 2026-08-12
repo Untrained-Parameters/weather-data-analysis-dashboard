@@ -2,9 +2,8 @@
 pandas
 numpy
 requests
-datetime
 pytz
-dateutil
+python-dateutil
 shapely
 
 # Plotting and visualization
@@ -20,3 +19,8 @@ streamlit-extras
 
 # Machine learning
 scikit-learn
+
+fastapi
+dotenv
+google-genai
+aiohttp

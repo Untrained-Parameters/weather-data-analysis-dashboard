@@ -4,6 +4,42 @@ import requests
 import pandas as pd
 from datetime import datetime, timedelta
 from shapely.geometry import Point, Polygon
+from dotenv import load_dotenv
+import os
+import mock_station_csv
+
+# Load environment variables from .env file. override=True because
+# Streamlit pre-populates MAPBOX_API_KEY as an empty string from its own
+# config system before this ever runs, and load_dotenv() otherwise leaves
+# already-set variables alone - silently ignoring the real value in .env.
+load_dotenv(override=True)
+
+
+def _generate_mock_temperature_data(date_list, matched_island):
+    """
+    Builds max-temperature station data for demo/screenshot purposes when
+    no live OAUTH_TOKEN is configured yet, using real station data
+    downloaded from HCDP (see mock_station_csv.py). Returns the same shape
+    as the real HCDP-backed path (columns: Time, lat, lon, max-temp), so
+    callers don't need to change, and this stops being used automatically
+    once a real OAUTH_TOKEN is set in .env.
+    """
+    month = mock_station_csv.available_month(date_list[0].month)
+    display_date = date_list[0].strftime("%m/%d/%Y")
+    records = []
+
+    if len(date_list) == 1:
+        # Daily view: real observations for that specific day
+        stations = mock_station_csv.load_station_values("temperature_max", matched_island, month, day=date_list[0].day)
+    else:
+        # Monthly view: one real monthly max per station
+        stations = mock_station_csv.load_station_values("temperature_max", matched_island, month)
+
+    for s in stations:
+        records.append({"Time": display_date, "lat": s["lat"], "lon": s["lon"], "max-temp": s["value"]})
+
+    return pd.DataFrame(records)
+
 
 def get_station_data_for_period_temp(date_input: str, island_name: str, variable: str):
     """
@@ -18,7 +54,14 @@ def get_station_data_for_period_temp(date_input: str, island_name: str, variable
     - pd.DataFrame: Daily station-level data for the given time and island
     """
 
-    hcdp_api_token = "c8aebebea3d9684526cfdab0fc62cbd6"
+    # Read the API token from the environment variable. If it's not set
+    # yet, temperature requests fall back to real downloaded HCDP station
+    # data (see mock_station_csv.py) so the app is still usable for demos
+    # before a real HCDP token is available.
+    hcdp_api_token = os.getenv("OAUTH_TOKEN")
+    if not hcdp_api_token and variable != "temperature":
+        raise ValueError("OAUTH_TOKEN is not set in the .env file")
+
     api_base_url = "https://api.hcdp.ikewai.org"
     header = {"Authorization": f"Bearer {hcdp_api_token}"}
 
@@ -86,6 +129,10 @@ def get_station_data_for_period_temp(date_input: str, island_name: str, variable
         raise ValueError(f"Date parsing failed: {e}")
 
     date_list = [start_date + timedelta(days=i) for i in range((end_date - start_date).days + 1)]
+
+    if not hcdp_api_token and variable == "temperature":
+        return _generate_mock_temperature_data(date_list, matched_island)
+
     metadata = get_station_metadata()
     records = []
 

@@ -16,6 +16,7 @@ import data_function
 from vega_datasets import data
 import Predictions
 import temp
+import humidity
 from chat import get_chat_response
 
 # setting page configuration
@@ -88,6 +89,16 @@ elif metric_view == "Monthly":
     st.session_state.date_input = st.sidebar.text_input("Enter Date (MM/YYYY)","12/2016")
     elev_factor = 150
 
+# Display types that don't have a real implementation yet
+COMING_SOON_TYPES = {
+    "Humidity", "NVDI", "Ignition Probability",
+    "Contemporary Climatology", "Legacy Climatology",
+}
+
+def show_coming_soon(display_type):
+    st.info(f"🚧 {display_type} is coming soon!")
+
+
 def plot_chart(date_input, island_name, variable):
     if island_name == "All" and variable == 'rainfall':
         chart_data_1 = data_function.get_station_data_for_period(date_input, "Oahu", variable)
@@ -120,6 +131,17 @@ def plot_chart(date_input, island_name, variable):
         chart_data = temp.get_station_data_for_period_temp(date_input, island_name, variable)
         chart_data = chart_data.rename(columns={"max-temp": "max_temp"})
         value_column = "max_temp"
+    elif island_name == "All" and variable == 'humidity':
+        chart_data_1 = humidity.get_station_data_for_period_humidity(date_input, "Oahu")
+        chart_data_2 = humidity.get_station_data_for_period_humidity(date_input, "Kauai")
+        chart_data_3 = humidity.get_station_data_for_period_humidity(date_input, "Molokai")
+        chart_data_4 = humidity.get_station_data_for_period_humidity(date_input, "Lānai")
+        chart_data_5 = humidity.get_station_data_for_period_humidity(date_input, "Maui")
+        chart_data_6 = humidity.get_station_data_for_period_humidity(date_input, "Hawaii (Big Island)")
+
+        chart_data = pd.concat([chart_data_1, chart_data_2, chart_data_3, chart_data_4, chart_data_5, chart_data_6], ignore_index=True)
+    elif island_name != "All" and variable == 'humidity':
+        chart_data = humidity.get_station_data_for_period_humidity(date_input, island_name)
 
     # print('--------------------------')
     # print('--------------------------')
@@ -162,6 +184,10 @@ def plot_chart(date_input, island_name, variable):
         value_column = "max_temp"
         units = "°C"
         color = [[255, 255, 0]] * 6
+    elif variable == "humidity":
+        value_column = "humidity"
+        units = "%"
+        color = [[0, 255, 255]] * 6
 
     # print(np.min(chart_data[value_column]), np.max(chart_data[value_column]))
     # print(chart_data[value_column].dtype)
@@ -201,7 +227,7 @@ def plot_chart(date_input, island_name, variable):
         ),
     )
 
-    
+
 
 def island_bar_chart(date_input=st.session_state.date_input, variable="rainfall", use_container_width=True):
     # Define islands and retrieve data
@@ -215,13 +241,13 @@ def island_bar_chart(date_input=st.session_state.date_input, variable="rainfall"
 
     data = []
     for label, name in islands.items():
-        df = temp.get_station_data_for_period_temp(date_input, name, variable)
-        df = df.rename(columns={"max-temp": "max_temp"})
         if variable == "rainfall":
+            df = data_function.get_station_data_for_period(date_input, name, variable)
             df = df.rename(columns={"rainfall": "value"})
             agg_value = df["value"].median()
         else:
-            df = df.rename(columns={"max_temp": "value"})
+            df = temp.get_station_data_for_period_temp(date_input, name, variable)
+            df = df.rename(columns={"max-temp": "value"})
             agg_value = df["value"].max()
         data.append({"Island": label, "value": agg_value})
 
@@ -298,7 +324,11 @@ with main_col:
                     st.session_state.active_view = "graph"
 
             # Display the appropriate view
-            if st.session_state.active_view == "map":
+            if st.session_state["display_type"] == "Humidity":
+                plot_chart(date_input=st.session_state.date_input, island_name="All", variable="humidity")
+            elif st.session_state["display_type"] in COMING_SOON_TYPES:
+                show_coming_soon(st.session_state["display_type"])
+            elif st.session_state.active_view == "map":
                 if st.session_state["display_type"] == "Rainfall":
                     plot_chart(date_input=st.session_state.date_input, island_name="All", variable="rainfall")
                 elif st.session_state["display_type"] == "Temperature":
@@ -366,6 +396,8 @@ with main_col:
                         ),
                     ),
                 )
+            elif st.session_state["display_type"] in COMING_SOON_TYPES:
+                show_coming_soon(st.session_state["display_type"])
 
     elif st.session_state["selected_page"] == "Kauaʻi":
         if st.session_state["display_type"]=="Future Climate Predictions":
@@ -427,6 +459,10 @@ with main_col:
                 plot_chart(date_input=st.session_state.date_input, island_name="Kauai", variable="rainfall")
             elif st.session_state["display_type"]=="Temperature":
                 plot_chart(date_input=st.session_state.date_input, island_name="Kauai", variable="temperature")
+            elif st.session_state["display_type"]=="Humidity":
+                plot_chart(date_input=st.session_state.date_input, island_name="Kauai", variable="humidity")
+            elif st.session_state["display_type"] in COMING_SOON_TYPES:
+                show_coming_soon(st.session_state["display_type"])
 
     elif st.session_state["selected_page"] == 'Molokaʻi':
         if st.session_state["display_type"]=="Future Climate Predictions":
@@ -488,6 +524,10 @@ with main_col:
                 plot_chart(date_input=st.session_state.date_input, island_name="Molokai", variable="rainfall")
             elif st.session_state["display_type"]=="Temperature":
                 plot_chart(date_input=st.session_state.date_input, island_name="Molokai", variable="temperature")
+            elif st.session_state["display_type"]=="Humidity":
+                plot_chart(date_input=st.session_state.date_input, island_name="Molokai", variable="humidity")
+            elif st.session_state["display_type"] in COMING_SOON_TYPES:
+                show_coming_soon(st.session_state["display_type"])
 
     elif st.session_state["selected_page"] == 'Lānaʻi':
         if st.session_state["display_type"]=="Future Climate Predictions":
@@ -569,6 +609,8 @@ with main_col:
                         ),
                     ),
                 )
+            elif st.session_state["display_type"] in COMING_SOON_TYPES:
+                show_coming_soon(st.session_state["display_type"])
 
 
     elif st.session_state["selected_page"] == 'Maui':
@@ -631,6 +673,10 @@ with main_col:
                 plot_chart(date_input=st.session_state.date_input, island_name="Maui", variable="rainfall")
             elif st.session_state["display_type"]=="Temperature":
                 plot_chart(date_input=st.session_state.date_input, island_name="Maui", variable="temperature")
+            elif st.session_state["display_type"]=="Humidity":
+                plot_chart(date_input=st.session_state.date_input, island_name="Maui", variable="humidity")
+            elif st.session_state["display_type"] in COMING_SOON_TYPES:
+                show_coming_soon(st.session_state["display_type"])
 
     elif st.session_state["selected_page"] == 'Hawaiʻi (Big Island)':
         if st.session_state["display_type"]=="Future Climate Predictions":
@@ -692,6 +738,10 @@ with main_col:
                 plot_chart(date_input=st.session_state.date_input, island_name="Hawaii (Big Island)", variable="rainfall")
             elif st.session_state["display_type"]=="Temperature":
                 plot_chart(date_input=st.session_state.date_input, island_name="Hawaii (Big Island)", variable="temperature")
+            elif st.session_state["display_type"]=="Humidity":
+                plot_chart(date_input=st.session_state.date_input, island_name="Hawaii (Big Island)", variable="humidity")
+            elif st.session_state["display_type"] in COMING_SOON_TYPES:
+                show_coming_soon(st.session_state["display_type"])
 
 
 with chat_col:
