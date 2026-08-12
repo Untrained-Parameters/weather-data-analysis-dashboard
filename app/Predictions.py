@@ -63,8 +63,8 @@ def generate_rainfall_forecast_plot(month: str, latitude: float, longitude: floa
     """
     Generate and display a Plotly chart of actual vs predicted daily rainfall.
 
-    Forecast range: Apr 4, 2025 to end of input month.
-    Actuals: Dec 2024 to end of input month.
+    Forecast range: today through the end of the input month.
+    Actuals: the ~4 months before today through the end of the input month.
 
     Parameters:
         month (str): "MM/YYYY" format (e.g., "06/2025")
@@ -111,15 +111,17 @@ def generate_rainfall_forecast_plot(month: str, latitude: float, longitude: floa
                 continue
         return closest_station
 
-    now = datetime(2025, 4, 6)
     target_month = datetime.strptime("01/" + month, "%d/%m/%Y")
-    forecast_start = datetime(2025, 4, 4)
+    forecast_start = datetime.now()
     forecast_end = (target_month.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(days=1)
+    if forecast_end < forecast_start:
+        # Requested month is in the past relative to today - nothing to forecast.
+        forecast_end = forecast_start
 
     train_start = forecast_start - relativedelta(months=36)
     train_end = forecast_start - timedelta(days=1)
 
-    actual_start = datetime(2024, 12, 1)
+    actual_start = forecast_start - relativedelta(months=4)
     actual_end = forecast_end
 
     metadata = get_station_metadata()

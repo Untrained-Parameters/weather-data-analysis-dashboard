@@ -192,6 +192,10 @@ def plot_chart(date_input, island_name, variable):
     # print(np.min(chart_data[value_column]), np.max(chart_data[value_column]))
     # print(chart_data[value_column].dtype)
 
+    if chart_data.empty or value_column not in chart_data.columns:
+        st.info(f"No {variable} data available for {island_name} on this date.")
+        return
+
     st.pydeck_chart(
         pdk.Deck(
             map_style='mapbox://styles/mapbox/satellite-v9',
@@ -396,6 +400,12 @@ with main_col:
                         ),
                     ),
                 )
+            elif st.session_state["display_type"]=="Rainfall":
+                plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="rainfall")
+            elif st.session_state["display_type"]=="Temperature":
+                plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="temperature")
+            elif st.session_state["display_type"]=="Humidity":
+                plot_chart(date_input=st.session_state.date_input, island_name="Oahu", variable="humidity")
             elif st.session_state["display_type"] in COMING_SOON_TYPES:
                 show_coming_soon(st.session_state["display_type"])
 
@@ -586,29 +596,11 @@ with main_col:
                     ),
                 )
             elif st.session_state["display_type"]=="Rainfall":
-                st.pydeck_chart(
-                    pdk.Deck(
-                        map_style='mapbox://styles/mapbox/satellite-v9',
-                        initial_view_state=pdk.ViewState(
-                            latitude=20.83,
-                            longitude=-156.92,
-                            zoom=10,
-                            pitch=50,
-                        ),
-                    ),
-                )
+                plot_chart(date_input=st.session_state.date_input, island_name="Lānai", variable="rainfall")
             elif st.session_state["display_type"]=="Temperature":
-                st.pydeck_chart(
-                    pdk.Deck(
-                        map_style='mapbox://styles/mapbox/satellite-v9',
-                        initial_view_state=pdk.ViewState(
-                            latitude=20.83,
-                            longitude=-156.92,
-                            zoom=10,
-                            pitch=50,
-                        ),
-                    ),
-                )
+                plot_chart(date_input=st.session_state.date_input, island_name="Lānai", variable="temperature")
+            elif st.session_state["display_type"]=="Humidity":
+                plot_chart(date_input=st.session_state.date_input, island_name="Lānai", variable="humidity")
             elif st.session_state["display_type"] in COMING_SOON_TYPES:
                 show_coming_soon(st.session_state["display_type"])
 
